@@ -21,6 +21,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
 
   * qsub_gen.py
   * SAMtools_calling_v2.py
+  * CatVariants.py
   * get_consensus_vcf.py
   * hardfilter_indels.py
   * depth_filter.py
@@ -36,11 +37,11 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * Repeat masker bed file: **/fastdata/bop15hjb/GT_data/BGI_10_repeats/ParusMajorBuild1_v24032014_reps.bed**
   * BAM files for SAMtools calling: **/fastdata/bop15hjb/GT_data/BGI_10_BAM/\*.bam**
   
-## Generating the dataset
+# Generating the dataset
 
-### Creating a 'set of known variants' or 'truth set'
+## Creating a 'set of known variants' or 'truth set'
 
-#### 1) GATK - SAMtools consensus set
+### 1) GATK - SAMtools consensus set
 
 This step takes the intersection of INDELs discovered with GATK and SAMtools variant discovery pipelines. 
 Firstly raw INDELs were extracted from an all sites VCF file produced by GATK using the following command:
@@ -49,7 +50,7 @@ Firstly raw INDELs were extracted from an all sites VCF file produced by GATK us
 java -Xmx6g -jar /usr/local/packages6/apps/binapps/GATK/3.4-46/GenomeAnalysisTK.jar -T SelectVariants -R /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -V /fastdata/bop15hjb/GT_data/BGI/bgi_10birds.raw.snps.indels.all_sites.vcf -selectType INDEL -trimAlternates -env -o /fastdata/bop15hjb/GT_data/BGI/bgi_10birds.raw.snps.indels.all_sites.rawindels.vcf
 ```
 
-Secondly SAMtools was used to call INDELs and SNPs from the BAM files using the python script 'SAMtools_calling_v2.py' which implements SAMtools and BCFtools calling pipeline per chromosome, before using GATK CatVariants to produce a genome wide file. This step uses the following command:
+Secondly SAMtools was used to call INDELs and SNPs from the BAM files using the python script 'SAMtools_calling_v2.py' which implements SAMtools and BCFtools calling pipeline per chromosome, before using GATK CatVariants (from within the script 'CatVariants.py') to produce a genome wide file. This step uses the following command:
 
 ```
 python SAMtools_calling_v2.py -bam_list /fastdata/bop15hjb/GT_data/BGI_10_BAM/bgi10_bam.list -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -out /fastdata/bop15hjb/GT_data/BGI/Consensus/SAMtools_run2/BGI_10.dedup.real.recal
@@ -61,7 +62,7 @@ The consensus set of the SAMtools and GATK INDELs was then obtained using GATK's
 python get_consensus_vcf.py -vcf_I /fastdata/bop15hjb/GT_data/BGI/bgi_10birds.raw.snps.indels.all_sites.rawindels.vcf -vcf_II /fastdata/bop15hjb/GT_data/BGI/Consensus/SAMtools_run2/BGI_10.dedup.real.recal.allsites.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -out /fastdata/bop15hjb/GT_data/BGI/Consensus/
 ```
 
-#### 2) Hardfiltering 
+### 2) Hardfiltering 
 
 The consensus set was filtered using the GATK best practice hard filters for INDELs of "QD<2.0", "FS>200.0" and "ReadPosRankSum<-20.0" (see <https://www.broadinstitute.org/gatk/guide/tagged?tag=filtering>). This was implemented in the python script 'hardfilter_indels.py' as follows:
 
@@ -69,7 +70,7 @@ The consensus set was filtered using the GATK best practice hard filters for IND
 python hardfilter_indels.py -vcf /fastdata/bop15hjb/GT_data/BGI/Consensus/bgi_10birds.raw.snps.indels.all_sites.rawindels.consensus.rawindels.vcf
 ```
 
-#### 3) Coverage filtering
+### 3) Coverage filtering
 
 Next, INDELs with coverage more than twice, or less than half, the mean coverage were excluded with the in-house script 'depth_filter.py'. Usage follows:
 
@@ -77,7 +78,7 @@ Next, INDELs with coverage more than twice, or less than half, the mean coverage
 python depth_filter.py -vcf /fastdata/bop15hjb/GT_data/BGI/Consensus/bgi_10birds.raw.snps.indels.all_sites.rawindels.consensus.rawindels.hardfiltered.pass.vcf
 ```
 
-#### 4) Repeat filtering
+### 4) Repeat filtering
 
 Repeat regions identified by a previous repeat masker analysis were excluded using GATK's VariantFiltration implemented in the script 'repeat_filter.py':
 
@@ -85,7 +86,7 @@ Repeat regions identified by a previous repeat masker analysis were excluded usi
 python repeat_filter.py -vcf /fastdata/bop15hjb/GT_data/BGI/Consensus/bgi_10birds.raw.snps.indels.all_sites.rawindels.consensus.rawindels.hardfiltered.pass.coveragefiltered.pass.vcf -bed /fastdata/bop15hjb/GT_data/BGI_10_repeats/ParusMajorBuild1_v24032014_reps.bed -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa
 ```
 
-#### 5) Filter by length and number of alleles
+### 5) Filter by length and number of alleles
 
 INDELs that were longer than 50 bp or were not biallelic were excluded using GATK SelectVariants implemented in the script 'filter_length_biallelic.py':
 
@@ -93,7 +94,7 @@ INDELs that were longer than 50 bp or were not biallelic were excluded using GAT
 python filter_length_biallelic.py -vcf /fastdata/bop15hjb/GT_data/BGI/Consensus/bgi_10birds.raw.snps.indels.all_sites.rawindels.consensus.rawindels.hardfiltered.pass.coveragefiltered.pass.repeatfilter.pass.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa
 ```
 
-#### Truth set step summary
+### Truth set step summary
 
 The number of INDELs remove at each step of filtering during creation of the 'truth set' are listed in the table below: 
 
@@ -106,7 +107,7 @@ The number of INDELs remove at each step of filtering during creation of the 'tr
 |Repeat filtering                  |1156233                           |164056             |
 |Length and allele number filtering|1047463                           |108770             |
 
-### Variant quality score recalibration (VQSR)
+## Variant quality score recalibration (VQSR)
 
 TODO
 
