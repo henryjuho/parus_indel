@@ -27,6 +27,8 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * depth_filter.py
   * repeat_filter.py
   * filter_length_biallelic.py
+  * run_VQSR.py
+  * trancheSTATS.py 
   
 
 ## Pre-prepared files required for analysis
@@ -126,7 +128,7 @@ This produced output VCFs for six tranche levels, as show in the table below, al
 |99.9          |1817437          |52047            |
 |100.0         |1869484          |0                |
 
-The custom script 'trancheSTATS.py' was used to evaluate which tranche level was most suitable by obtaining data on the number of novel INDELs discovered at each tranche level. The script uses a list of vcfs generate using ls. The command used is as follows:
+The custom script 'trancheSTATS.py' was used to evaluate which tranche level was most suitable by obtaining data on the number of novel INDELs discovered at each tranche level. The script uses a list of vcfs generated using ls. The command used is as follows:
 
 ```
 python trancheSTATS.py -vcf /fastdata/bop15hjb/GT_data/BGI/VQSR_consensus/post_vqsr_vcfs.list -out /fastdata/bop15hjb/GT_data/BGI/VQSR_consensus/bgi_10_tranchelevel_stats.txt
@@ -142,10 +144,5 @@ The numbers of novel variants in each tranche are shown in the table below.
 |99.0     |1612948	  |1036992                |116234                  |459722       |
 |98.0	    |1584287	  |1026513                |91570	                 |466204       |
 |90.0     |1420423	  |942720	                |14487	                 |463216       |
-
-
-
-
-
 
 
