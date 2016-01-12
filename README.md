@@ -146,3 +146,6 @@ The numbers of novel variants in each tranche are shown in the table below.
 |90.0     |1420423	  |942720	                |14487	                 |463216       |
 
 
+# Performing the INDEL analysis
+
+TODO
