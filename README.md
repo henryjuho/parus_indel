@@ -109,7 +109,39 @@ The number of INDELs remove at each step of filtering during creation of the 'tr
 
 ## Variant quality score recalibration (VQSR)
 
-TODO
+VQSR was performed on raw INDELs called with the GATK HaplotypeCaller, using the INDEL set descirbed above as the 'truth set' to train the VQSR model. VQSR was implement with the python script 'run_VQSR.py' as follows:
+
+```
+ python run_VQSR.py -vcf /fastdata/bop15hjb/GT_data/BGI/bgi_10birds.raw.snps.indels.all_sites.rawindels.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -truth_set /fastdata/bop15hjb/GT_data/BGI/Consensus/bgi_10birds.raw.snps.indels.all_sites.rawindels.consensus.rawindels.hardfiltered.pass.coveragefiltered.pass.repeatfilter.pass.maxlength50.biallelic.vcf -out /fastdata/bop15hjb/GT_data/BGI/VQSR_consensus/
+```
+
+This produced output VCFs for six tranche levels, as show in the table below, along with the number of variants retained at each level.
+
+|Tranche level | INDELs retained | INDELs excluded |
+|:------------:|:---------------:|:---------------:|
+|90.0          |1420423          |449061           |
+|98.0          |1584287          |285197           |
+|99.0          |1612948          |256536           |
+|99.5          |1632060          |237424           |
+|99.9          |1817437          |52047            |
+|100.0         |1869484          |0                |
+
+The custom script 'trancheSTATS.py' was used to evaluate which tranche level was most suitable by obtaining data on the number of novel INDELs discovered at each tranche level. The script uses a list of vcfs generate using ls. The command used is as follows:
+
+```
+python trancheSTATS.py -vcf /fastdata/bop15hjb/GT_data/BGI/VQSR_consensus/post_vqsr_vcfs.list -out /fastdata/bop15hjb/GT_data/BGI/VQSR_consensus/bgi_10_tranchelevel_stats.txt
+```
+
+The numbers of novel variants in each tranche are shown in the table below.
+
+|Tranche  |All sites	|Positive training sites|	Negative training sites|	Novel sites|
+|:-------:|:---------:|:---------------------:|:----------------------:|:-----------:|
+|100.0	  |1869484	  |1047463	              |321122	                 |500899       |
+|99.9     |1817437	  |1046415                |302038 	               |468984       |
+|99.5     |1632060	  |1042225                |133408                  |456427       |
+|99.0     |1612948	  |1036992                |116234                  |459722       |
+|98.0	    |1584287	  |1026513                |91570	                 |466204       |
+|90.0     |1420423	  |942720	                |14487	                 |463216       |
 
 
 
