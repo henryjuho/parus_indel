@@ -21,12 +21,14 @@ parser.add_argument('-hold', '--hold_jobs', help='Comma separated list of jobs t
                     default=False)
 parser.add_argument('-jid', '--job_ID', help='Name for job, if not specified follows default of <qsub_filename_job.sh>',
                     required=False, default='DEFAULT')
+parser.add_argument('-tr', '--threads', help='Number of threads required for job', default=1)
 args = parser.parse_args()
 
 cmd_line = args.command_line  # list of commands to submit in batch job
 mods = args.modules
 run_time = '#$-l h_rt='+str(args.time)+':00:00\n'
 memory = '#$-l mem='+str(args.virtual_memory)+'G\n#$-l rmem='+str(args.real_memory)+'G\n'
+threads = args.threads
 file_pos = args.out.rfind('/')+1
 if args.job_ID == 'DEFAULT':
     output_name = args.out[0:file_pos] + 'qsub_' + args.out[file_pos:] + '_job.sh'
@@ -47,7 +49,10 @@ if out_mode == 'w' or out_mode == 'q':
     output.write('#!/bin/bash\n')
     for m in mods:
         output.write('#!module load  '+available_modules[m]+'\n')
-    output.write('\n#$-l arch=intel*\n' + run_time + memory + outs + '\n')
+    output.write('\n#$-l arch=intel*\n' + run_time + memory + '\n')
+    if threads != 1:
+        output.write('#$-pe openmp ' + str(threads) + '\n')
+    output.write(outs + '\n')
     if hold is not False:
         output.write('#$-hold_jid ' + args.hold_jobs + '\n\n')
     for cmd in cmd_line:
@@ -60,7 +65,10 @@ elif out_mode == 'p':
     print('#!/bin/bash')
     for m in mods:
         print('#!module load  '+available_modules[m])
-    print('\n#$-l arch=intel*\n' + run_time + memory + outs)
+    print('\n#$-l arch=intel*\n' + run_time + memory)
+    if threads != 1:
+        print('#$-pe openmp ' + str(threads))
+    print(outs)
     if hold is not False:
         print('#$-hold_jid ' + args.hold_jobs + '\n')
     for cmd in cmd_line:
