@@ -13,7 +13,6 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * VCFtools version 0.1.12b
   * SAMtools version 1.2
   * BCFtools version 1.3
-  * R version 3.2.2
   
 ## Python scripts used in this pipeline
 
