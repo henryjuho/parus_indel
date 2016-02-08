@@ -170,4 +170,22 @@ TODO
 
 # Performing the INDEL analysis
 
-TODO
+## Binning data by recombination rate
+
+### 1) Predicting recombination rate for each INDEL
+
+Linkage map data was used to estimate recombination rate at each INDEL. First, 3rd order polynomials were fitted to plots of physical position versus map length. Second, the derivative of each chromosome's polynomial was used to estimate recombination rate for each INDEL start position. This predicition was implemented in the following python script:
+
+```
+python predict_recomb.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -poly /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/3rd_polynom.txt
+```
+
+The file specified by ```-poly``` is a list of variables for each chromosome's polynomial.
+
+### 2) Binning the data
+
+The output from the previous step was used to bin the data by recombination yielding x new vcf files, where x = the required number of recombination bins. Bins had equal numbers of variants. The script used for binning is as follows:
+
+```
+python recomBINdels.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -recomb /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/5_recomb_bins/
+```
