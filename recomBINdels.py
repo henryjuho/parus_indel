@@ -3,7 +3,7 @@ import argparse
 # arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-vcf', help='/input/directory/vcf', required=True)
-parser.add_argument('-recomb', help='List of INDEL positions and recomb rates', required=True)
+parser.add_argument('-recomb', help='List file of INDEL positions and recomb rates', required=True)
 parser.add_argument('-out', help='/output/directory/', required=False, default=False)
 parser.add_argument('-nbin', help='Number of recombination bins required', default=5.0, type=float, required=False)
 args = parser.parse_args()
@@ -33,11 +33,13 @@ print('Variant bins will be of size n = ' + str(bin_size) +
 
 # generate bins
 bins = []
-for i in range(0, no_indels-1, bin_size):
-    if i != no_indels - bin_size - 1:
-        end_coord = i + bin_size
-    else:
+bin_tracker = 0
+for i in range(0, no_indels - bin_size - 1, bin_size):
+    bin_tracker += 1
+    if bin_tracker == int(bin_number):
         end_coord = no_indels
+    else:
+        end_coord = i + bin_size
     bin_ID = 'bin_' + str(i+1) + '-' + str(end_coord)
     bins.append([bin_ID, indel_recombs[i:end_coord]])
 
