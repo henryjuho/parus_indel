@@ -170,6 +170,30 @@ TODO
 
 # Performing the INDEL analysis
 
+## Repeat region analysis
+
+The occurance of INDELs in repeat regions was investigated using GATK's 'VariantAnnotator' to annotate homoploymer runs and tandem repeats in the INDEL dataset. This used a python wrapper as follows:
+
+```
+python annotate_hr_tr.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Repeat_analysis/
+```
+Summary data was the generated using the script ```indel_repeat_stats.py``` as follows:
+
+```
+python indel_repeat_stats.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Repeat_analysis/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.hr.tr.vcf
+```
+
+This yielded the following results:
+
+|Class	          |Number of INDELs|
+|:----------------|:--------------:|
+|Hompolymer runs	|241528          |
+|Tandem repeats	  |668234          |
+|Overlap	        |241528          |
+|Total repetative	|668234          |
+|Total no. INDELs	|1240366         | 
+|% INDEL in repeat|53              |
+
 ## Binning data by recombination rate
 
 ### 1) Predicting recombination rate for each INDEL
