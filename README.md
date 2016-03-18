@@ -176,7 +176,13 @@ The number of INDELs removed at each step are listed below:
 
 The following genomes were used for the multispecies alignment:
 
-TODO
+|Species           |Version           |Available from                                                        |
+|:-----------------|:-----------------|:---------------------------------------------------------------------|
+|chicken           |Galgal4           |<ftp://ftp.ensembl.org/pub/release-84/fasta/gallus_gallus/dna/>       |
+|turkey            |Turkey_2.01       |<ftp://ftp.ensembl.org/pub/release-84/fasta/meleagris_gallopavo/dna/> |
+|flycatcher        |FicAlb1.5         |<http://www.ncbi.nlm.nih.gov/genome/?term=flycatcher>                 |
+|zebrafinch        |TaeGut3.2.4       |<ftp://ftp.ensembl.org/pub/release-84/fasta/taeniopygia_guttata/dna/> |
+|great tit         |Parus_major1.0.4  |```/fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa```            |
 
 ## Preparing fastas
 
