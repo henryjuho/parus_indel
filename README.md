@@ -28,7 +28,13 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * filter_length_biallelic.py
   * run_VQSR.py
   * trancheSTATS.py 
-  
+  * mergeFA.py
+  * mergeZF.py
+  * mergeGG.py
+  * mergeMG.py
+  * mergeGreatT.py
+  * annotate_hr_tr.py
+  * indel_repeat_stats.py
 
 ## Pre-prepared files required for analysis
 
@@ -165,6 +171,26 @@ The number of INDELs removed at each step are listed below:
 |Repeat             |1240366         |133033        |
 
 # Multispecies alignment and INDEL polarisation
+
+## Alignment genomes
+
+The following genomes were used for the multispecies alignment:
+
+TODO
+
+## Preparing fastas
+
+Alignment genomes' chromosomal fastas were merged into genome fastas in the same chromosomal order (dictated by '-fa_list' file) (without scaffolds) with the follow scripts:
+
+```
+python mergeFA.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Flycatcher/chromosome_merge.list
+python mergeZF.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Zebrafinch/chromosome_merge.list
+python mergeGG.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Chicken/chromosome_merge.list
+python mergeMG.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Turkey/chromosome_merge.list
+python mergeGreatT.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Greattit/chromosome_merge.list
+```
+
+## Pairwise alignments
 
 TODO
 
