@@ -13,6 +13,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * VCFtools version 0.1.12b
   * SAMtools version 1.2
   * BCFtools version 1.3
+  * bedtools version 2.23.0
   
 ## Python scripts used in this pipeline
 
@@ -35,11 +36,14 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * mergeGreatT.py
   * annotate_hr_tr.py
   * indel_repeat_stats.py
+  * get_gene_bed.py
+  * get_genic_nongenic_2.py
 
 ## Pre-prepared files required for analysis
 
   * Reference genome: **/fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa**
   * Reference genome index file: **/fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa.fai**
+  * GFF annotation file: **/fastdata/bop15hjb/GT_ref/GCF_001522545.1_Parus_major1.0.3_genomic.gff.gz**
   * All sites VCF: **/fastdata/bop15hjb/GT_data/BGI/bgi_10birds.raw.snps.indels.all_sites.vcf**
   * Repeat masker bed file: **/fastdata/bop15hjb/GT_data/BGI_10_repeats/ParusMajorBuild1_v24032014_reps.bed**
   * BAM files for SAMtools calling: **/fastdata/bop15hjb/GT_data/BGI_10_BAM/\*.bam**
@@ -226,9 +230,11 @@ This yielded the following results:
 |Total no. INDELs	|1240366         | 
 |% INDEL in repeat|53              |
 
-## Binning data by recombination rate
+## Binning the data 
 
-### 1) Predicting recombination rate for each INDEL
+### By recombination rate
+
+#### 1) Predicting recombination rate for each INDEL
 
 Linkage map data was used to estimate recombination rate at each INDEL. First, 3rd order polynomials were fitted to plots of physical position versus map length. Second, the derivative of each chromosome's polynomial was used to estimate recombination rate for each INDEL start position. This predicition was implemented in the following python script:
 
@@ -238,10 +244,28 @@ python predict_recomb.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_r
 
 The file specified by ```-poly``` is a list of variables for each chromosome's polynomial.
 
-### 2) Binning the data
+#### 2) Binning the data
 
 The output from the previous step was used to bin the data by recombination yielding x new vcf files, where x = the required number of recombination bins. Bins had equal numbers of variants. The script used for binning is as follows:
 
 ```
 python recomBINdels.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -recomb /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/5_recomb_bins/
+```
+
+### By coding and non coding regions
+
+#### 1) Extracting gene regions
+
+Gene regions were extracted form the annotation file and written to a new bed file as follows:
+
+```
+~/get_gene_bed.py -gff GCF_001522545.1_Parus_major1.0.3_genomic.gff.gz -out ./
+```
+
+#### 2) Splitting into regions with bedtools
+
+Bedtools was then used to generate genic and intergenic vcf files using the following wrapper script:
+
+```
+./get_genic_nongenic_2.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -bed /fastdata/bop15hjb/GT_ref/gene_list.bed -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Genic_analysis/
 ```
