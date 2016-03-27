@@ -190,7 +190,7 @@ The following genomes were used for the multispecies alignment:
 
 ## Preparing fastas
 
-The reference genome (Chicken) chromosomal fastas were merged into a genome fasta (without scaffolds) with the follow script:
+The reference genome (Chicken) chromosomal fastas were merged into a genome fasta (without scaffolds) with the following script:
 
 ```
 python mergeGG.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Chicken/chromosome_merge.list
@@ -206,6 +206,12 @@ For non-reference species, list files (tab delim) were generated that contained 
 ```
 
 ## Pairwise alignments
+
+LastZ was used to generate pairwise alignments between the chicken genome and each chromosome from each of the query species listed in the above table. This use a python wrapper script as follows:
+
+```
+./chromosomal_lastz.py -ref "/fastdata/bop15hjb/GT_data/Multispecies_alignment/Whole_genomes_chr_only/Gallus_gallus.Galgal4.dna_sm.fa Chicken" -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Groundtit/Groundtit_scaffold_bins.list -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Groundtit/
+```
 
 TODO
 
