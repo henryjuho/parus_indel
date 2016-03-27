@@ -14,7 +14,8 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * SAMtools version 1.2
   * BCFtools version 1.3
   * bedtools version 2.23.0
-  
+  * lastz version 1.03.73
+
 ## Python scripts used in this pipeline
 
 \* Note \* that most scripts make use of the script 'qsub_gen.py' which is designed to submit jobs in the form of shell scripts to the 'Sun Grid Engine', if shell scripts only are required the '-OM' option in the 'qsub_gen.py' command line within the scripts can be changed from 'q' to 'w'.
@@ -29,11 +30,9 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * filter_length_biallelic.py
   * run_VQSR.py
   * trancheSTATS.py 
-  * mergeFA.py
-  * mergeZF.py
   * mergeGG.py
-  * mergeMG.py
-  * mergeGreatT.py
+  * split_ground_tit.py
+  * make_chromo_list.py
   * annotate_hr_tr.py
   * indel_repeat_stats.py
   * get_gene_bed.py
@@ -187,17 +186,23 @@ The following genomes were used for the multispecies alignment:
 |flycatcher        |FicAlb1.5         |<http://www.ncbi.nlm.nih.gov/genome/?term=flycatcher>                 |
 |zebrafinch        |TaeGut3.2.4       |<ftp://ftp.ensembl.org/pub/release-84/fasta/taeniopygia_guttata/dna/> |
 |great tit         |Parus_major1.0.4  |```/fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa```            |
+|ground tit        |PseHum1.0         |<http://www.ncbi.nlm.nih.gov/genome/15114>                            |
 
 ## Preparing fastas
 
-Alignment genomes' chromosomal fastas were merged into genome fastas in the same chromosomal order (dictated by '-fa_list' file) (without scaffolds) with the follow scripts:
+The reference genome (Chicken) chromosomal fastas were merged into a genome fasta (without scaffolds) with the follow script:
 
 ```
-python mergeFA.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Flycatcher/chromosome_merge.list
-python mergeZF.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Zebrafinch/chromosome_merge.list
 python mergeGG.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Chicken/chromosome_merge.list
-python mergeMG.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Turkey/chromosome_merge.list
-python mergeGreatT.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Greattit/chromosome_merge.list
+```
+As the Ground tit genome is only at scaffold level, scaffolds were binned into fasta files containg ~20 scaffolds each as follows:
+
+```
+~/split_ground_tit.py
+```
+For non-reference species, list files (tab delim) were generated that contained chromosomal fasta paths and sequence nicknames for use by lastz with the following script (note for ground tit this step was incorporated into the previous script):
+```
+~/make_chromo_list.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Flycatcher/ -spp 'Flycatcher'
 ```
 
 ## Pairwise alignments
