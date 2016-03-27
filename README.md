@@ -33,6 +33,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * mergeGG.py
   * split_ground_tit.py
   * make_chromo_list.py
+  * merge_mafs.py
   * annotate_hr_tr.py
   * indel_repeat_stats.py
   * get_gene_bed.py
@@ -207,11 +208,21 @@ For non-reference species, list files (tab delim) were generated that contained 
 
 ## Pairwise alignments
 
-LastZ was used to generate pairwise alignments between the chicken genome and each chromosome from each of the query species listed in the above table. This use a python wrapper script as follows:
+LastZ was used to generate pairwise alignments between the chicken genome and each chromosome from each of the query species listed in the above table. This used a python wrapper script as follows:
 
 ```
 ./chromosomal_lastz.py -ref "/fastdata/bop15hjb/GT_data/Multispecies_alignment/Whole_genomes_chr_only/Gallus_gallus.Galgal4.dna_sm.fa Chicken" -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Groundtit/Groundtit_scaffold_bins.list -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Groundtit/
 ```
+
+Pairwise chromosomal mafs were merged for each comparison with the following script:
+
+```
+~/merge_mafs.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Greattit/ -out_maf /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/Chicken_vs_Greattit.maf
+```
+
+TODO
+
+## Multiple alignment
 
 TODO
 
