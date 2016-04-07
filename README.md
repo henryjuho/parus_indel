@@ -15,6 +15,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * BCFtools version 1.3
   * bedtools version 2.23.0
   * lastz version 1.03.73
+  * single_cov2 version 11
 
 ## Python scripts used in this pipeline
 
@@ -220,9 +221,15 @@ Pairwise chromosomal mafs were merged for each comparison with the following scr
 ~/merge_mafs.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Greattit/ -out_maf /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/Chicken_vs_Greattit.maf
 ```
 
-TODO
-
 ## Multiple alignment
+
+A number of preprocessing steps were carried out on the whole genome maf files. Firstly single coverage for the reference genome was ensured using single_cov2 (a requirement of multiz). This used the following python wrapper:
+
+```
+./single_cov.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/
+```
+
+Secondly the positions in the reference were corrected to chromosomal positions rather than genomewide position, and sequence names were corrected.
 
 TODO
 
