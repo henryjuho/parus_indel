@@ -35,6 +35,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * split_ground_tit.py
   * make_chromo_list.py
   * merge_mafs.py
+  * single_cov.py
   * annotate_hr_tr.py
   * indel_repeat_stats.py
   * get_gene_bed.py
@@ -204,7 +205,7 @@ As the Ground tit genome is only at scaffold level, scaffolds were binned into f
 ```
 For non-reference species, list files (tab delim) were generated that contained chromosomal fasta paths and sequence nicknames for use by lastz with the following script (note for ground tit this step was incorporated into the previous script):
 ```
-~/make_chromo_list.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Flycatcher/ -spp 'Flycatcher'
+~/make_chromo_list.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Flycatcher/ -spp Flycatcher
 ```
 
 ## Pairwise alignments
@@ -212,7 +213,7 @@ For non-reference species, list files (tab delim) were generated that contained 
 LastZ was used to generate pairwise alignments between the chicken genome and each chromosome from each of the query species listed in the above table. This used a python wrapper script as follows:
 
 ```
-./chromosomal_lastz.py -ref "/fastdata/bop15hjb/GT_data/Multispecies_alignment/Whole_genomes_chr_only/Gallus_gallus.Galgal4.dna_sm.fa Chicken" -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Groundtit/Groundtit_scaffold_bins.list -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Groundtit/
+./chromosomal_lastz.py -ref /fastdata/bop15hjb/GT_data/Multispecies_alignment/Whole_genomes_chr_only/Gallus_gallus.Galgal4.dna_sm.fa -ref_name Chicken -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Groundtit/Groundtit_scaffold_bins.list -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Groundtit/
 ```
 
 Pairwise chromosomal mafs were merged for each comparison with the following script:
