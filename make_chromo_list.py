@@ -22,5 +22,5 @@ chromosomes = sorted([fa for fa in os.listdir(input_dir) if
 with open(input_dir + nickname_prefix + '.chromosome.list', 'w') as output:
     for chromo in chromosomes:
         chromo_no = re.search(r'.chromosome.[chr]{0,3}([ZLGE]{0,3}[\d]{0,2}[AB]?).fa', chromo).group(1)
-        nickname = nickname_prefix + '_chr' + chromo_no
+        nickname = nickname_prefix + '.chr' + chromo_no
         output.write(input_dir + chromo + '\t' + nickname + '\n')
