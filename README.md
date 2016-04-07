@@ -32,6 +32,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * run_VQSR.py
   * trancheSTATS.py 
   * mergeGG.py
+  * fasta_add_header_prefix.py
   * split_ground_tit.py
   * make_chromo_list.py
   * merge_mafs.py
@@ -197,7 +198,15 @@ The reference genome (Chicken) chromosomal fastas were merged into a genome fast
 
 ```
 python mergeGG.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Chicken/chromosome_merge.list
+
 ```
+
+The reference genome sequence were then renamed to include species information as follows:
+
+```
+~/fasta_add_header_prefix.py -fa /fastdata/bop15hjb/GT_data/Multispecies_alignment/Whole_genomes_chr_only/Gallus_gallus.Galgal4.dna_sm.fa
+```
+
 As the Ground tit genome is only at scaffold level, scaffolds were binned into fasta files containg ~20 scaffolds each as follows:
 
 ```
