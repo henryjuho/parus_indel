@@ -201,7 +201,7 @@ python mergeGG.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Ali
 
 ```
 
-The reference genome sequence were then renamed to include species information as follows:
+The reference genome sequences were then renamed to include species information as follows:
 
 ```
 ~/fasta_add_header_prefix.py -fa /fastdata/bop15hjb/GT_data/Multispecies_alignment/Whole_genomes_chr_only/Gallus_gallus.Galgal4.dna_sm.fa
