@@ -26,7 +26,7 @@ for genome in query_genomes:
 
     # construct commandline
     lastz_cmd = ('"lastz_latest ' +
-                 ref_genome + '[multiple][nameparse=tag:\'>\'] ' +
+                 ref_genome + '[multiple][nameparse=darkspace] ' +
                  genome[0] + '[nickname=' + genome[1] + '] '
                  '--gfextend '
                  '--chain '
