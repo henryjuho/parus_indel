@@ -16,6 +16,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * bedtools version 2.23.0
   * lastz version 1.03.73
   * single_cov2 version 11
+  * roast version 3
 
 ## Python scripts used in this pipeline
 
@@ -35,8 +36,11 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * fasta_add_header_prefix.py
   * split_ground_tit.py
   * make_chromo_list.py
+  * chromosomal_lastz.py
   * merge_mafs.py
   * single_cov.py
+  * rename_mafs.py
+  * roast_birds.py
   * annotate_hr_tr.py
   * indel_repeat_stats.py
   * get_gene_bed.py
@@ -239,7 +243,19 @@ A number of preprocessing steps were carried out on the whole genome maf files. 
 ./single_cov.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/
 ```
 
-Secondly the positions in the reference were corrected to chromosomal positions rather than genomewide position, and sequence names were corrected.
+Prior to multiple alignment maf files were renamed to be compatible with multiz [Spp1.Spp2.sing.maf] as follows:
+
+```
+~/rename_mafs.py -dir ./
+```
+
+Multiple alignment was then performed using roast (provided with and calls multiz), with the following wrapper script:
+
+```
+./roast_birds.py -maf_dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/single_coverage/renamed_mafs/ -ref Chicken -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment/six_birds.maf
+```
+
+## INDEL polarisation
 
 TODO
 
