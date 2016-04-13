@@ -38,7 +38,6 @@ qsub = ('python qsub_gen.py '
         '-cmd "cd ' + maf_dir + '" '
         '-cmd ' + roast + ' '
         '-o ' + out_dir + 'roast '
-        '-mem=10 -rmem=10 '
         '-t 168 '
         '-jid roast.sh '
         '-OM q')
