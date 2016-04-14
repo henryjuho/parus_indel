@@ -22,7 +22,7 @@ if not os.path.isdir(out_dir):
 
 # iterate through query genomes
 for genome in query_genomes:
-    output_prefix = out_dir + ref_name + '_vs_' + genome[1]
+    output_prefix = out_dir + ref_name + '.' + genome[1]
 
     # construct commandline
     lastz_cmd = ('"lastz_latest ' +
