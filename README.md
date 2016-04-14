@@ -189,8 +189,6 @@ The following genomes were used for the multispecies alignment:
 
 |Species           |Version           |Available from                                                        |
 |:-----------------|:-----------------|:---------------------------------------------------------------------|
-|chicken           |Galgal4           |<ftp://ftp.ensembl.org/pub/release-84/fasta/gallus_gallus/dna/>       |
-|turkey            |Turkey_2.01       |<ftp://ftp.ensembl.org/pub/release-84/fasta/meleagris_gallopavo/dna/> |
 |flycatcher        |FicAlb1.5         |<http://www.ncbi.nlm.nih.gov/genome/?term=flycatcher>                 |
 |zebrafinch        |TaeGut3.2.4       |<ftp://ftp.ensembl.org/pub/release-84/fasta/taeniopygia_guttata/dna/> |
 |great tit         |Parus_major1.0.4  |```/fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa```            |
@@ -198,17 +196,16 @@ The following genomes were used for the multispecies alignment:
 
 ## Preparing fastas
 
-The reference genome (Chicken) chromosomal fastas were merged into a genome fasta (without scaffolds) with the following script:
+The reference genome (Zebrafinch) chromosomal fastas were merged into a genome fasta (without 'random' chromosomes) with the following script:
 
 ```
-python mergeGG.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Chicken/chromosome_merge.list
-
+python mergeZF.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Zebrafinch/chromosome_merge.list
 ```
 
 The reference genome sequences were then renamed to include species information as follows:
 
 ```
-~/fasta_add_header_prefix.py -fa /fastdata/bop15hjb/GT_data/Multispecies_alignment/Whole_genomes_chr_only/Gallus_gallus.Galgal4.dna_sm.fa
+~/fasta_add_header_prefix.py -fa Taeniopygia_guttata.taeGut3.2.4.dna_sm.fa -pre Zebrafinch
 ```
 
 As the Ground tit genome is only at scaffold level, scaffolds were binned into fasta files containg ~20 scaffolds each as follows:
@@ -226,16 +223,17 @@ For non-reference species, list files (tab delim) were generated that contained 
 LastZ was used to generate pairwise alignments between the chicken genome and each chromosome from each of the query species listed in the above table. This used a python wrapper script as follows:
 
 ```
-./chromosomal_lastz.py -ref /fastdata/bop15hjb/GT_data/Multispecies_alignment/Whole_genomes_chr_only/Gallus_gallus.Galgal4.dna_sm.fa -ref_name Chicken -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Groundtit/Groundtit_scaffold_bins.list -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Groundtit/
+./chromosomal_lastz.py -ref Tit_data/Multispecies_alignment/four_spp_alignment/ref_zf/Taeniopygia_guttata.taeGut3.2.4.dna_sm.rename.fa -ref_name Zebrafinch -fa_list Tit_data/Multispecies_alignment/Alignment_genomes/Greattit/Greattit.chromosome.list -out Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/Greattit/
 ```
 
+## Under review - TODO
 Pairwise chromosomal mafs were merged for each comparison with the following script:
 
 ```
 ~/merge_mafs.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Greattit/ -out_maf /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/Chicken_vs_Greattit.maf
 ```
 
-## Multiple alignment
+## TOREDO Multiple alignment
 
 A number of preprocessing steps were carried out on the whole genome maf files. Firstly single coverage for the reference genome was ensured using single_cov2 (a requirement of multiz). This used the following python wrapper:
 
