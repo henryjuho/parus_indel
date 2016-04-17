@@ -41,6 +41,9 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * merge_mafs.py
   * single_cov.py
   * roast_birds.py
+  * alignment_summary.py
+  * maf2dotplot.py
+  * maf_divergence.py
   * annotate_hr_tr.py
   * indel_repeat_stats.py
   * get_gene_bed.py
@@ -250,13 +253,19 @@ Multiple alignment was then performed using roast (provided with and calls multi
 
 ## Assessing alignment quality
 
-Firstly the percentage of each genome aligned was estimated using the multiple alignment maf file with the following python script:
+Firstly datafiles for plotting dotplots in R were generated with the following command:
 
 ```
-TODO
+ls *.maf | while read i; do ~/maf2dotplot.py -maf $i -out plotdata/ ; done
 ```
 
-Secondly estimates of pairwise divergence were obtainied using maffilter in the following wrapper script:
+Secondly the percentage of each genome aligned was estimated using the multiple alignment maf file with the following python script:
+
+```
+./alignment_summary.py TODO
+```
+
+Thirdly estimates of pairwise divergence were obtainied using maffilter in the following wrapper script:
 
 ```
 ./maf_divergence.py -maf_list Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/divergence_maf.list
