@@ -17,6 +17,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * lastz version 1.03.73
   * single_cov2 version 11
   * roast version 3
+  * MAF Filter version 1.0.1 
 
 ## Python scripts used in this pipeline
 
@@ -39,7 +40,6 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * chromosomal_lastz.py
   * merge_mafs.py
   * single_cov.py
-  * rename_mafs.py
   * roast_birds.py
   * annotate_hr_tr.py
   * indel_repeat_stats.py
@@ -226,32 +226,43 @@ LastZ was used to generate pairwise alignments between the chicken genome and ea
 ./chromosomal_lastz.py -ref Tit_data/Multispecies_alignment/four_spp_alignment/ref_zf/Taeniopygia_guttata.taeGut3.2.4.dna_sm.rename.fa -ref_name Zebrafinch -fa_list Tit_data/Multispecies_alignment/Alignment_genomes/Greattit/Greattit.chromosome.list -out Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/Greattit/
 ```
 
-## Under review - TODO
 Pairwise chromosomal mafs were merged for each comparison with the following script:
 
 ```
-~/merge_mafs.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/Greattit/ -out_maf /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/Chicken_vs_Greattit.maf
+~/merge_mafs.py -dir Greattit/ -out_maf genome_mafs/Zebrafinch.Greattit.maf
 ```
 
-## TOREDO Multiple alignment
+## Multiple alignment
 
 A number of preprocessing steps were carried out on the whole genome maf files. Firstly single coverage for the reference genome was ensured using single_cov2 (a requirement of multiz). This used the following python wrapper:
 
 ```
-./single_cov.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/
+./single_cov.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/ -ref_name Zebrafinch
 ```
 
-Prior to multiple alignment maf files were renamed to be compatible with multiz [Spp1.Spp2.sing.maf] as follows:
-
-```
-~/rename_mafs.py -dir ./
-```
+## RERUNNING TODO
 
 Multiple alignment was then performed using roast (provided with and calls multiz), with the following wrapper script:
 
 ```
-./roast_birds.py -maf_dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/single_coverage/renamed_mafs/ -ref Chicken -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment/six_birds.maf
+./roast_birds.py -maf_dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/single_coverage/ -ref Zebrafinch -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/four_spp_alignment/multiple/four_birds.maf
 ```
+
+## Assessing alignment quality
+
+Firstly the percentage of each genome aligned was estimated using the multiple alignment maf file with the following python script:
+
+```
+TODO
+```
+
+Secondly estimates of pairwise divergence were obtainied using maffilter in the following wrapper script:
+
+```
+./maf_divergence.py -maf_list Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/divergence_maf.list
+```
+
+TODO
 
 ## INDEL polarisation
 
