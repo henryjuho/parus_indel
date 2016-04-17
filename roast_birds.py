@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-maf_dir', help='Maf directory', required=True)
 parser.add_argument('-ref', help='Reference species name', required=True)
 parser.add_argument('-tree', help='Species tree',
-                    default="'((Greattit Groundtit) (Flycatcher Zebrafinch) (Chicken Turkey))'")
+                    default="'((Greattit Groundtit) (Flycatcher Zebrafinch))'")
 parser.add_argument('-out', help='Output path and filename', required=True)
 args = parser.parse_args()
 
