@@ -240,7 +240,7 @@ Pairwise chromosomal mafs were merged for each comparison with the following scr
 A number of preprocessing steps were carried out on the whole genome maf files. Firstly single coverage for the reference genome was ensured using single_cov2 (a requirement of multiz). This used the following python wrapper:
 
 ```
-./single_cov.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Pairwise_alignment/genome_mafs/ -ref_name Zebrafinch
+./single_cov.py -dir Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/ -ref_name Zebrafinch
 ```
 
 ## RERUNNING TODO
@@ -271,7 +271,12 @@ Thirdly estimates of pairwise divergence were obtainied using maffilter in the f
 ./maf_divergence.py -maf_list Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/divergence_maf.list
 ```
 
-TODO
+|Alignment                   |Divergence |
+|:---------------------------|:---------:|
+|Zebrafinch.Flycatcher       | 0.0803389 |
+|Zebrafinch.Greattit         | 0.08081   |
+|Zebrafinch.Groundtit.rename | 0.103866  |
+
 
 ## INDEL polarisation
 
