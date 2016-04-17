@@ -243,8 +243,6 @@ A number of preprocessing steps were carried out on the whole genome maf files. 
 ./single_cov.py -dir Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/ -ref_name Zebrafinch
 ```
 
-## RERUNNING TODO
-
 Multiple alignment was then performed using roast (provided with and calls multiz), with the following wrapper script:
 
 ```
@@ -262,8 +260,15 @@ ls *.maf | while read i; do ~/maf2dotplot.py -maf $i -out plotdata/ ; done
 Secondly the percentage of each genome aligned was estimated using the multiple alignment maf file with the following python script:
 
 ```
-./alignment_summary.py TODO
+~/alignment_summary.py -maf four_birds.maf -fa_list ../../Alignment_genomes/top_levels/four_genomes.list
 ```
+
+|Species     |Genome_len   |Mapped_len    |Percent_mapped |
+|:-----------|:-----------:|:------------:|:-------------:|
+|Zebrafinch  |1233186341   |930633040     |75             |
+|Groundtit   |1042997632   |109673494     |10             |
+|Greattit    |1020292357   |872426535     |85             |
+|Flycatcher  |1118343587   |872260742     |77             |
 
 Thirdly estimates of pairwise divergence were obtainied using maffilter in the following wrapper script:
 
