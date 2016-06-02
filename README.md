@@ -33,7 +33,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * filter_length_biallelic.py
   * run_VQSR.py
   * trancheSTATS.py 
-  * mergeGG.py
+  * mergeZF.py
   * fasta_add_header_prefix.py
   * split_ground_tit.py
   * make_chromo_list.py
@@ -186,101 +186,9 @@ The number of INDELs removed at each step are listed below:
 
 # Multispecies alignment and INDEL polarisation
 
-## Alignment genomes
+## Alignment
 
-The following genomes were used for the multispecies alignment:
-
-|Species           |Version           |Available from                                                        |
-|:-----------------|:-----------------|:---------------------------------------------------------------------|
-|flycatcher        |FicAlb1.5         |<http://www.ncbi.nlm.nih.gov/genome/?term=flycatcher>                 |
-|zebrafinch        |TaeGut3.2.4       |<ftp://ftp.ensembl.org/pub/release-84/fasta/taeniopygia_guttata/dna/> |
-|great tit         |Parus_major1.0.4  |```/fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa```            |
-|ground tit        |PseHum1.0         |<http://www.ncbi.nlm.nih.gov/genome/15114>                            |
-
-## Preparing fastas
-
-The reference genome (Zebrafinch) chromosomal fastas were merged into a genome fasta (without 'random' chromosomes) with the following script:
-
-```
-python mergeZF.py -fa_list /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Zebrafinch/chromosome_merge.list
-```
-
-The reference genome sequences were then renamed to include species information as follows:
-
-```
-~/fasta_add_header_prefix.py -fa Taeniopygia_guttata.taeGut3.2.4.dna_sm.fa -pre Zebrafinch
-```
-
-As the Ground tit genome is only at scaffold level, scaffolds were binned into fasta files containg ~20 scaffolds each as follows:
-
-```
-~/split_ground_tit.py
-```
-For non-reference species, list files (tab delim) were generated that contained chromosomal fasta paths and sequence nicknames for use by lastz with the following script (note for ground tit this step was incorporated into the previous script):
-```
-~/make_chromo_list.py -dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/Alignment_genomes/Flycatcher/ -spp Flycatcher
-```
-
-## Pairwise alignments
-
-LastZ was used to generate pairwise alignments between the chicken genome and each chromosome from each of the query species listed in the above table. This used a python wrapper script as follows:
-
-```
-./chromosomal_lastz.py -ref Tit_data/Multispecies_alignment/four_spp_alignment/ref_zf/Taeniopygia_guttata.taeGut3.2.4.dna_sm.rename.fa -ref_name Zebrafinch -fa_list Tit_data/Multispecies_alignment/Alignment_genomes/Greattit/Greattit.chromosome.list -out Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/Greattit/
-```
-
-Pairwise chromosomal mafs were merged for each comparison with the following script:
-
-```
-~/merge_mafs.py -dir Greattit/ -out_maf genome_mafs/Zebrafinch.Greattit.maf
-```
-
-## Multiple alignment
-
-A number of preprocessing steps were carried out on the whole genome maf files. Firstly single coverage for the reference genome was ensured using single_cov2 (a requirement of multiz). This used the following python wrapper:
-
-```
-./single_cov.py -dir Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/ -ref_name Zebrafinch
-```
-
-Multiple alignment was then performed using roast (provided with and calls multiz), with the following wrapper script:
-
-```
-./roast_birds.py -maf_dir /fastdata/bop15hjb/GT_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/single_coverage/ -ref Zebrafinch -out /fastdata/bop15hjb/GT_data/Multispecies_alignment/four_spp_alignment/multiple/four_birds.maf
-```
-
-## Assessing alignment quality
-
-Firstly datafiles for plotting dotplots in R were generated with the following command:
-
-```
-ls *.maf | while read i; do ~/maf2dotplot.py -maf $i -out plotdata/ ; done
-```
-
-Secondly the percentage of each genome aligned was estimated using the multiple alignment maf file with the following python script:
-
-```
-~/alignment_summary.py -maf four_birds.maf -fa_list ../../Alignment_genomes/top_levels/four_genomes.list
-```
-
-|Species     |Genome_len   |Mapped_len    |Percent_mapped |
-|:-----------|:-----------:|:------------:|:-------------:|
-|Zebrafinch  |1233186341   |930633040     |75             |
-|Groundtit   |1042997632   |109673494     |10             |
-|Greattit    |1020292357   |872426535     |85             |
-|Flycatcher  |1118343587   |872260742     |77             |
-
-Thirdly estimates of pairwise divergence were obtainied using maffilter in the following wrapper script:
-
-```
-./maf_divergence.py -maf_list Tit_data/Multispecies_alignment/four_spp_alignment/pairwise/genome_mafs/divergence_maf.list
-```
-
-|Alignment                   |Divergence |
-|:---------------------------|:---------:|
-|Zebrafinch.Flycatcher       | 0.0803389 |
-|Zebrafinch.Greattit         | 0.08081   |
-|Zebrafinch.Groundtit.rename | 0.103866  |
+Multispecies alignment was performed between zebra finch, flycatcher and great tit as described here: <https://github.com/henryjuho/bird_alignments/tree/master/Zebrafinch_Flycatcher_Greattit>.
 
 
 ## INDEL polarisation
