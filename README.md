@@ -193,7 +193,26 @@ Multispecies alignment was performed between zebra finch, flycatcher and great t
 
 ## INDEL polarisation
 
-TODO
+Firstly the sequence alignments across species [in addition to 1bp up and down stream of INDEL] for each INDEL in the dataset were pulled out of the multiple alignment file with the following script:
+
+```
+~/INDELsfromMAF.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -maf /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.maf  -target_spp Greattit -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Polarisation/ -no_jobs 100
+```
+
+Secondly the output of the above script was used to annotate the ancestral state for each variant in the INDEL vcf as follows:
+
+```
+ ~/polarise_vcf_indels.py -vcf ../Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -align_data all_indels.alignment_states.txt -target_spp Greattit
+```
+
+|                 |           |
+|:----------------|:---------:|  
+|Total no INDELs  | 1240366   |
+|INDELs polarised | 593030    |
+|Hotspots         | 287659    |
+|Low spp coverage | 42732     |
+|Ambiguous        | 21464     |
+|Total unpolarised| 647336    |
 
 # Performing the INDEL analysis
 
