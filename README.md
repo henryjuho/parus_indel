@@ -14,10 +14,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * SAMtools version 1.2
   * BCFtools version 1.3
   * bedtools version 2.23.0
-  * lastz version 1.03.73
-  * single_cov2 version 11
-  * roast version 3
-  * MAF Filter version 1.0.1 
+
 
 ## Python scripts used in this pipeline
 
@@ -33,17 +30,6 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * filter_length_biallelic.py
   * run_VQSR.py
   * trancheSTATS.py 
-  * mergeZF.py
-  * fasta_add_header_prefix.py
-  * split_ground_tit.py
-  * make_chromo_list.py
-  * chromosomal_lastz.py
-  * merge_mafs.py
-  * single_cov.py
-  * roast_birds.py
-  * alignment_summary.py
-  * maf2dotplot.py
-  * maf_divergence.py
   * annotate_hr_tr.py
   * indel_repeat_stats.py
   * get_gene_bed.py
@@ -202,7 +188,7 @@ Firstly the sequence alignments across species [in addition to 1bp up and down s
 Secondly the output of the above script was used to annotate the ancestral state for each variant in the INDEL vcf as follows:
 
 ```
- ~/polarise_vcf_indels.py -vcf ../Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -align_data all_indels.alignment_states.txt -target_spp Greattit
+~/polarise_vcf_indels.py -vcf ../Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -align_data all_indels.alignment_states.txt -target_spp Greattit
 ```
 
 |                 |           |
@@ -212,6 +198,7 @@ Secondly the output of the above script was used to annotate the ancestral state
 |Hotspots         | 287659    |
 |Low spp coverage | 42732     |
 |Ambiguous        | 21464     |
+|Not in alignment | 295481    |
 |Total unpolarised| 647336    |
 
 # Performing the INDEL analysis
@@ -264,18 +251,8 @@ python recomBINdels.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_rea
 
 ### By coding and non coding regions
 
-#### 1) Extracting gene regions
-
-Gene regions were extracted form the annotation file and written to a new bed file as follows:
+INDELs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'CDS_frameshift', 'intron' or 'intergenic' as follows:
 
 ```
-~/get_gene_bed.py -gff GCF_001522545.1_Parus_major1.0.3_genomic.gff.gz -out ./
-```
-
-#### 2) Splitting into regions with bedtools
-
-Bedtools was then used to generate genic and intergenic vcf files using the following wrapper script:
-
-```
-./get_genic_nongenic_2.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -bed /fastdata/bop15hjb/GT_ref/gene_list.bed -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Genic_analysis/
+./annotate_all_vcf_chr.py -gff /data/bop15hjb/annotating_gt/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz-vcf /data/bop15hjb/annotating_gt/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.vcf -evolgen
 ```
