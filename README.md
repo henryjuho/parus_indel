@@ -32,8 +32,10 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * trancheSTATS.py 
   * annotate_hr_tr.py
   * indel_repeat_stats.py
-  * get_gene_bed.py
-  * get_genic_nongenic_2.py
+  * reformat_gff.py
+  * annotate_all_vcf_chr.py
+  * annotate_vcf.py
+  * catVCFs.py
 
 ## Pre-prepared files required for analysis
 
