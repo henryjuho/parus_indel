@@ -2,15 +2,16 @@
 
 import argparse
 import os
+
 from qsub import *
 
 # arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-vcf', help='VCF file to trawl maf for its variants', required=True)
-parser.add_argument('-maf', help='MAF file with alignment to find INDELs in', required=True)
+parser.add_argument('-maf', help='MAF file with alignment to find variants in', required=True)
 parser.add_argument('-target_spp', help='Name of target species as it appears in the maf file', required=True)
 parser.add_argument('-out', help='Output directory', required=True)
-parser.add_argument('-no_jobs', help='Number of jobs to split maf INDEL extraction over', required=True)
+parser.add_argument('-no_jobs', help='Number of jobs to split maf variant extraction over', required=True)
 args = parser.parse_args()
 
 # variables
@@ -71,23 +72,23 @@ with open(vcf_name) as vcf:
                 output_bed.write(bed_line)
 
 # write and submit array job for extract_maf_region.py
-extract_maf_region_cmd = ('./maf2indel.py '
+extract_maf_region_cmd = ('./maf2var.py '
                           '-bed ' + bed_prefix + '$SGE_TASK_ID.bed '
                           '-maf ' + maf)
 
 q_sub([extract_maf_region_cmd],
-      bed_dir+'indel_from_maf',
+      bed_dir+'var_from_maf',
       t=72,
-      jid='indel_from_maf.sh',
+      jid='var_from_maf.sh',
       array=[1, int(no_jobs)])
 
 # write hold job to concatonate all output files
 concat_cmd = ('./concat_seq_files.py '
-              '-out ' + output_dir + 'all_indels.alignment_states.txt ')
+              '-out ' + output_dir + 'all_variants.alignment_states.txt ')
 
 for output in output_list:
     concat_cmd += '-seq ' + output + ' '
 
 q_sub([concat_cmd],
-      output_dir + 'merge_indel_alignment_variants',
-      hold=['indel_from_maf.sh'])
+      output_dir + 'merge_alignment_variants',
+      hold=['var_from_maf.sh'])
