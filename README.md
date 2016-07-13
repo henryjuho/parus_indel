@@ -32,6 +32,9 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * trancheSTATS.py 
   * annotate_hr_tr.py
   * indel_repeat_stats.py
+  * VARfromMAF.py
+  * maf2var.py
+  * concat_seq_files.py
   * reformat_gff.py
   * annotate_all_vcf_chr.py
   * annotate_vcf.py
@@ -184,7 +187,7 @@ Multispecies alignment was performed between zebra finch, flycatcher and great t
 Firstly the sequence alignments across species [in addition to 1bp up and down stream of INDEL] for each INDEL in the dataset were pulled out of the multiple alignment file with the following script:
 
 ```
-~/INDELsfromMAF.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -maf /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.maf  -target_spp Greattit -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Polarisation/ -no_jobs 100
+~/VARfromMAF.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -maf /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.maf  -target_spp Greattit -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Polarisation/ -no_jobs 100
 ```
 
 Secondly the output of the above script was used to annotate the ancestral state for each variant in the INDEL vcf as follows:
