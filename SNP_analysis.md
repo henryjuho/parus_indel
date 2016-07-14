@@ -42,4 +42,23 @@ Multispecies alignment was performed between zebra finch, flycatcher and great t
 
 ## SNP polarisation
 
-TODO
+Firstly the sequence alignments across species for each SNP in the dataset were pulled out of the multiple alignment file with the following script:
+
+```
+./VARfromMAF.py  -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -maf /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.maf -target_spp Greattit -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/polarisation/ -no_jobs 500
+```
+
+Secondly the output of the above script was used to annotate the ancestral state for each variant in the INDEL vcf as follows:
+
+```
+./polarise_vcf_snps.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -align_data /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/polarisation/all_variants.alignment_states.txt -target_spp Greattit -sub
+```
+
+|Category         | Number of SNPs |
+|:----------------|:--------------:|
+|Total no SNPs    | 10772087       |
+|SNPs polarised   | 4430706        |
+|Low spp coverage | 446296         |
+|Ambiguous        | 2399524        |
+|Not in alignment | 2515988        |
+|Total unpolarised| 6341381        |
