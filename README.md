@@ -206,6 +206,28 @@ Secondly the output of the above script was used to annotate the ancestral state
 |Not in alignment | 295481    |
 |Total unpolarised| 647336    |
 
+## Annotating the data 
+
+Firstly INDELs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'CDS_frameshift', 'intron' or 'intergenic' as follows:
+
+```
+./annotate_all_vcf_chr.py -gff /data/bop15hjb/annotating_gt/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz-vcf /data/bop15hjb/annotating_gt/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.vcf -evolgen
+```
+
+Secondly the recombination category of each INDEL was annotated using linkage map data to estimate recombination rates. First, 3rd order polynomials were fitted to plots of physical position versus map length. Second, the derivative of each chromosome's polynomial was used to estimate recombination rate for each INDEL start position. This predicition was implemented in the following python script:
+
+```
+python predict_recomb.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -poly /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/3rd_polynom.txt
+```
+
+The file specified by ```-poly``` is a list of variables for each chromosome's polynomial.
+
+The output from this step was used to bin the data by recombination yielding x new vcf files, where x = the required number of recombination bins. Bins had equal numbers of variants. The script used for binning is as follows:
+
+```
+python recomBINdels.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -recomb /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/5_recomb_bins/
+```
+
 # Performing the INDEL analysis
 
 ## Repeat region analysis
@@ -232,32 +254,7 @@ This yielded the following results:
 |Total no. INDELs	|1240366         | 
 |% INDEL in repeat|53              |
 
-## Binning the data 
+## Site frequency spectrum analysis
 
-### By recombination rate
+```TODO```
 
-#### 1) Predicting recombination rate for each INDEL
-
-Linkage map data was used to estimate recombination rate at each INDEL. First, 3rd order polynomials were fitted to plots of physical position versus map length. Second, the derivative of each chromosome's polynomial was used to estimate recombination rate for each INDEL start position. This predicition was implemented in the following python script:
-
-```
-python predict_recomb.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -poly /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/3rd_polynom.txt
-```
-
-The file specified by ```-poly``` is a list of variables for each chromosome's polynomial.
-
-#### 2) Binning the data
-
-The output from the previous step was used to bin the data by recombination yielding x new vcf files, where x = the required number of recombination bins. Bins had equal numbers of variants. The script used for binning is as follows:
-
-```
-python recomBINdels.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -recomb /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/5_recomb_bins/
-```
-
-### By coding and non coding regions
-
-INDELs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'CDS_frameshift', 'intron' or 'intergenic' as follows:
-
-```
-./annotate_all_vcf_chr.py -gff /data/bop15hjb/annotating_gt/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz-vcf /data/bop15hjb/annotating_gt/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.vcf -evolgen
-```
