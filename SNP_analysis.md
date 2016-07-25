@@ -62,3 +62,29 @@ Secondly the output of the above script was used to annotate the ancestral state
 |Ambiguous        | 2399524        |
 |Not in alignment | 2515988        |
 |Total unpolarised| 6341381        |
+
+# Annotating the data
+
+Firstly SNPs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'intron' or 'intergenic' as follows:
+
+```
+./annotate_all_vcf_chr.py -gff /data/bop15hjb/annotating_gt_snps/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz -vcf /data/bop15hjb/annotating_gt_snps/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.vcf -evolgen
+```
+
+A breakdown of this annotation is shown below:
+
+|Category             | Number SNPs  |
+|:--------------------|:------------:|
+|All                  | 10643865     |
+|CDS                  | 155463       |
+|Intron               | 5489556      |
+|Intergenic           | 4718020      |
+|Unannotated          | 280826       |
+
+# Site frequency spectrum analysis
+
+Firstly the unfolded SFS for W<->W and S<->S snps was obtained from the snp data as follows:
+
+```  
+./snpSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.vcf -folded N -bin intergenic_ww_ss -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/snp_ww_ss_spectra -sub -evolgen
+```
