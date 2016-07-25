@@ -39,6 +39,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * annotate_all_vcf_chr.py
   * annotate_vcf.py
   * catVCFs.py
+  * snpSFS.py
 
 ## Pre-prepared files required for analysis
 
@@ -206,13 +207,25 @@ Secondly the output of the above script was used to annotate the ancestral state
 |Not in alignment | 295481    |
 |Total unpolarised| 647336    |
 
-## Annotating the data 
+# Annotating the data 
 
 Firstly INDELs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'CDS_frameshift', 'intron' or 'intergenic' as follows:
 
 ```
 ./annotate_all_vcf_chr.py -gff /data/bop15hjb/annotating_gt/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz-vcf /data/bop15hjb/annotating_gt/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.vcf -evolgen
 ```
+
+A summary of this annotation is shown below:
+
+|Category             | Number INDELs|
+|:--------------------|:------------:|
+|All                  | 1221124      |
+|CDS                  | 2027         |
+|Frameshift           | 973          |
+|Non shift            | 1054         |
+|Intron               | 646507       |
+|Intergenic           | 537246       |
+|Unannotated          | 35344        |
 
 Secondly the recombination category of each INDEL was annotated using linkage map data to estimate recombination rates. First, 3rd order polynomials were fitted to plots of physical position versus map length. Second, the derivative of each chromosome's polynomial was used to estimate recombination rate for each INDEL start position. This predicition was implemented in the following python script:
 
