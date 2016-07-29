@@ -18,7 +18,7 @@ parser.add_argument('-folded',
 parser.add_argument('-bin',
                     help='Specify genomic regions to bin data by (requires an annotated vcf',
                     default=[],
-                    choices=['CDS', 'intron', 'intergenic', 'intergenic_ww_ss'],
+                    choices=['CDS', 'intron', 'intergenic', 'intergenic_ww_ss', 'zerofold'],
                     action='append')
 parser.add_argument('-include_sex', help='If not specified excludes sex chromosomes',
                     default=True, action='store_false')
@@ -86,10 +86,22 @@ if folded == 'Y':
             # catch S<->S and W<->W
             alt_seq = str(snp.ALT[0])
             ref_seq = snp.REF
-            if re.match(r'[CG]', alt_seq) and re.match(r'[CG]', ref_seq) and region == 'intergenic':
-                region = 'intergenic_ww_ss'
-            elif re.match(r'[AT]', alt_seq) and re.match(r'[AT]', ref_seq) and region == 'intergenic':
-                region = 'intergenic_ww_ss'
+            if 'intergenic_ww_ss' in bins:
+                if re.match(r'[CG]', alt_seq) and re.match(r'[CG]', ref_seq) and region == 'intergenic':
+                    region = 'intergenic_ww_ss'
+                elif re.match(r'[AT]', alt_seq) and re.match(r'[AT]', ref_seq) and region == 'intergenic':
+                    region = 'intergenic_ww_ss'
+
+            # catch zerofold
+            if region == 'CDS_non_frameshift' and 'zerofold' in bins:
+                try:
+                    degen = snp.INFO['DEGEN']
+                    if degen == 0:
+                        region = 'zerofold'
+                    else:
+                        region = region
+                except KeyError:
+                    region = region
 
             # determine minor allele freq
             alt_freq = snp.aaf[0]
@@ -132,10 +144,22 @@ else:
                     continue
 
             # catch S<->S and W<->W
-            if re.search(r'[CG]', alt_seq) and re.search(r'[CG]', ref_seq) and region == 'intergenic':
-                region = 'intergenic_ww_ss'
-            elif re.search(r'[AT]', alt_seq) and re.search(r'[AT]', ref_seq) and region == 'intergenic':
-                region = 'intergenic_ww_ss'
+            if 'intergenic_ww_ss' in bins:
+                if re.search(r'[CG]', alt_seq) and re.search(r'[CG]', ref_seq) and region == 'intergenic':
+                    region = 'intergenic_ww_ss'
+                elif re.search(r'[AT]', alt_seq) and re.search(r'[AT]', ref_seq) and region == 'intergenic':
+                    region = 'intergenic_ww_ss'
+
+            # catch zerofold
+            if region == 'CDS_non_frameshift' and 'zerofold' in bins:
+                try:
+                    degen = snp.INFO['DEGEN']
+                    if degen == 0:
+                        region = 'zerofold'
+                    else:
+                        region = region
+                except KeyError:
+                    region = region
 
             # determine derived allele frequency
             if alt_seq == ancestral_sequence:
@@ -166,7 +190,10 @@ with open(new_output, 'w') as sfs:
         print '| ' + folded + ' |' + region_key + ' |' + str(total_snps) + ' |'
         data = [x for x in region_dict.values()]
         for frequency in data:
-            frequency[3] = float(frequency[1])/total_snps
+            try:
+                frequency[3] = float(frequency[1])/total_snps
+            except ZeroDivisionError:
+                frequency[3] = 0.0
         sorted_data = sorted(data, key=lambda y: y[0])
         for row in sorted_data:
             row = [str(z) for z in row]
