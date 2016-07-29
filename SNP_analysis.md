@@ -81,10 +81,33 @@ A breakdown of this annotation is shown below:
 |Intergenic           | 4718020      |
 |Unannotated          | 280826       |
 
+Secondly the degeneracy of SNPs in coding seqences was annotated as follows:
+
+```
+./annotate_degeneracy.py -gff /fastdata/bop15hjb/GT_ref/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -db_dir /data/bop15hjb/databases/greattit/ -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/ degeneracy_annotation/ -evolgen
+```
+
+Annotation summary below:
+
+|Category          | Number SNPs     |
+|:-----------------|:---------------:|
+|All               | 10643865        |
+|CDS               | 155463          |
+|0fold             | 46792           |
+|2fold             | 46786           |
+|3fold             | 4240            |
+|4fold             | 57169           |
+
 # Site frequency spectrum analysis
 
 Firstly the unfolded SFS for W<->W and S<->S snps was obtained from the snp data as follows:
 
 ```  
 ./snpSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.vcf -folded N -bin intergenic_ww_ss -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/snp_ww_ss_spectra -sub -evolgen
+```
+
+Secondly the unfolded SFS for zerofold coding snps was generated as follows:
+
+```
+./snpSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.degen.vcf -folded N -bin zerofold -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/zerofold_snps -evolgen -sub
 ```
