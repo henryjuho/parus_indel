@@ -39,7 +39,10 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * annotate_all_vcf_chr.py
   * annotate_vcf.py
   * catVCFs.py
+  * annotate_recomb.py
+  * annotate_recomb_chr.py
   * snpSFS.py
+  * indelSFS.py
 
 ## Pre-prepared files required for analysis
 
@@ -230,16 +233,11 @@ A summary of this annotation is shown below:
 Secondly the recombination category of each INDEL was annotated using linkage map data to estimate recombination rates. First, 3rd order polynomials were fitted to plots of physical position versus map length. Second, the derivative of each chromosome's polynomial was used to estimate recombination rate for each INDEL start position. This predicition was implemented in the following python script:
 
 ```
-python predict_recomb.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -poly /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/3rd_polynom.txt
+./annotate_recomb.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -poly /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/3rd_polynom.txt -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/recomb_anno/ -evolgen
 ```
 
 The file specified by ```-poly``` is a list of variables for each chromosome's polynomial.
 
-The output from this step was used to bin the data by recombination yielding x new vcf files, where x = the required number of recombination bins. Bins had equal numbers of variants. The script used for binning is as follows:
-
-```
-python recomBINdels.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.vcf -recomb /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Recomb_data/indel_recomb_data.txt -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/5_recomb_bins/
-```
 
 # Performing the INDEL analysis
 
@@ -269,5 +267,28 @@ This yielded the following results:
 
 ## Site frequency spectrum analysis
 
-```TODO```
+Site frequency data were generated with the script ```indelSFS.py``` (comparative snp spectra are described here: <https://github.com/henryjuho/parus_indel/blob/master/SNP_analysis.md> using different binning variables such as recombination rate and gene region. Examples follow:
 
+### Unfolded SFS 
+
+```
+./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/crude_recomb_bin_indels -evolgen -sub 
+```
+
+### Unfolded SFS grouped genomic region
+
+```
+./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -bin CDS_non_frameshift -bin CDS_frameshift -bin intron -bin intergenic -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/crude_recomb_bin_indels -evolgen -sub 
+```
+
+### Unfolded SFS grouped by recombination category
+
+```
+./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -rbin crude -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/crude_recomb_bin_indels -evolgen -sub
+```
+
+### Unfolded SFS grouped by recombination category and genomic region
+
+```
+./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -rbin crude -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/crude_recomb_bin_indels -evolgen -sub -bin CDS_non_frameshift -bin CDS_frameshift -bin intron -bin intergenic
+```
