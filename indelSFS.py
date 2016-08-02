@@ -14,12 +14,15 @@ parser.add_argument('-folded',
                     help='Specify Y for folded and N for unfolded spectrum',
                     default='Y',
                     choices=['Y', 'N'])
+parser.add_argument('-fold_type', help='Type of folded spectra, minior allele or shorter allele',
+                    choices=['minor', 'short'], default='short')
 parser.add_argument('-bin',
                     help='Specify genomic regions to bin data by (requires an annotated vcf',
                     default=[],
                     choices=['CDS_non_frameshift', 'CDS_frameshift', 'intron', 'intergenic'],
                     action='append')
-parser.add_argument('-rbin', help='Type of recombination binning to perform', choices=['None', 'crude'], default='None')
+parser.add_argument('-rbin', help='Type of recombination binning to perform', choices=['None', 'crude', 'poly'],
+                    default='None')
 parser.add_argument('-auto_only', help='By default exclude sex chromosomes', default=True, choices=[True, False])
 parser.add_argument('-sfs_out',
                     help='Output sfs data prefix',
@@ -37,17 +40,36 @@ if args.sub is True:
 # variables
 vcf_file = args.vcf
 folded = args.folded
+folded_type = args.fold_type
 output = args.sfs_out
-vcf = py_vcf.Reader(open(vcf_file))
-number_samples = len(vcf.samples)
 bins = args.bin
 auto_only = args.auto_only
+rr_dict = {}
 if len(bins) == 0:
     bins.append('no_bins')
 if args.rbin == 'crude':
     rbins = ['micro', 'macro_mid', 'macro_end']
+elif args.rbin == 'poly':
+    rbins = ['low', 'low_mid', 'mid', 'mid_high', 'high']
+    # get variant pos + recomb rate
+    indel_rates = [('_'.join([line.CHROM, str(line.POS)]), line.INFO['RR'])
+                   for line in py_vcf.Reader(open(vcf_file)) if 'RR' in line.INFO.keys()]
+    # sort list
+    sorted_rates = sorted(indel_rates, key=lambda w: w[1])
+    no_indels_per_bin = len(sorted_rates)/5
+
+    # load rr dict
+    n = 0
+    for rbin in rbins:
+        n_plus_i = n + no_indels_per_bin + 1
+        for site in sorted_rates[n:n_plus_i]:
+            rr_dict[site[0]] = rbin
+        n = n_plus_i
+
 else:
     rbins = ['None']
+vcf = py_vcf.Reader(open(vcf_file))
+number_samples = len(vcf.samples)
 
 # dictionaries
 freq_dict = {}
@@ -56,16 +78,21 @@ ins_freq_dict = {}
 
 # preload frequency dictionary
 # to follow form {recomb: {bin :{freq: [freq, proportion, bin, normalised_freq, recomb]}}}
+if folded == 'Y' and folded_type == 'minor':
+    no_frequencies = number_samples + 1
+else:
+    no_frequencies = 2 * number_samples
+
 for recomb in rbins:
     freq_dict[recomb] = {region_bin: {float(freq)/float(2 * number_samples):
                          [float(freq)/float(2 * number_samples), 0, region_bin, 0, recomb]
-                         for freq in range(1, 2 * number_samples)} for region_bin in bins}
+                         for freq in range(1, no_frequencies)} for region_bin in bins}
     del_freq_dict[recomb] = {region_bin: {float(freq)/float(2 * number_samples):
                              [float(freq)/float(2 * number_samples), 0, region_bin, 0, recomb]
-                             for freq in range(1, 2 * number_samples)} for region_bin in bins}
+                             for freq in range(1, no_frequencies)} for region_bin in bins}
     ins_freq_dict[recomb] = {region_bin: {float(freq)/float(2 * number_samples):
                              [float(freq)/float(2 * number_samples), 0, region_bin, 0, recomb]
-                             for freq in range(1, 2 * number_samples)} for region_bin in bins}
+                             for freq in range(1, no_frequencies)} for region_bin in bins}
 
 # generate folded spectrum if specified
 if folded == 'Y':
@@ -83,6 +110,11 @@ if folded == 'Y':
             # determine recomb
             if rbins[0] == 'None':
                 recomb_region = rbins[0]
+            elif args.rbin == 'poly':
+                try:
+                    recomb_region = rr_dict[indel.CHROM + '_' + str(indel.POS)]
+                except KeyError:
+                    continue
             else:
                 try:
                     recomb_region = indel.INFO['RBIN']
@@ -99,14 +131,26 @@ if folded == 'Y':
                     continue
 
             # determine shorter allele freq
-            if alt_len > ref_len:
-                shorter_freq = 1.0 - alt_freq
+            if folded_type == 'short':
+                if alt_len > ref_len:
+                    shorter_freq = 1.0 - alt_freq
+                else:
+                    shorter_freq = alt_freq
+                try:
+                    freq_dict[recomb_region][region][shorter_freq][1] += 1
+                except KeyError:
+                    continue
+
+            # determine minor allele freq
             else:
-                shorter_freq = alt_freq
-            try:
-                freq_dict[recomb_region][region][shorter_freq][1] += 1
-            except KeyError:
-                continue
+                if alt_freq <= 0.5:
+                    minor_allele_freq = alt_freq
+                else:
+                    minor_allele_freq = 1.0 - alt_freq
+                try:
+                    freq_dict[recomb_region][region][minor_allele_freq][1] += 1
+                except KeyError:
+                    continue
 
 # generate unfolded spectrum if specified
 else:
@@ -128,6 +172,11 @@ else:
             # determine recomb
             if rbins[0] == 'None':
                 recomb_region = rbins[0]
+            elif args.rbin == 'poly':
+                try:
+                    recomb_region = rr_dict[indel.CHROM + '_' + str(indel.POS)]
+                except KeyError:
+                    continue
             else:
                 try:
                     recomb_region = indel.INFO['RBIN']
