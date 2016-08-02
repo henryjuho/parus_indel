@@ -111,3 +111,9 @@ Secondly the unfolded SFS for zerofold coding snps was generated as follows:
 ```
 ./snpSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.degen.vcf -folded N -bin zerofold -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/zerofold_snps -evolgen -sub
 ```
+
+Finally both these SFS were also generated folded:
+
+```
+./snpSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.degen.vcf -folded Y -bin intergenic_ww_ss -bin zerofold -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/folded_snps -sub -evolgen
+```
