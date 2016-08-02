@@ -292,3 +292,9 @@ Site frequency data were generated with the script ```indelSFS.py``` (comparativ
 ```
 ./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -rbin crude -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/crude_recomb_bin_indels -evolgen -sub -bin CDS_non_frameshift -bin CDS_frameshift -bin intron -bin intergenic
 ```
+
+### Folded SFS grouped by genomic region
+
+```
+./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded Y -fold_type minor -bin CDS_non_frameshift -bin CDS_frameshift -bin intron -bin intergenic -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/minor_allele_indel -sub -evolgen
+```
