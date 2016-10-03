@@ -49,7 +49,11 @@ def get_end_3mb(length):
 
 # Toni's polynomial function to predict recomb
 def predict_recomb(pos, x, y, z):
-    return 3*x*pos**2+2*y*pos+z
+    predicted_value = 3*x*pos**2+2*y*pos+z
+    if predicted_value > 0.0:
+        return predicted_value
+    else:
+        return 0.0
 
 # loop through vcf and identify category for each variant
 all_variants = 0
