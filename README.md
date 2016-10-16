@@ -300,12 +300,11 @@ Site frequency data were generated with the script ```indelSFS.py``` (comparativ
 ./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded Y -fold_type minor -bin CDS_non_frameshift -bin CDS_frameshift -bin intron -bin intergenic -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/minor_allele_indel -sub -evolgen
 ```
 
-## \pi \theta and Tajima's D
+## $\pi$ $\theta$ and Tajima's D
 
-In order to calculate  \pi \theta and Tajima's D, first a fasta of callable sites was generated as follows:
+In order to calculate  $\pi$ $\theta$ and Tajima's D, first a fasta of callable sites with the bases coded as 0s (Ns), 1s (not callable) or 2s (callable) was generated as follows:
 
 ```
 ./callable_sites_from_vcf.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/bgi_10birds.raw.snps.indels.all_sites.vcf.bgz -chr ALL -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds_callable -evolgen -sub
 ```
 
-Which the bases replaced as 0s (Ns), 1s (not callable) or 2s (callable).
