@@ -32,15 +32,6 @@ out = args.out
 fasta_out = out + '.' + chromosome + '.fa'
 evolgen = args.evolgen
 
-
-# functions
-def in_repeat(start, rep_list):
-    for rep_region in rep_list:
-        if rep_region[1] <= start <= rep_region[2]:
-            return True
-    else:
-        return False
-
 # submission loop
 if args.sub is True:
     if chromosome == 'ALL':
@@ -64,7 +55,7 @@ if args.sub is True:
                             '-N ' + str(no_indiv) + ' '
                             '-chr ' + chromo + ' '
                             '-out ' + out)
-            q_sub([command_line], out + '.' + chromo, evolgen=evolgen, t=120)
+            q_sub([command_line], out + '.' + chromo, jid=jid, evolgen=evolgen, t=120)
 
         # cat job for final output
         cat_cmd = 'cat ' + ' '.join(output_fasta_list) + ' > ' + fasta_out
@@ -92,8 +83,11 @@ if args.chr == 'ALL' and args.sub is False:
 lower_depth_limit = all_data_mean_depth / filter_factor
 upper_depth_limit = all_data_mean_depth * filter_factor
 
+repeats = set()
 # get bed regions per chromo
-repeats = [(x.split()[0], x.split()[1], x.split()[2]) for x in open(repeat_bed) if x.split()[0] == chromosome]
+for x in open(repeat_bed):
+    if x.split()[0] == chromosome:
+        repeats |= {y for y in range(int(x.split()[1]), int(x.split()[2]))}
 
 # loop through allsites for chromosome
 counter = 0
@@ -124,7 +118,7 @@ with open(fasta_out, 'w') as out_fa:
         if lower_depth_limit <= locus_mean_depth <= upper_depth_limit:
 
             # repeat filter
-            if in_repeat(line.pos, repeats) is False:
+            if line.pos not in repeats:
                 fasta_string += '2'
                 continue
 
