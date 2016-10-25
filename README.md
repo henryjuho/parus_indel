@@ -302,9 +302,10 @@ Site frequency data were generated with the script ```indelSFS.py``` (comparativ
 
 ## $\pi$ $\theta$ and Tajima's D
 
-In order to calculate  $\pi$ $\theta$ and Tajima's D, first a fasta of callable sites with the bases coded as 0s (Ns), 1s (not callable) or 2s (callable) was generated as follows:
+In order to calculate  \pi, \theta and Tajima's D, first a fasta of callable sites with the bases coded as 0s (Ns), 1s (not callable) or 2s (callable) was generated and indexed as follows:
 
 ```
 ./callable_sites_from_vcf.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/bgi_10birds.raw.snps.indels.all_sites.vcf.bgz -chr ALL -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds_callable -evolgen -sub
+samtools faidx bgi_10birds_callable.ALL.fa
 ```
 
