@@ -55,7 +55,7 @@ if args.sub is True:
                             '-N ' + str(no_indiv) + ' '
                             '-chr ' + chromo + ' '
                             '-out ' + out)
-            q_sub([command_line], out + '.' + chromo, jid=jid, evolgen=evolgen, t=120)
+            q_sub([command_line], out + '.' + chromo, jid=jid, evolgen=evolgen)
 
         # cat job for final output
         cat_cmd = 'cat ' + ' '.join(output_fasta_list) + ' > ' + fasta_out
@@ -72,7 +72,7 @@ if args.sub is True:
                         '-N ' + str(no_indiv) + ' '
                         '-chr ' + chromosome + ' '
                         '-out ' + out)
-        q_sub([command_line], out, evolgen=evolgen, t=120)
+        q_sub([command_line], out, evolgen=evolgen)
         sys.exit()
 
 # catch -all specified without -sub
