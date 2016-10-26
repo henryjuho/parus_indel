@@ -12,6 +12,7 @@ parser.add_argument('-vcf', help='Vcf file to get summary stats for', required=T
 parser.add_argument('-call_fa', help='Fasta file of callable sites, coded as 0=N, 1=notcalled and 3=called',
                     required=True)
 parser.add_argument('-sub', help='If specified will submit script to cluster', action='store_true', default=False)
+parser.add_argument('-md', help='If specified will output in markdown table format', default=False, action='store_true')
 args = parser.parse_args()
 
 # submission loop
@@ -23,6 +24,7 @@ if args.sub is True:
 # variables
 vcf_file = args.vcf
 call_fasta = pysam.FastaFile(args.call_fa)
+markdown = args.md
 
 
 # functions
@@ -58,39 +60,67 @@ def tajimas_d(n, allele_frq_list):
     return big_d
 
 # get variant site info
-no_segsites = {'genome': 0}
-allele_freqs = {'genome': []}
+allele_freqs = {}
 
 for line in pysam.VariantFile(vcf_file).fetch():
     chromo = line.contig
     alt_allele_freq = round(line.info['AF'][0], 2)
-    no_segsites['genome'] += 1
-    allele_freqs['genome'].append(alt_allele_freq)
+    ref_seq = line.ref
+    alt_seq = line.alts[0]
+    indel_type = 'Unpolarised'
     try:
-        no_segsites[chromo] += 1
-        allele_freqs[chromo].append(alt_allele_freq)
+        ancestral_sequence = line.info['AA']
     except KeyError:
-        no_segsites[chromo] = 1
-        allele_freqs[chromo] = [alt_allele_freq]
+        ancestral_sequence = ''
+
+    # determine indel type and derived allele frequency
+    if len(alt_seq) == len(ancestral_sequence):
+        if len(alt_seq) > len(ref_seq):
+            indel_type = 'Del'
+        elif len(alt_seq) < len(ref_seq):
+            indel_type = 'Ins'
+    elif len(ref_seq) == len(ancestral_sequence):
+        if len(alt_seq) < len(ref_seq):
+            indel_type = 'Del'
+        elif len(alt_seq) > len(ref_seq):
+            indel_type = 'Ins'
+
+    # record allele freqs
+    if chromo in allele_freqs.keys():
+        if indel_type in allele_freqs[chromo].keys():
+            allele_freqs[chromo][indel_type].append(alt_allele_freq)
+        else:
+            allele_freqs[chromo][indel_type] = [alt_allele_freq]
+    else:
+        allele_freqs[chromo] = {indel_type: [alt_allele_freq]}
 
 # Calc stats
 tw_genome, pi_val_genome, tajD_genome, genome_wide_callable_sites = 0, 0, 0, 0
 
-print '|region|theta_w|pi|tajD|\n|:----|:---:|:---:|:---:|'
-for region in allele_freqs.keys():
-    if region == 'genome':
-        freqs = allele_freqs[region]
-        tw_genome = theta_w(20, len(freqs))
-        pi_val_genome = pi(20, freqs)
-        tajD_genome = tajimas_d(20, freqs)
-    else:
-        callable_sites = call_fasta.fetch(region).count('2')
-        genome_wide_callable_sites += callable_sites
-        freqs = allele_freqs[region]
-        tw = theta_w(20, len(freqs))/callable_sites
-        pi_val = pi(20, freqs)/callable_sites
-        tajD = tajimas_d(20, freqs)
-        print '|'+'|'.join([region, str(tw), str(pi_val), str(tajD)])+'|'
+if markdown is True:
+    print '|region|type|theta_w|pi|tajD|\n|:----|:---:|:---:|:---:|:---:|'
+else:
+    print 'region\ttype\ttheta_w\tpi\ttajD'
 
-print '|'+'|'.join(['genome', str(tw_genome/genome_wide_callable_sites),
-                   str(pi_val_genome/genome_wide_callable_sites), str(tajD_genome)])+'|'
+for region in allele_freqs.keys():
+    callable_sites = call_fasta.fetch(region).count('2')
+    unpoled = len(allele_freqs[region]['Unpolarised'])
+    for indel in ['Del', 'Ins', 'INDEL']:
+        if indel == 'INDEL':
+            freqs = sum([list(x) for x in allele_freqs[region].values()], [])
+        else:
+            try:
+                freqs = allele_freqs[region][indel]
+            except KeyError:
+                if markdown is True:
+                    print '|'+'|'.join([region, indel, 'NA', 'NA', 'NA'])+'|'
+                else:
+                    print '\t'.join([region, indel, 'NA', 'NA', 'NA'])
+                continue
+        tw = theta_w(20, len(freqs))/(callable_sites-unpoled)
+        pi_val = pi(20, freqs)/(callable_sites-unpoled)
+        tajD = tajimas_d(20, freqs)
+        if markdown is True:
+            print '|'+'|'.join([region, indel, str(tw), str(pi_val), str(tajD)])+'|'
+        else:
+            print '\t'.join([region, indel, str(tw), str(pi_val), str(tajD)])
