@@ -312,6 +312,6 @@ samtools faidx bgi_10birds_callable.ALL.fa
 The stas were then calculated with the following script:
 
 ```
-./summarise_vcf.py -vcf ../debug_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -call_fa ../debug_data/bgi_10birds_callable.ALL.fa 
+./summarise_vcf.py -vcf ../debug_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -call_fa ../debug_data/bgi_10birds_callable.ALL.fa > ../../indel_pi_theta_tajd/gt_indel_sum_stats.txt
 ```
 
