@@ -117,3 +117,18 @@ Finally both these SFS were also generated folded:
 ```
 ./snpSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.degen.vcf -folded Y -bin intergenic_ww_ss -bin zerofold -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/folded_snps -sub -evolgen
 ```
+
+# pi theta_w and Tajima's D
+
+In order to calculate  pi, theta_w and Tajima's D, first a fasta of callable sites with the bases coded as 0s (Ns), 1s (not callable) or 2s (callable) was generated and indexed as follows:
+
+```
+./callable_sites_from_vcf.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/bgi_10birds.raw.snps.indels.all_sites.vcf.bgz -chr ALL -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds_callable -evolgen -sub
+samtools faidx bgi_10birds_callable.ALL.fa
+```
+
+The statistics were then calculated with the following script:
+
+```
+./summarise_vcf.py -vcf ../debug_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.degen.vcf.gz -call_fa ../debug_data/bgi_10birds_callable.ALL.fa -mode SNP > /Users/henryjuho/genomics/indel_pi_theta_tajd/gt_snp_sum_stats.txt
+```
