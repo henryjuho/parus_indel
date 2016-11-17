@@ -25,11 +25,12 @@ parser.add_argument('-bin',
                     action='append')
 parser.add_argument('-rbin', help='Type of recombination binning to perform', choices=['None', 'crude', 'poly'],
                     default='None')
-parser.add_argument('-auto_only', help='By default exclude sex chromosomes', default=True, choices=[True, False])
+parser.add_argument('-include_sex', help='If not specified excludes sex chromosomes',
+                    default=True, action='store_false')
 parser.add_argument('-sfs_out',
                     help='Output sfs data prefix',
                     required=True)
-parser.add_argument('-bootstrap', help='Help specify number of times to bootstrap, default is none', default=None)
+parser.add_argument('-bootstrap', help='Help specify number of times to bootstrap, default is none', default=0)
 parser.add_argument('-evolgen', help='If specified will run on evolgen', default=False, action='store_true')
 parser.add_argument('-sub', help='If specified will submit script to cluster', action='store_true', default=False)
 args = parser.parse_args()
@@ -37,7 +38,7 @@ args = parser.parse_args()
 # submission loop
 if args.sub is True:
     command_line = [' '.join([x for x in sys.argv if x != '-sub' and x != '-evolgen'])]
-    if args.bootstrap is None:
+    if args.bootstrap == 0:
         time = 8
     else:
         time = 36
@@ -52,7 +53,8 @@ def bootstrap_sfs(sfs_array, n_boots):
 
     :param sfs_array:  list [[freq, proportion, bin, normalised_freq, recomb], [...]]
     :param n_boots: integer
-    :return : nested list [[freq, mean, bin, normalised_freq, recomb, se, norm_se], [...]]
+    :return : nested list [[freq, mean, bin, normalised_freq, recomb, se, norm_se, ci_lwr, ci_upr, ci_lwr_norm,
+    ci_upr_norm], [...]]
     """
 
     region_bin = sfs_array[0][2]
@@ -66,7 +68,7 @@ def bootstrap_sfs(sfs_array, n_boots):
             sfs_freqs.append(freq[0])
 
     # bootstrap
-    bootstrapped_sfs = {f[0]: [f[1]] for f in sfs_array}
+    bootstrapped_sfs = {f[0]: [] for f in sfs_array}
     for bs in range(0, n_boots):
         # resample with replacement
         resampled_sfs = []
@@ -78,11 +80,13 @@ def bootstrap_sfs(sfs_array, n_boots):
 
     # get mean and standard error
     bootstrap_output = []
-    # [freq, mean, bin, normalised_freq, recomb, se, norm_se]
+    # [freq, mean, bin, normalised_freq, recomb, se, norm_se, ci_lwr, ci_upr, ci_lwr_norm, ci_upr_norm]
     for f in bootstrapped_sfs.keys():
         mean = numpy.mean(bootstrapped_sfs[f])
-        se = numpy.std(bootstrapped_sfs[f])/numpy.sqrt(len(bootstrapped_sfs[f]))
-        bootstrap_output.append([f, mean, region_bin, 0, recomb_region_bin, se, 0])
+        se = numpy.std(bootstrapped_sfs[f])/numpy.sqrt(float(n_boots))
+        ci = numpy.percentile(bootstrapped_sfs[f], [2.5, 97.5])
+
+        bootstrap_output.append([f, mean, region_bin, 0, recomb_region_bin, se, 0, ci[0], ci[1], 0, 0])
 
     return bootstrap_output
 
@@ -92,7 +96,7 @@ folded = args.folded
 folded_type = args.fold_type
 output = args.sfs_out
 bins = args.bin
-auto_only = args.auto_only
+auto_only = args.include_sex
 bootstrap = int(args.bootstrap)
 rr_dict = {}
 if len(bins) == 0:
@@ -291,8 +295,9 @@ print '|Type   |Recomb  |Region       | No_INDELs  |\n' \
 for spectrum in dict_list:
     new_output = output + '.' + spectrum[0] + '_sfs.txt'
     with open(new_output, 'w') as sfs:
-        if bootstrap is not None:
-            sfs.write('\t'.join(['Freq', 'Mean', 'SE', 'Norm', 'Norm_SE', 'Bin', 'Recomb']) + '\n')
+        if bootstrap != 0:
+            sfs.write('\t'.join(['Freq', 'Mean', 'SE', 'Norm', 'Norm_SE', 'Bin', 'Recomb',
+                                 'CI_lwr', 'CI_upr', 'CI_lwr_norm', 'CI_upr_norm']) + '\n')
         else:
             sfs.write('\t'.join(['Freq', 'Proportion', 'Bin', 'Norm', 'Recomb']) + '\n')
         for recomb_region_key in spectrum[1].keys():
@@ -304,15 +309,17 @@ for spectrum in dict_list:
                 data = [x for x in region_dict.values()]
 
                 # perform bootstrapping if specified
-                if bootstrap is not None:
+                if bootstrap != 0:
                     bootstrap_data = bootstrap_sfs(data, bootstrap)
-                    # [freq, mean, bin, normalised_freq, recomb, se, norm_se]
+                    # [freq, mean, bin, normalised_freq, recomb, se, norm_se, ci_lwr, ci_upr, ci_lwr_norm, ci_upr_norm]
                     for frequency in bootstrap_data:
                         frequency[3] = float(frequency[1])/total_indels
                         frequency[6] = frequency[5]/total_indels
+                        frequency[9] = frequency[7]/total_indels
+                        frequency[10] = frequency[8]/total_indels
                     sorted_data = sorted(bootstrap_data, key=lambda y: y[0])
                     for row in sorted_data:
-                        new_row = [str(z) for z in [row[0], row[1], row[5], row[3], row[6], row[2], row[4]]]
+                        new_row = [str(z) for z in [row[0], row[1], row[5], row[3], row[6], row[2], row[4]] + row[7:]]
                         sfs.write('\t'.join(new_row) + '\n')
 
                 # if no bootstrapping specified
