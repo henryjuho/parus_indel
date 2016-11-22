@@ -21,7 +21,7 @@ parser.add_argument('-fold_type', help='Type of folded spectra, minior allele or
 parser.add_argument('-bin',
                     help='Specify genomic regions to bin data by (requires an annotated vcf',
                     default=[],
-                    choices=['CDS_non_frameshift', 'CDS_frameshift', 'intron', 'intergenic'],
+                    choices=['CDS_non_frameshift', 'CDS_frameshift', 'intron', 'intergenic', 'CDS'],
                     action='append')
 parser.add_argument('-rbin', help='Type of recombination binning to perform', choices=['None', 'crude', 'poly'],
                     default='None')
@@ -202,6 +202,9 @@ if folded == 'Y':
                 else:
                     minor_allele_freq = 1.0 - alt_freq
                 try:
+                    if 'CDS' in bins and region.starts('CDS'):
+                        freq_dict[recomb_region]['CDS'][minor_allele_freq][1] += 1
+
                     freq_dict[recomb_region][region][minor_allele_freq][1] += 1
                 except KeyError:
                     continue
@@ -274,11 +277,17 @@ else:
             # record site frequencies
             if indel_type == 'Del':
                 try:
+                    if 'CDS' in bins and region.startswith('CDS'):
+                        del_freq_dict[recomb_region]['CDS'][derived_freq][1] += 1
+
                     del_freq_dict[recomb_region][region][derived_freq][1] += 1
                 except KeyError:
                     continue
             else:
                 try:
+                    if 'CDS' in bins and region.startswith('CDS'):
+                        ins_freq_dict[recomb_region]['CDS'][derived_freq][1] += 1
+
                     ins_freq_dict[recomb_region][region][derived_freq][1] += 1
                 except KeyError:
                     continue
