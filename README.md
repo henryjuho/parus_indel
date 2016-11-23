@@ -44,6 +44,9 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * snpSFS.py
   * indelSFS.py
   * callable_sites_from_vcf.py
+  * summarise_vcf.py
+  * anavar_belt_and_braces_edition.py
+  * process_model_data.py
 
 ## Pre-prepared files required for analysis
 
@@ -279,7 +282,7 @@ Site frequency data were generated with the script ```indelSFS.py``` (comparativ
 ### Unfolded SFS grouped genomic region
 
 ```
-./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -bin CDS_non_frameshift -bin CDS_frameshift -bin intron -bin intergenic -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/crude_recomb_bin_indels -evolgen -sub 
+./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -bin CDS_non_frameshift -bin CDS_frameshift -bin CDS -bin intron -bin intergenic -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/gt_indels_all_bins_mergedCDS_nobs -evolgen -sub 
 ```
 
 ### Unfolded SFS grouped by recombination category
@@ -315,3 +318,35 @@ The statistics were then calculated with the following script:
 ./summarise_vcf.py -vcf ../debug_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -call_fa ../debug_data/bgi_10birds_callable.ALL.fa -mode INDEL > ../../indel_pi_theta_tajd/gt_indel_sum_stats.txt
 ```
 
+## Estimating selection and mutation coefficients with a novel maximum likelihood approach
+
+A novel extension of the Glémin et al. (2015) model was used to estimate the selection coefficient gamma, the mutational bias kappa, theta and polarisation error for insertions and deletions. More information on the model and test results can be found here: <https://github.com/henryjuho/parus_indel/tree/master/model>. The model takes site frequency spectra for insertions, deletions and neutral snps as input.The model was run on genome wide variants and variants grouped by genomic region. The was implemented in a python wrapper of the 'anavar' program. The wrapper runs the full model on the data as well as a reduced model (reductions specified with ```-lrt``` on the command line), and performs a likelihood ratio test on the results to test the fit of the model and significance of the estimated parameters. An example command line follows:
+
+```
+ ./anavar_belt_and_braces_edition.py -i_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.insertions_sfs.txt -d_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.deletions_sfs.txt -s_sfs SFS_model_data/snp_ww_ss_spectra.folded_N_sfs.txt -n 20 -r intergenic -lrt gamma_ins -out model_estimates/gt_indel_intergenic_gammainstest -evolgen
+```
+
+The following parameter combinations were run:
+
+| region (```-r```) | likelihood ratio test (```-lrt```) |
+|:------------------|:----------------------------------:|
+| intergenic        | kappa                              |
+| intergenic        | gamma_indel                        |
+| intergenic        | gamma_ins                          |
+| intergenic        | gamma_del                          |
+| intron            | kappa                              |
+| intron            | gamma_indel                        |
+| intron            | gamma_ins                          |
+| intron            | gamma_del                          |
+| CDS               | kappa                              |
+| CDS               | gamma_indel                        |
+| CDS               | gamma_ins                          |
+| CDS               | gamma_del                          |
+| CDS_frameshift    | kappa                              |
+| CDS_frameshift    | gamma_indel                        |
+| CDS_frameshift    | gamma_ins                          |
+| CDS_frameshift    | gamma_del                          |
+| CDS_non_frameshift| kappa                              |
+| CDS_non_frameshift| gamma_indel                        |
+| CDS_non_frameshift| gamma_ins                          |
+| CDS_non_frameshift| gamma_del                          |
