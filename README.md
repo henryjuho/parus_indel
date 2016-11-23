@@ -20,6 +20,8 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
 
 \* Note \* that most scripts make use of the script 'qsub_gen.py' which is designed to submit jobs in the form of shell scripts to the 'Sun Grid Engine', if shell scripts only are required the '-OM' option in the 'qsub_gen.py' command line within the scripts can be changed from 'q' to 'w'. Alternatively some scripts make use of the python qsub wrapper module ```qsub.py``` described here: <https://github.com/henryjuho/python_qsub_wrapper>.
 
+<div class="columns-3">
+
   * qsub_gen.py
   * SAMtools_calling_v2.py
   * CatVariants.py
@@ -29,7 +31,8 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * repeat_filter.py
   * filter_length_biallelic.py
   * run_VQSR.py
-  * trancheSTATS.py 
+  * trancheSTATS.py
+
   * annotate_hr_tr.py
   * indel_repeat_stats.py
   * VARfromMAF.py
@@ -40,6 +43,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * annotate_vcf.py
   * catVCFs.py
   * annotate_recomb.py
+
   * annotate_recomb_chr.py
   * snpSFS.py
   * indelSFS.py
@@ -47,6 +51,8 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * summarise_vcf.py
   * anavar_belt_and_braces_edition.py
   * process_model_data.py
+  
+</div>
 
 ## Pre-prepared files required for analysis
 
