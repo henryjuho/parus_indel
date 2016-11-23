@@ -22,6 +22,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
 
 <div class="columns-3">
 
+
   * qsub_gen.py
   * SAMtools_calling_v2.py
   * CatVariants.py
@@ -33,6 +34,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * run_VQSR.py
   * trancheSTATS.py
 
+
   * annotate_hr_tr.py
   * indel_repeat_stats.py
   * VARfromMAF.py
@@ -43,6 +45,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * annotate_vcf.py
   * catVCFs.py
   * annotate_recomb.py
+
 
   * annotate_recomb_chr.py
   * snpSFS.py
