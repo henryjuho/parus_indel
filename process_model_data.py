@@ -68,6 +68,13 @@ for m in mods.keys():
         deletion_gamma = get_var('d2_gamma_2', data[0], cp)
         insertion_error = get_var('d2_e_1', data[0], cp)
         deletion_error = get_var('d2_e_2', data[0], cp)
+        indel_theta2 = get_var('d3_theta', data[0], cp)
+        indel_kappa2 = get_var('d3_kappa', data[0], cp)
+        insertion_gamma2 = get_var('d3_gamma_1', data[0], cp)
+        deletion_gamma2 = get_var('d3_gamma_2', data[0], cp)
+        insertion_error2 = get_var('d3_e_1', data[0], cp)
+        deletion_error2 = get_var('d3_e_2', data[0], cp)
+
         lnL = get_var('lnL', data[0], cp)
 
         output_string = '\t'.join([m, algorithm,
@@ -75,6 +82,9 @@ for m in mods.keys():
                                    indel_theta, indel_kappa,
                                    insertion_gamma, deletion_gamma,
                                    insertion_error, deletion_error,
+                                   indel_theta2, indel_kappa2,
+                                   insertion_gamma2, deletion_gamma2,
+                                   insertion_error2, deletion_error2,
                                    lnL])
 
         output_lines.append(output_string)
