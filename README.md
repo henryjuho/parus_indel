@@ -14,6 +14,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
   * SAMtools version 1.2
   * BCFtools version 1.3
   * bedtools version 2.23.0
+  * anavar version 1.00
 
 
 ## Python scripts used in this pipeline
