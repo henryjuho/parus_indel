@@ -20,33 +20,17 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
 
 \* Note \* that most scripts make use of the script 'qsub_gen.py' which is designed to submit jobs in the form of shell scripts to the 'Sun Grid Engine', if shell scripts only are required the '-OM' option in the 'qsub_gen.py' command line within the scripts can be changed from 'q' to 'w'. Alternatively some scripts make use of the python qsub wrapper module ```qsub.py``` described here: <https://github.com/henryjuho/python_qsub_wrapper>.
 
-  * qsub_gen.py
-  * SAMtools_calling_v2.py
-  * CatVariants.py
-  * get_consensus_vcf.py
-  * hardfilter_indels.py
-  * depth_filter.py
-  * repeat_filter.py
-  * filter_length_biallelic.py
-  * run_VQSR.py
-  * trancheSTATS.py 
-  * annotate_hr_tr.py
-  * indel_repeat_stats.py
-  * VARfromMAF.py
-  * maf2var.py
-  * concat_seq_files.py
-  * reformat_gff.py
-  * annotate_all_vcf_chr.py
-  * annotate_vcf.py
-  * catVCFs.py
-  * annotate_recomb.py
-  * annotate_recomb_chr.py
-  * snpSFS.py
-  * indelSFS.py
-  * callable_sites_from_vcf.py
-  * summarise_vcf.py
-  * anavar_belt_and_braces_edition.py
-  * process_model_data.py
+|:--------------------------|:---------------------------|:----------------------------|
+| qsub_gen.py               | SAMtools_calling_v2.py     | CatVariants.py              |
+| get_consensus_vcf.py      | hardfilter_indels.py       | depth_filter.py             |
+| repeat_filter.py          | filter_length_biallelic.py | run_VQSR.py                 |
+| trancheSTATS.py           | annotate_hr_tr.py          | indel_repeat_stats.py       |
+| VARfromMAF.py             | maf2var.py                 | concat_seq_files.py         |
+| reformat_gff.py           | annotate_all_vcf_chr.py    | annotate_vcf.py             |
+| catVCFs.py                | annotate_recomb.py         | annotate_recomb_chr.py      |
+| snpSFS.py                 | indelSFS.py                | callable_sites_from_vcf.py  |
+| summarise_vcf.py          | anavar.py                  | process_model_data.py       |
+| anavar_compare_allsfs.py  |                            |                             |
 
 ## Pre-prepared files required for analysis
 
@@ -323,7 +307,7 @@ The statistics were then calculated with the following script:
 A novel extension of the Glémin et al. (2015) model was used to estimate the selection coefficient gamma, the mutational bias kappa, theta and polarisation error for insertions and deletions. More information on the model and test results can be found here: <https://github.com/henryjuho/parus_indel/tree/master/model>. The model takes site frequency spectra for insertions, deletions and neutral snps as input.The model was run on genome wide variants and variants grouped by genomic region. The was implemented in a python wrapper of the 'anavar' program. The wrapper runs the full model on the data as well as a reduced model (reductions specified with ```-lrt``` on the command line), and performs a likelihood ratio test on the results to test the fit of the model and significance of the estimated parameters. An example command line follows:
 
 ```
- ./anavar_belt_and_braces_edition.py -i_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.insertions_sfs.txt -d_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.deletions_sfs.txt -s_sfs SFS_model_data/snp_ww_ss_spectra.folded_N_sfs.txt -n 20 -r intergenic -lrt gamma_ins -out model_estimates/gt_indel_intergenic_gammainstest -evolgen
+ ./anavar.py -i_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.insertions_sfs.txt -d_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.deletions_sfs.txt -s_sfs SFS_model_data/snp_ww_ss_spectra.folded_N_sfs.txt -n 20 -r intergenic -lrt gamma_ins -out model_estimates/gt_indel_intergenic_gammainstest -evolgen
 ```
 
 The following parameter combinations were run:
@@ -350,3 +334,9 @@ The following parameter combinations were run:
 | CDS_non_frameshift| gamma_indel                        |
 | CDS_non_frameshift| gamma_ins                          |
 | CDS_non_frameshift| gamma_del                          |
+
+The model was also run on SNP data and two INDEL datasets from different genomic regions. The model was run both in full, with INDEL kappas equal, with insertion gammas equal and with deletion gammas equal, in order to perform likelihood ratio tests between the full and reduced models to ascertain the if any estimated parameters differ significantly between genomic regions. This was run as follows:
+
+```
+./anavar_compare_allsfs.py -i_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.insertions_sfs.txt -d_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.deletions_sfs.txt -s_sfs SFS_model_data/snp_ww_ss_spectra.folded_N_sfs.txt -n 20 -out model_estimates/inter_sfs_comp/gt_all_comparisons_run1_ -evolgen -node 217
+```
