@@ -21,18 +21,16 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
 \* Note \* that most scripts make use of the script 'qsub_gen.py' which is designed to submit jobs in the form of shell scripts to the 'Sun Grid Engine', if shell scripts only are required the '-OM' option in the 'qsub_gen.py' command line within the scripts can be changed from 'q' to 'w'. Alternatively some scripts make use of the python qsub wrapper module ```qsub.py``` described here: <https://github.com/henryjuho/python_qsub_wrapper>.
 
 
-|                           |                            |                             |
-|:--------------------------|:---------------------------|:----------------------------|
-| qsub_gen.py               | SAMtools_calling_v2.py     | CatVariants.py              |
-| get_consensus_vcf.py      | hardfilter_indels.py       | depth_filter.py             |
-| repeat_filter.py          | filter_length_biallelic.py | run_VQSR.py                 |
-| trancheSTATS.py           | annotate_hr_tr.py          | indel_repeat_stats.py       |
-| VARfromMAF.py             | maf2var.py                 | concat_seq_files.py         |
-| reformat_gff.py           | annotate_all_vcf_chr.py    | annotate_vcf.py             |
-| catVCFs.py                | annotate_recomb.py         | annotate_recomb_chr.py      |
-| snpSFS.py                 | indelSFS.py                | callable_sites_from_vcf.py  |
-| summarise_vcf.py          | anavar.py                  | process_model_data.py       |
-| anavar_compare_allsfs.py  |                            |                             |
+|                            |                            |                             |                             |
+|:---------------------------|:---------------------------|:----------------------------|:----------------------------|
+| qsub_gen.py                | qsub.py                    | SAMtools_calling_v2.py      | CatVariants.py              |
+| get_consensus_vcf.py       | hardfilter_indels.py       | depth_filter.py             | repeat_filter.py            |
+| filter_length_biallelic.py | run_VQSR.py                | trancheSTATS.py             | annotate_hr_tr.py           |
+| indel_repeat_stats.py      | VARfromMAF.py              | maf2var.py                  | concat_seq_files.py         |
+| reformat_gff.py            | annotate_all_vcf_chr.py    | annotate_vcf.py             | catVCFs.py                  |
+| annotate_recomb.py         | annotate_recomb_chr.py     | snpSFS.py                   | indelSFS.py                 | 
+| callable_sites_from_vcf.py | summarise_vcf.py           | anavar.py                   | process_model_data.py       |
+| anavar_compare_allsfs.py   |                            |                             |                             |
 
 ## Pre-prepared files required for analysis
 
