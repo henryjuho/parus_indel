@@ -31,7 +31,7 @@ This document outlines the pipeline used to generate and analyse an INDEL datase
 | reformat_gff.py            | annotate_all_vcf_chr.py    | annotate_vcf.py             | catVCFs.py                  |
 | annotate_recomb.py         | annotate_recomb_chr.py     | snpSFS.py                   | indelSFS.py                 | 
 | callable_sites_from_vcf.py | summarise_vcf.py           | anavar.py                   | process_model_data.py       |
-| anavar_compare_allsfs.py   |                            |                             |                             |
+| anavar_compare_allsfs.py   | chromosomal_sfs.py         | chromosomal_anavar.py       | hen_utils.py                |
 
 ## Pre-prepared files required for analysis
 
@@ -282,6 +282,12 @@ Site frequency data were generated with the script ```indelSFS.py``` (comparativ
 ./indelSFS.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -rbin crude -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/crude_recomb_bin_indels -evolgen -sub -bin CDS_non_frameshift -bin CDS_frameshift -bin intron -bin intergenic
 ```
 
+### SFS by chromosome
+
+```
+./chromosomal_sfs.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -folded N -bin CDS -bin intron -bin intergenic -mode INDEL -sfs_out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/chromosomal_sfs/gt_indel_allregions -evolgen
+```
+
 ### Folded SFS grouped by genomic region
 
 ```
@@ -340,4 +346,10 @@ The model was also run on SNP data and two INDEL datasets from different genomic
 
 ```
 ./anavar_compare_allsfs.py -i_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.insertions_sfs.txt -d_sfs SFS_model_data/gt_indels_all_bins_mergedCDS_nobs.deletions_sfs.txt -s_sfs SFS_model_data/snp_ww_ss_spectra.folded_N_sfs.txt -n 20 -out model_estimates/inter_sfs_comp/gt_all_comparisons_run1_ -evolgen -node 217
+```
+
+Additionally the model was also run on intergenic and intronic INDELs on a per chromosome basis as follows:
+
+```
+./chromosomal_anavar.py -indel_prefix /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/chromosomal_sfs/gt_indel_allregions.chr -snp_prefix /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SFS/chromosomal_sfs/gt_snp_allregions.chr -n 20 -out model_estimates/chromosomal_runs/gt_chromosomal
 ```
