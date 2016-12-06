@@ -180,7 +180,7 @@ for x in ['none', lrt]:
 ml_out = out_prefix + '.maxL.txt'
 with open(ml_out, 'w') as mlo:
     mlo.write('model\talgorithm\tsnp_theta\tsnp_error\tsnp_gamma\t'
-              'indel_theta\tindel_kappa\tinsertion_gamma\tdeletion_gamma\tinsertion_error\tdeletion_error'
+              'indel_theta\tindel_kappa\tinsertion_gamma\tdeletion_gamma\tinsertion_error\tdeletion_error\t'
               'indel_theta2\tindel_kappa2\tinsertion_gamma2\tdeletion_gamma2\tinsertion_error2\tdeletion_error2'
               '\tlnL\tp_value\n')
 
