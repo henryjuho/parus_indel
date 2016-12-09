@@ -174,7 +174,7 @@ for x in ['none', lrt]:
         # submit anavar jobs per algorithm
         anavar_cmd = 'anavar ' + control_file + ' ' + result_file + ' ' + log_file
         q_sub([anavar_cmd], out_prefix + '.' + reduction[0] + '.' + algorithm.lower(),
-              evolgen=args.evolgen, node=node, t=48, jid=jid)
+              evolgen=args.evolgen, node=node, t=120, jid=jid)
 
 # construct merged ml output
 ml_out = out_prefix + '.maxL.txt'
