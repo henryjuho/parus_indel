@@ -48,9 +48,14 @@ for sfs in indel_files:
         file_dict[chromo][var] = sfs
 
 # add snp locations
-for sfs in snp_files:
-    chromo = sfs.split('.')[-3]
-    file_dict[chromo]['snp'] = sfs
+if len(snp_files) == 1:
+    for chromo_key in file_dict.keys():
+        file_dict[chromo_key]['snp'] = snp_files[0]
+
+else:
+    for sfs in snp_files:
+        chromo = sfs.split('.')[-3]
+        file_dict[chromo]['snp'] = sfs
 
 # run anavar jobs per chromo
 for chromosome in file_dict.keys():
