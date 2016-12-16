@@ -32,7 +32,7 @@ parser.add_argument('-out', '--output_prefix',
                     required=True)
 parser.add_argument('-evolgen', '--evolgen', help='If specified will submit to lab queue', action='store_true',
                     default=False)
-parser.add_argument('-node', '--node', help='Will run on specified nodes', default=0, type=int)
+parser.add_argument('-node', '--node', help='Will run on specified nodes', default='0', type=str)
 args = parser.parse_args()
 
 # input checks
