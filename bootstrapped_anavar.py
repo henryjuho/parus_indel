@@ -58,6 +58,7 @@ parser.add_argument('-out', '--output_prefix',
                     help='Output path and file prefix for control, data and results files',
                     required=True)
 parser.add_argument('-n_boot', '--n_boot', help='Number of bootstrap replicates', required=True)
+parser.add_argument('-block_size', '--block_size', help='Size of bootstrap block', default=100, type=int)
 parser.add_argument('-sfs_path', '--sfs_path', help='Directory to hold bootstrapped sfs files', required=True)
 parser.add_argument('-evolgen', '--evolgen', help='If specified will submit to lab queue', action='store_true',
                     default=False)
@@ -92,7 +93,8 @@ if not os.path.isdir(sfs_path):
 if not os.path.isdir(file_location(out_prefix)):
     os.makedirs(file_location(out_prefix))
 evolgen = args.evolgen
-block_size = 100
+block_size = args.block_size
+pos_biallelic_freqs = [i/float(n) for i in range(1, int(n))]
 
 # get sfs in
 sfs_dict = {'snp': {}, 'del': {}, 'ins': {}}
@@ -127,8 +129,17 @@ for replicate in range(1, n_boot+1):
             for regional_sfs in sfs_dict[var_type].keys():
                 resampled_sfs = block_bootstrap(sfs_dict[var_type][regional_sfs])
                 counted_sorted_sfs = sorted(Counter(resampled_sfs).most_common(), key=lambda z: z[0])
+                list_pos = 0
                 for frequency in counted_sorted_sfs:
-                    sfs_out.write('\t'.join([str(frequency[0]), str(frequency[1]), regional_sfs, 'NA']) + '\n')
+                    # account for freqs with 0 variants
+                    if float(frequency[0]) == pos_biallelic_freqs[list_pos]:
+                        sfs_out.write('\t'.join([str(frequency[0]), str(frequency[1]), regional_sfs, 'NA']) + '\n')
+                    else:
+                        sfs_out.write('\t'.join([str(pos_biallelic_freqs[list_pos]), '0', regional_sfs, 'NA']) + '\n')
+                    list_pos += 1
+                if list_pos < len(pos_biallelic_freqs):
+                    for missed_freq in pos_biallelic_freqs[list_pos:]:
+                        sfs_out.write('\t'.join([str(pos_biallelic_freqs[list_pos]), '0', regional_sfs, 'NA']) + '\n')
 
     # write and submit anavar job
     anavar_cmd = ('anavar.py '
