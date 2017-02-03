@@ -98,48 +98,50 @@ pos_biallelic_freqs = [i/float(n) for i in range(1, int(n))]
 
 # get sfs in
 sfs_dict = {'snp': {}, 'del': {}, 'ins': {}}
-snp_sfs_cmd = ('vcf2raw_sfs.py -vcf ' + snp_vcf + ' -region intergenic -mode snp -mute_type SS -mute_type WW')
+snp_sfs_cmd = ('vcf2raw_sfs.py -vcf ' + snp_vcf + ' -region intergenic '
+                                                  '-mode snp -mute_type SS -mute_type WW -auto_only')
 snp_sfs = subprocess.Popen(snp_sfs_cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].split('\n')[:-1]
 sfs_dict['snp']['intergenic_ww_ss'] = chunk_sfs(snp_sfs, block_size)
 
-del_sfs_cmd = ('vcf2raw_sfs.py -vcf ' + indel_vcf + ' -region ' + region + ' -mode del')
+del_sfs_cmd = ('vcf2raw_sfs.py -vcf ' + indel_vcf + ' -region ' + region + ' -mode del -auto_only')
 del_sfs = subprocess.Popen(del_sfs_cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].split('\n')[:-1]
 sfs_dict['del'][region] = chunk_sfs(del_sfs, block_size)
 
-ins_sfs_cmd = ('vcf2raw_sfs.py -vcf ' + indel_vcf + ' -region ' + region + ' -mode ins')
+ins_sfs_cmd = ('vcf2raw_sfs.py -vcf ' + indel_vcf + ' -region ' + region + ' -mode ins -auto_only')
 ins_sfs = subprocess.Popen(ins_sfs_cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].split('\n')[:-1]
 sfs_dict['ins'][region] = chunk_sfs(ins_sfs, block_size)
 
 # second region
 if region2 != 'none':
-    del_sfs_cmd2 = ('vcf2raw_sfs.py -vcf ' + indel_vcf + ' -region ' + region2 + ' -mode del')
+    del_sfs_cmd2 = ('vcf2raw_sfs.py -vcf ' + indel_vcf + ' -region ' + region2 + ' -mode del -auto_only')
     del_sfs2 = subprocess.Popen(del_sfs_cmd2, shell=True, stdout=subprocess.PIPE).communicate()[0].split('\n')[:-1]
     sfs_dict['del'][region2] = chunk_sfs(del_sfs2, block_size)
 
-    ins_sfs_cmd2 = ('vcf2raw_sfs.py -vcf ' + indel_vcf + ' -region ' + region2 + ' -mode ins')
+    ins_sfs_cmd2 = ('vcf2raw_sfs.py -vcf ' + indel_vcf + ' -region ' + region2 + ' -mode ins -auto_only')
     ins_sfs2 = subprocess.Popen(ins_sfs_cmd2, shell=True, stdout=subprocess.PIPE).communicate()[0].split('\n')[:-1]
     sfs_dict['ins'][region2] = chunk_sfs(ins_sfs2, block_size)
 
 # write bootstrapped sfs files Freq\tProportion\tBin\tNorm
-for replicate in range(1, n_boot+1):
+for replicate in range(0, n_boot+1):
     for var_type in sfs_dict.keys():
         sfs_output_file = sfs_path + var_type + '_rep' + str(replicate) + '.sfs.txt'
         with open(sfs_output_file, 'w') as sfs_out:
             sfs_out.write('Freq\tProportion\tBin\tNorm\n')
             for regional_sfs in sfs_dict[var_type].keys():
-                resampled_sfs = block_bootstrap(sfs_dict[var_type][regional_sfs])
+                if replicate == 0:
+                    resampled_sfs = sum(sfs_dict[var_type][regional_sfs], [])
+                else:
+                    resampled_sfs = block_bootstrap(sfs_dict[var_type][regional_sfs])
                 counted_sorted_sfs = sorted(Counter(resampled_sfs).most_common(), key=lambda z: z[0])
-                list_pos = 0
-                for frequency in counted_sorted_sfs:
-                    # account for freqs with 0 variants
-                    if float(frequency[0]) == pos_biallelic_freqs[list_pos]:
-                        sfs_out.write('\t'.join([str(frequency[0]), str(frequency[1]), regional_sfs, 'NA']) + '\n')
-                    else:
-                        sfs_out.write('\t'.join([str(pos_biallelic_freqs[list_pos]), '0', regional_sfs, 'NA']) + '\n')
-                    list_pos += 1
-                if list_pos < len(pos_biallelic_freqs):
-                    for missed_freq in pos_biallelic_freqs[list_pos:]:
-                        sfs_out.write('\t'.join([str(pos_biallelic_freqs[list_pos]), '0', regional_sfs, 'NA']) + '\n')
+                sfs_freq_dict = {x[0]: x[1] for x in counted_sorted_sfs}
+
+                for frequency in pos_biallelic_freqs:
+                    try:
+                        no_indels = sfs_freq_dict[str(frequency)]
+                    except KeyError:
+                        no_indels = 0  # account for freqs with 0 variants
+
+                    sfs_out.write('\t'.join([str(frequency), str(no_indels), regional_sfs, 'NA']) + '\n')
 
     # write and submit anavar job
     anavar_cmd = ('anavar.py '
