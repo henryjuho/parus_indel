@@ -238,6 +238,7 @@ Secondly the output of the above script was used to annotate the ancestral state
 |Total unpolarised| 647336    |
 
 # Annotating the data 
+## Genomic regions
 
 Firstly INDELs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'CDS_frameshift', 'intron' or 'intergenic' as follows:
 
@@ -257,6 +258,8 @@ A summary of this annotation is shown below:
 |Intergenic           | 537246       |
 |Unannotated          | 35344        |
 
+## Recombination regions
+
 Secondly the recombination category of each INDEL was annotated using linkage map data to estimate recombination rates. First, 3rd order polynomials were fitted to plots of physical position versus map length. Second, the derivative of each chromosome's polynomial was used to estimate recombination rate for each INDEL start position. This predicition was implemented in the following python script:
 
 ```
@@ -265,6 +268,37 @@ Secondly the recombination category of each INDEL was annotated using linkage ma
 
 The file specified by ```-poly``` is a list of variables for each chromosome's polynomial.
 
+## LINEs
+
+INDELs in ancestral LINEs were extracted from the post VQSR vcf file, prior to the repeat filtering step as follows:
+
+```
+bedtools intersect -a bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.vcf.gz -b ../repeat_coordinates/LINE_intersect/Zebrafinch.Flycatcher.Greattit.ancLINEs.sorted.bed.gz -header | bgzip -c > bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.LINEintersect.vcf.gz
+```
+
+These INDELs were then polarised with the same pipeline as other INDELs as follows:
+
+```
+./VARfromMAF.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/polymorphic_non_repeat_filtered_vcfs/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.LINEintersect.vcf -maf /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.maf -target_spp Greattit -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/polymorphic_non_repeat_filtered_vcfs/ -no_jobs 100
+polarise_vcf_indels.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/polymorphic_non_repeat_filtered_vcfs/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.LINEintersect.vcf -align_data /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/polymorphic_non_repeat_filtered_vcfs/all_variants.alignment_states.txt -target_spp Greattit
+```
+
+|                 |       |
+|:----------------|:-----:|
+|Total no INDELs  | 19849 |
+|INDELs polarised | 15340 |
+|Hotspots         | 3897  |
+|Low spp coverage | 10    |
+|Ambiguous        | 486   |
+|Not in alignment | 116   |
+|Total unpolarised| 4509  |
+
+These variants were then annotated by genomic region as with the main INDEL dataset, and any coding region INDELs found were removed (5 INDELs).
+
+```
+annotate_all_vcf_chr.py -gff /data/bop15hjb/databases/greattit/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/polymorphic_non_repeat_filtered_vcfs/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.LINEintersect.polarised.vcf -evolgen
+zgrep -v CDS bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.LINEintersect.polarised.annotated.vcf.gz | bgzip -c > bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.LINEintersect.polarised.annotated.noCDS.vcf.gz
+```
 
 # Performing the INDEL analysis
 
