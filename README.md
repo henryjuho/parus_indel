@@ -368,17 +368,17 @@ Site frequency data were generated with the script ```indelSFS.py``` (comparativ
 
 ## pi theta_w and Tajima's D
 
-In order to calculate  pi, theta_w and Tajima's D, first a fasta of callable sites with the bases coded as 0s (Ns), 1s (not callable) or 2s (callable) was generated and indexed as follows:
+In order to calculate  pi, theta_w and Tajima's D, first a fasta of callable sites with the bases coded as 0s (Ns), 1s (not callable), 2s (callable) or 3s (callable LINEs) was generated and indexed as follows:
 
 ```
-./callable_sites_from_vcf.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/bgi_10birds.raw.snps.indels.all_sites.vcf.bgz -chr ALL -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds_callable -evolgen -sub
-samtools faidx bgi_10birds_callable.ALL.fa
+callable_sites_from_vcf.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/bgi_10birds.raw.snps.indels.all_sites.vcf.bgz -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed -LINE_bed /fastdata/bop15hjb/GT_ref/Zebrafinch.Flycatcher.Greattit.ancLINEs.sorted.bed.gz -out /fastdata/bop15hjb/GT_ref/callable_withLINE/bgi_10birds_callable_withLINEs -evolgen -sub
 ```
 
 The statistics were then calculated with the following script:
 
 ```
 ./summarise_vcf.py -vcf ../debug_data/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.recomb.vcf -call_fa ../debug_data/bgi_10birds_callable.ALL.fa -mode INDEL > ../../indel_pi_theta_tajd/gt_indel_sum_stats.txt
+summarise_vcf.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/polymorphic_non_repeat_filtered_vcfs/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.LINEintersect.polarised.annotated.noCDS.vcf.gz -call_fa /fastdata/bop15hjb/GT_ref/bgi_10birds_callable_withLINEs.ALL.fa -call_code 3 -mode INDEL -skipZ -genome_wide -bootstrap 10000 -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/LINEs_summary_stats_bs10000.txt -sub -evolgen
 ```
 
 ## Estimating selection and mutation coefficients with a novel maximum likelihood approach
