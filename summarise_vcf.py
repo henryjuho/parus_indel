@@ -13,13 +13,17 @@ import numpy
 # arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-vcf', help='Vcf file to get summary stats for', required=True)
-parser.add_argument('-call_fa', help='Fasta file of callable sites, coded as 0=N, 1=notcalled and 2=called',
+parser.add_argument('-call_fa', help='Fasta file of callable sites, coded as 0=N, 1=notcalled, 2=called and 3=LINE',
                     required=True)
+parser.add_argument('-call_code', help='callable code to use ie 2 for called or 3 for LINE', default='2')
 parser.add_argument('-mode', help='Variant mode, either SNP, SNP_comp or INDEL', required=True,
                     choices=['SNP', 'SNP_comp', 'INDEL'])
 parser.add_argument('-by_region', help='Specify location of gff databases for use with gffutils', default='NONE')
-parser.add_argument('-bootstrap', help='If specified will perform the requested number opf rounds of bootstrapping',
+parser.add_argument('-genome_wide', help='If specified will only output genome wide stats', action='store_true',
+                    default=False)
+parser.add_argument('-bootstrap', help='If specified will perform the requested number of rounds of bootstrapping',
                     default=0)
+parser.add_argument('-skipZ', help='If specified will skip Z chromosome', default=False, action='store_true')
 parser.add_argument('-md', help='If specified will output in markdown table format', default=False, action='store_true')
 parser.add_argument('-out', help='Output directory and file name, only required in conjunction with sub', default='')
 parser.add_argument('-sub', help='If specified will submit script to cluster', action='store_true', default=False)
@@ -34,7 +38,10 @@ mode = args.mode
 markdown = args.md
 database_path = args.by_region
 bootstrap = int(args.bootstrap)
+genome_wide = args.genome_wide
+skipZ = args.skipZ
 chromo_list = []
+call_code = args.call_code
 
 if mode == 'SNP_comp' and database_path == 'NONE':
     sys.exit('-mode SNP_comp can only be run in conjunction with -by_region')
@@ -45,7 +52,7 @@ if len(args.out) == 0 and args.sub is True:
 # submission loop
 if args.sub is True:
     command_line = [' '.join([x for x in sys.argv if x != '-sub' and x != '-evolgen']) + ' > ' + args.out]
-    q_sub(command_line, args.out.rstrip('.txt'), evolgen=args.evolgen)
+    q_sub(command_line, args.out.rstrip('.txt'), evolgen=args.evolgen, t=48)
     sys.exit()
 
 # preset dictionaries
@@ -95,92 +102,96 @@ allele_freqs = {}
 for line in pysam.VariantFile(vcf_file).fetch():
     chromo = line.contig
 
-    alt_allele_freq = round(line.info['AF'][0], 2)
-    ref_seq = line.ref
-    alt_seq = line.alts[0]
-
-    # if INDEL mode works out if polarised and if so if del or ins
-    if mode == 'INDEL':
-        variant_type = 'Unpolarised'
-        try:
-            ancestral_sequence = line.info['AA']
-        except KeyError:
-            ancestral_sequence = ''
-    
-        # determine type
-        if len(alt_seq) == len(ancestral_sequence):
-            if len(alt_seq) > len(ref_seq):
-                variant_type = 'Del'
-            elif len(alt_seq) < len(ref_seq):
-                variant_type = 'Ins'
-        elif len(ref_seq) == len(ancestral_sequence):
-            if len(alt_seq) < len(ref_seq):
-                variant_type = 'Del'
-            elif len(alt_seq) > len(ref_seq):
-                variant_type = 'Ins'
-
-    # skips above for SNP mode
+    # overcomes lack of z chromosome in zebrafinch data
+    if skipZ is True and chromo == 'chrZ':
+        continue
     else:
-        variant_type = 'SNP'
+        alt_allele_freq = round(line.info['AF'][0], 2)
+        ref_seq = line.ref
+        alt_seq = line.alts[0]
 
-    # determine region variant falls in
-    if regions[0] != 'NONE':
-        try:
-            var_region = line.info['ANNO']
-            if var_region.startswith('CDS'):
-                var_region = 'CDS'
-            if mode == 'SNP_comp':
-                # catch S<->S and W<->W
-                if var_region == 'intergenic':
-                    if re.search(r'[CG]', alt_seq) and re.search(r'[CG]', ref_seq):
-                        var_region = 'intergenic_ww_ss'
-                    elif re.search(r'[AT]', alt_seq) and re.search(r'[AT]', ref_seq):
-                        var_region = 'intergenic_ww_ss'
-                    else:
-                        continue
+        # if INDEL mode works out if polarised and if so if del or ins
+        if mode == 'INDEL':
+            variant_type = 'Unpolarised'
+            try:
+                ancestral_sequence = line.info['AA']
+            except KeyError:
+                ancestral_sequence = ''
 
-                # catch zerofold
-                elif var_region == 'CDS':
-                    try:
-                        degen = line.info['DEGEN']
-                        if degen == 0:
-                            var_region = 'CDS_zerofold'
+            # determine type
+            if len(alt_seq) == len(ancestral_sequence):
+                if len(alt_seq) > len(ref_seq):
+                    variant_type = 'Del'
+                elif len(alt_seq) < len(ref_seq):
+                    variant_type = 'Ins'
+            elif len(ref_seq) == len(ancestral_sequence):
+                if len(alt_seq) < len(ref_seq):
+                    variant_type = 'Del'
+                elif len(alt_seq) > len(ref_seq):
+                    variant_type = 'Ins'
+
+        # skips above for SNP mode
+        else:
+            variant_type = 'SNP'
+
+        # determine region variant falls in
+        if regions[0] != 'NONE':
+            try:
+                var_region = line.info['ANNO']
+                if var_region.startswith('CDS'):
+                    var_region = 'CDS'
+                if mode == 'SNP_comp':
+                    # catch S<->S and W<->W
+                    if var_region == 'intergenic':
+                        if re.search(r'[CG]', alt_seq) and re.search(r'[CG]', ref_seq):
+                            var_region = 'intergenic_ww_ss'
+                        elif re.search(r'[AT]', alt_seq) and re.search(r'[AT]', ref_seq):
+                            var_region = 'intergenic_ww_ss'
                         else:
                             continue
-                    except KeyError:
+
+                    # catch zerofold
+                    elif var_region == 'CDS':
+                        try:
+                            degen = line.info['DEGEN']
+                            if degen == 0:
+                                var_region = 'CDS_zerofold'
+                            else:
+                                continue
+                        except KeyError:
+                            continue
+
+                    # skip all others
+                    else:
                         continue
+            except KeyError:
+                continue
+        else:
+            var_region = 'NO_BINNING'
 
-                # skip all others
+        # record allele freqs
+        if chromo in allele_freqs.keys():
+            if var_region in allele_freqs[chromo].keys():
+                if variant_type in allele_freqs[chromo][var_region].keys():
+                    allele_freqs[chromo][var_region][variant_type].append(alt_allele_freq)
                 else:
-                    continue
-        except KeyError:
-            continue
-    else:
-        var_region = 'NO_BINNING'
-
-    # record allele freqs
-    if chromo in allele_freqs.keys():
-        if var_region in allele_freqs[chromo].keys():
-            if variant_type in allele_freqs[chromo][var_region].keys():
-                allele_freqs[chromo][var_region][variant_type].append(alt_allele_freq)
+                    allele_freqs[chromo][var_region][variant_type] = [alt_allele_freq]
             else:
-                allele_freqs[chromo][var_region][variant_type] = [alt_allele_freq]
+                allele_freqs[chromo][var_region] = {variant_type: [alt_allele_freq]}
         else:
-            allele_freqs[chromo][var_region] = {variant_type: [alt_allele_freq]}
-    else:
-        allele_freqs[chromo] = {var_region: {variant_type: [alt_allele_freq]}}
+            allele_freqs[chromo] = {var_region: {variant_type: [alt_allele_freq]}}
 
-    # record genome wide allele freqs
-    if 'genome' in allele_freqs.keys():
-        if var_region in allele_freqs['genome'].keys():
-            if variant_type in allele_freqs['genome'][var_region].keys():
-                allele_freqs['genome'][var_region][variant_type].append(alt_allele_freq)
+        # record genome wide allele freqs
+        if 'genome' in allele_freqs.keys():
+            if var_region in allele_freqs['genome'].keys():
+                if variant_type in allele_freqs['genome'][var_region].keys():
+                    allele_freqs['genome'][var_region][variant_type].append(alt_allele_freq)
+                else:
+                    allele_freqs['genome'][var_region][variant_type] = [alt_allele_freq]
             else:
-                allele_freqs['genome'][var_region][variant_type] = [alt_allele_freq]
+                allele_freqs['genome'][var_region] = {variant_type: [alt_allele_freq]}
         else:
-            allele_freqs['genome'][var_region] = {variant_type: [alt_allele_freq]}
-    else:
-        allele_freqs['genome'] = {var_region: {variant_type: [alt_allele_freq]}}
+            allele_freqs['genome'] = {var_region: {variant_type: [alt_allele_freq]}}
 
 # set variables
 tw_genome, pi_val_genome, tajD_genome = 0, 0, 0
@@ -227,10 +238,10 @@ for chromosome in allele_freqs.keys():
 
             callable_seq = call_fasta.fetch(chromosome)
             if region == 'NO_BINNING':
-                callable_sites = callable_seq.count('2')
+                callable_sites = callable_seq.count(call_code)
 
             else:
-                callable_sites = sum([callable_seq[s[0]-1: s[1]].count('2')
+                callable_sites = sum([callable_seq[s[0]-1: s[1]].count(call_code)
                                       for s in chr_coord_dict[region.split('_')[0]]])
 
             genome_wide_callable_sites[region][0] += callable_sites
@@ -244,6 +255,10 @@ for chromosome in allele_freqs.keys():
                 type_list = ['SNP']
 
             genome_wide_callable_sites[region][1] += unpoled
+
+            # if -genome_wide specified skips stats for per chromosome
+            if genome_wide is True:
+                continue
 
             # calculates statistics and prints to standard out
             for variant in type_list:
