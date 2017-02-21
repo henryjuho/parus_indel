@@ -4,11 +4,13 @@ import argparse
 from qsub import *
 import sys
 from pysam import VariantFile
+import gzip
 
 # arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-vcf', help='Allsites vcf to apply filters to and get callable sites', required=True)
 parser.add_argument('-bed', '--bed_repeats', help='BED file with repeat regions listed', required=True)
+parser.add_argument('-LINE_bed', '--LINE_bed', help='BED file of LINEs', default='None')
 parser.add_argument('-DF', '--DepthFilter',
                     help='Defines abnormal depth eg) 2 means abnormal depth is twice and half the mean depth',
                     default=2.0, type=float)
@@ -24,6 +26,7 @@ args = parser.parse_args()
 # variables
 all_sites = args.vcf
 repeat_bed = args.bed_repeats
+line_bed = args.LINE_bed
 filter_factor = args.DepthFilter
 all_data_mean_depth = float(args.mean_depth)
 no_indiv = args.no_individuals
@@ -50,6 +53,7 @@ if args.sub is True:
             command_line = ('./callable_sites_from_vcf.py '
                             '-vcf ' + all_sites + ' '
                             '-bed ' + repeat_bed + ' '
+                            '-LINE_bed ' + line_bed + ' '
                             '-DF ' + str(filter_factor) + ' '
                             '-mean_depth ' + str(all_data_mean_depth) + ' '
                             '-N ' + str(no_indiv) + ' '
@@ -67,6 +71,7 @@ if args.sub is True:
         command_line = ('./callable_sites_from_vcf.py '
                         '-vcf ' + all_sites + ' '
                         '-bed ' + repeat_bed + ' '
+                        '-LINE_bed ' + line_bed + ' '
                         '-DF ' + str(filter_factor) + ' '
                         '-mean_depth ' + str(all_data_mean_depth) + ' '
                         '-N ' + str(no_indiv) + ' '
@@ -88,6 +93,13 @@ repeats = set()
 for x in open(repeat_bed):
     if x.split()[0] == chromosome:
         repeats |= {y for y in range(int(x.split()[1]), int(x.split()[2]))}
+
+lines = set()
+# get bed regions per chromo
+if line_bed != 'None':
+    for x in gzip.open(line_bed):
+        if x.split()[0] == chromosome:
+            lines |= {y for y in range(int(x.split()[1]), int(x.split()[2]))}
 
 # loop through allsites for chromosome
 counter = 0
@@ -123,7 +135,10 @@ with open(fasta_out, 'w') as out_fa:
                 continue
 
             else:
-                fasta_string += '1'
+                if line.pos in lines:
+                    fasta_string += '3'
+                else:
+                    fasta_string += '1'
                 continue
 
         else:
