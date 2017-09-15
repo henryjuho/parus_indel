@@ -155,7 +155,7 @@ def main():
     repeat_bed = args.bed_repeats
     line_bed = args.ar_bed
     start = args.start
-    stop = args.stop
+    stop = args.end
     filter_factor = args.DepthFilter
     all_data_mean_depth = float(args.mean_depth)
     no_indiv = args.no_individuals
