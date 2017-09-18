@@ -81,7 +81,7 @@ def main():
                                    end_pos=part[2],
                                    wga=pol,
                                    out=fa_out)
-            q_sub([cmd_line], out=out_pre, t=90, evolgen=True, jid=jid)
+            q_sub([cmd_line], out=out_pre, t=48, rmem=10, mem=10, evolgen=True, jid=jid)
 
     file_list.close()
 
