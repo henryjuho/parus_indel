@@ -22,7 +22,7 @@ def main():
         for line in open(file_name.rstrip()):
             if line.startswith('>'):
                 prev_chromo = chromo
-                chromo = line.split(':')[0].replace('.', '')
+                chromo = line.split(':')[0].replace('>', '')
                 if prev_chromo == chromo or prev_chromo == '':
                     continue
                 else:
