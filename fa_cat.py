@@ -19,7 +19,7 @@ def main():
     prev_chromo = ''
 
     for file_name in sys.stdin:
-        for line in open(file_name):
+        for line in open(file_name.rstrip()):
             if line.startswith('>'):
                 prev_chromo = chromo
                 chromo = line.split(':')[0].replace('.', '')
