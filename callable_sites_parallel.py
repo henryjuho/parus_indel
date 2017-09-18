@@ -58,7 +58,7 @@ def main():
 
         for part in chunks:
 
-            jid = '{}_part{}'.format(chromo, part[0])
+            jid = '{}_part{}.sh'.format(chromo, part[0])
             jids.append(jid)
 
             fa_out = '{}_{}_part{}.fa'.format(out_pre, chromo, part[0])
@@ -81,12 +81,12 @@ def main():
                                    end_pos=part[2],
                                    wga=pol,
                                    out=fa_out)
-            q_sub([cmd_line], out=out_pre, t=48, evolgen=True, jid=jid)
+            q_sub([cmd_line], out=out_pre, t=90, evolgen=True, jid=jid)
 
     file_list.close()
 
     # concat job
-    cat_cmd = 'cat {} | ~/parus_indel/fa_cat.py > {}.fa'.format(file_list, out_pre)
+    cat_cmd = 'cat {} | ~/parus_indel/fa_cat.py > {}.fa'.format(out_pre + '_falist.txt', out_pre)
     q_sub([cat_cmd], out=out_pre + '_cat', hold=jids, evolgen=True)
 
 if __name__ == '__main__':
