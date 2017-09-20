@@ -190,8 +190,8 @@ def main():
     # move through vcf
     print(fasta_string)
     fasta_string = ''
-    prev_position = 0
-    for line in VariantFile(all_sites).fetch(chromosome, start+1, stop):
+    prev_position = start
+    for line in VariantFile(all_sites).fetch(chromosome, start, stop):
 
         # catch missing sites in allsites (new gatk3.7 feature)
         position = int(line.pos)
