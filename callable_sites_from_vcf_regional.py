@@ -193,8 +193,12 @@ def main():
     prev_position = start
     for line in VariantFile(all_sites).fetch(chromosome, start, stop):
 
-        # catch missing sites in allsites (new gatk3.7 feature)
+        # catch indels that overlap start and trim
         position = int(line.pos)
+        if position < start + 1:
+            continue
+
+        # catch missing sites in allsites (new gatk3.7 feature)
         diff = position - prev_position
         if diff != 1:
             missed_bases = ''.join(['1' for i in range(0, diff-1)])
