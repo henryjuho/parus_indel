@@ -3,24 +3,15 @@
 from __future__ import print_function
 import argparse
 import pysam
-import itertools
-
-
-def ranges(i):
-    for a, b in itertools.groupby(enumerate(i), lambda (x, y): y - x):
-        b = list(b)
-        yield b[0][1], b[-1][1]
 
 
 def bed_regions(bed_file, chromo):
     open_bed = pysam.TabixFile(bed_file)
-    coords = []
     for line in open_bed.fetch(chromo, parser=pysam.asTuple()):
         start = int(line[1])
         end = int(line[2])
-        coords += range(start, end)
 
-    return coords
+        yield start, end
 
 
 def main():
@@ -56,14 +47,16 @@ def main():
             # handle optional bed files
             else:
                 degen_bed = bed_files[region]
+                callable_sites_all = 0
+                callable_sites_pol = 0
                 try:
-                    degen_coords = bed_regions(degen_bed, chromo)
+                    for coord_range in bed_regions(degen_bed, chromo):
+                        fasta_seq = fasta_string[coord_range[0]:coord_range[1]]
+                        callable_sites_all += fasta_seq.upper().count('K')
+                        callable_sites_pol += fasta_seq.count('K')
 
-                    callable_sites_all = ''.join([fasta_string[x] for x in degen_coords]).upper().count('K')
-                    callable_sites_pol = ''.join([fasta_string[x] for x in degen_coords]).count('K')
                 except ValueError:
-                    callable_sites_all = 0
-                    callable_sites_pol = 0
+                    pass
 
             call_data[chromo][region]['ALL'] += callable_sites_all
             call_data[chromo][region]['POL'] += callable_sites_pol
