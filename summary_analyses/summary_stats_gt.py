@@ -195,9 +195,9 @@ def main():
 
                 # bootstrapping
 
-                if bootstrap == 0 or mute_sfs[2] == 0.0:
+                if bootstrap == 0 or mute_sfs[2] == 0.0 or tw == 0.0:
 
-                    # set cis for output if no bootsrapping
+                    # set cis for output if no bootstrapping
                     ci_tw = [0, 0]
                     ci_pi = [0, 0]
                     ci_tajd = [0, 0]
