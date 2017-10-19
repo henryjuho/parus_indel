@@ -13,6 +13,6 @@ for line in sys.stdin:
     elif 'ANNO=intergenic' in line:
         print(line.replace('ANNO=intergenic', 'ANNO=intergenic_ar'))
     elif 'ANNO=intron' in line:
-        print(line.replace('ANNO=intron_ar', 'ANNO=intron_ar'))
+        print(line.replace('ANNO=intron', 'ANNO=intron_ar'))
     else:
         print(line)
