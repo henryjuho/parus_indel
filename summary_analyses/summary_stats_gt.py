@@ -80,6 +80,7 @@ def main():
                         default=False, action='store_true')
     parser.add_argument('-md', help='If specified will output in markdown table format', default=False,
                         action='store_true')
+    parser.add_argument('-freq_filter_off', help='Adds multiallelic flag', default=False, action='store_true')
     parser.add_argument('-sub', help='If specified will submit script to cluster', action='store_true', default=False)
     parser.add_argument('-evolgen', help='If specified will submit to lab queue', default=False, action='store_true')
     parser.add_argument('-out', help='Output file if submitted')
@@ -104,6 +105,10 @@ def main():
     markdown = args.md
     bootstrap = int(args.bootstrap)
     no_sex = args.no_sex
+    if args.freq_filter_off:
+        freq_flag = ' -multi_allelic'
+    else:
+        freq_flag = ''
     if no_sex:
         sex_flag = '-auto_only'
     else:
@@ -165,19 +170,19 @@ def main():
                 pol_callable = callable_sites[chromo][region.split('_')[0]]['pol']
 
             if mode == 'SNP':
-                snp_sfs = popen_grab('~/sfs_utils/vcf2raw_sfs.py -vcf {} -chr {}{} -mode snp -folded {}'
-                                     .format(vcf_file, chromo, region_flag, sex_flag))
+                snp_sfs = popen_grab('~/sfs_utils/vcf2raw_sfs.py -vcf {}{} -chr {}{} -mode snp -folded {}'
+                                     .format(vcf_file, freq_flag, chromo, region_flag, sex_flag))
 
                 sfs_list = [([float(x) for x in snp_sfs], 'snp', all_callable)]
 
             else:
-                del_sfs = popen_grab('~/sfs_utils/vcf2raw_sfs.py -vcf {} -chr {}{} -mode del {}'
-                                     .format(vcf_file, chromo, region_flag, sex_flag))
-                ins_sfs = popen_grab('~/sfs_utils/vcf2raw_sfs.py  -vcf {} -chr {}{} -mode ins {}'
-                                     .format(vcf_file, chromo, region_flag, sex_flag))
-                indel_sfs = popen_grab('~/sfs_utils/vcf2raw_sfs.py  -vcf {} -chr {}{} -mode indel '
+                del_sfs = popen_grab('~/sfs_utils/vcf2raw_sfs.py -vcf {}{} -chr {}{} -mode del {}'
+                                     .format(vcf_file, freq_flag, chromo, region_flag, sex_flag))
+                ins_sfs = popen_grab('~/sfs_utils/vcf2raw_sfs.py  -vcf {}{} -chr {}{} -mode ins {}'
+                                     .format(vcf_file, freq_flag, chromo, region_flag, sex_flag))
+                indel_sfs = popen_grab('~/sfs_utils/vcf2raw_sfs.py  -vcf {}{} -chr {}{} -mode indel '
                                        '-folded {}'
-                                       .format(vcf_file, chromo, region_flag, sex_flag))
+                                       .format(vcf_file, freq_flag, chromo, region_flag, sex_flag))
 
                 sfs_list = [([float(x) for x in del_sfs], 'del', pol_callable),
                             ([float(x) for x in ins_sfs], 'ins', pol_callable),
