@@ -113,7 +113,7 @@ def main():
         sex_flag = '-auto_only'
     else:
         sex_flag = ''
-    n = int(popen_grab('zgrep ^#CHROM {} | wc -w'.format(vcf_file))[0]) - 9  # 9 columns before sample IDs in VCF
+    n = (int(popen_grab('zgrep ^#CHROM {} | wc -w'.format(vcf_file))[0]) - 9) * 2  # 9 columns before sample IDs in VCF
 
     if args.per_chromo:
         chromo_list = popen_grab('zgrep -v ^# {} | cut -f 1 | uniq'.format(vcf_file))
