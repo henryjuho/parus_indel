@@ -46,10 +46,10 @@ $ ~/parus_indel/summary_analyses/callable_sites_summary_nogff.py -call_fa /fastd
 The statistics were then calculated with the following script:
 
 ```
-$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode INDEL -no_sex -sub -evolgen -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.indels.summary_stats.txt
-$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode INDEL -no_sex -bootstrap 10000 -sub -evolgen -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.indels.summary_stats.bs10000.txt
-$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode SNP -no_sex -sub -evolgen -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.snps.summary_stats.txt
-$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.degen.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode SNP -no_sex -bootstrap 10000 -sub -evolgen -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.snps.summary_stats.bs10000.txt
+$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode INDEL -no_sex -sub -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.indels.summary_stats.txt
+$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode INDEL -no_sex -bootstrap 10000 -sub -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.indels.summary_stats.bs10000.txt
+$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode SNP -no_sex -sub -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.snps.summary_stats.txt
+$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.degen.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode SNP -no_sex -bootstrap 10000 -sub -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.snps.summary_stats.bs10000.txt
 ```
 
 And plotted:
@@ -59,4 +59,4 @@ $ cd ~/parus_indel/summary_analyses/
 $ Rscript summary_stats.R
 ```
 
-![stats_plot](gt_summary_stats.pdf)
+![stats_plot](gt_summary_stats.png)
