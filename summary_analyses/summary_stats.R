@@ -60,3 +60,9 @@ pdf(file='gt_summary_stats.pdf', width=9, height=3)
 grid.arrange(tajd, tw, pi, nrow=1)
 
 dev.off()
+
+png(file='gt_summary_stats.png', width=9, height=3, units='in', res=360)
+
+grid.arrange(tajd, tw, pi, nrow=1)
+
+dev.off()
