@@ -70,20 +70,22 @@ def sfs2counts(freq_list, n):
     return counts
 
 
-def prepare_indel_sfs(vcf, call, n):
+def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
 
     """
     gets sfs from vcf and prepares as anavar input
     :param vcf: str
     :param call: dict
     :param n: int
+    :param sel_sfs_regions: list
+    :param call_sel_reg: str
     :return: dict
     """
 
     # extract site frequencies
     del_sfs = vcf2sfs(vcf_name=vcf, mode='del',
                       auto_only=True,
-                      regions=['CDS_frameshift', 'CDS_non_frameshift'])
+                      regions=sel_sfs_regions)
 
     n_d_sfs = vcf2sfs(vcf_name=vcf, mode='del',
                       auto_only=True,
@@ -91,7 +93,7 @@ def prepare_indel_sfs(vcf, call, n):
 
     ins_sfs = vcf2sfs(vcf_name=vcf, mode='ins',
                       auto_only=True,
-                      regions=['CDS_frameshift', 'CDS_non_frameshift'])
+                      regions=sel_sfs_regions)
 
     n_i_sfs = vcf2sfs(vcf_name=vcf, mode='ins',
                       auto_only=True,
@@ -104,8 +106,8 @@ def prepare_indel_sfs(vcf, call, n):
     sfs_nd = sfs2counts(n_d_sfs, n)
 
     # get callable sites
-    sel_m = call['ALL']['CDS']['pol']
-    neu_m = call['ALL']['AR']['pol'] + call['ALL']['AR']['pol']
+    sel_m = call['ALL'][call_sel_reg]['pol']
+    neu_m = call['ALL']['AR']['pol']
 
     # construct control file sfs
     sfs_m = {'selected_INS': (sfs_i, sel_m), 'selected_DEL': (sfs_d, sel_m),
@@ -114,20 +116,22 @@ def prepare_indel_sfs(vcf, call, n):
     return sfs_m
 
 
-def prepare_snp_sfs(vcf, call, n):
+def prepare_snp_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
 
     """
     gets sfs from vcf and prepares as anavar input
     :param vcf: str
     :param call: dict
     :param n: int
+    :param sel_sfs_regions: list
+    :param call_sel_reg: str
     :return: dict
     """
 
     # extract site frequencies
     sel_sfs = vcf2sfs(vcf_name=vcf, mode='snp',
                       auto_only=True,
-                      regions=['CDS_frameshift', 'CDS_non_frameshift'])
+                      regions=sel_sfs_regions)
 
     neu_sfs = vcf2sfs(vcf_name=vcf, mode='snp',
                       auto_only=True,
@@ -138,7 +142,7 @@ def prepare_snp_sfs(vcf, call, n):
     sfs_neu = sfs2counts(neu_sfs, n)
 
     # get callable sites
-    sel_m = call['ALL']['CDS']['pol']
+    sel_m = call['ALL'][call_sel_reg]['pol']
     neu_m = call['ALL']['fourfold']['pol']
 
     # construct control file sfs
@@ -147,13 +151,14 @@ def prepare_snp_sfs(vcf, call, n):
     return sfs_m
 
 
-def sel_v_neu_anavar(mode, vcf, call, constraint, n, c, dfe, out_stem, search, degree, spread, evolgen):
+def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, out_stem, search, degree, spread, evolgen):
 
     """
     submits anavar jobs to cluster after writing required files etc
     :param mode: str
     :param vcf: str
     :param call: dict
+    :param sel_region: str
     :param constraint: str
     :param n: int
     :param c: int
@@ -173,13 +178,23 @@ def sel_v_neu_anavar(mode, vcf, call, constraint, n, c, dfe, out_stem, search, d
     # sort file names
     ctl_name = out_stem + '.control.txt'
 
+    # region combinations
+    region_combs = {'CDS': ['CDS_frameshift', 'CDS_non_frameshift'],
+                    'intron': ['intron'],
+                    'intergenic': ['intergenic'],
+                    'non-coding': ['intergenic', 'intron']}
+
     # make control file
     if mode == 'snp':
-        sfs_data = prepare_snp_sfs(vcf, call, n)
+        sfs_data = prepare_snp_sfs(vcf, call, n,
+                                   sel_sfs_regions=region_combs[sel_region],
+                                   call_sel_reg=sel_region)
         ctl = an.SNPNeuSelControlFile()
 
     else:
-        sfs_data = prepare_indel_sfs(vcf, call, n)
+        sfs_data = prepare_indel_sfs(vcf, call, n,
+                                     sel_sfs_regions=region_combs[sel_region],
+                                     call_sel_reg=sel_region)
         ctl = an.IndelNeuSelControlFile()
 
     ctl.set_alg_opts(search=search, alg='NLOPT_LD_SLSQP', key=3,
@@ -228,6 +243,9 @@ def main():
     parser.add_argument('-call_csv', help='Callable sites summary file', required=True)
     parser.add_argument('-vcf', help='VCF file to extract site frequencies from', required=True)
     parser.add_argument('-n', help='Sample size', required=True)
+    parser.add_argument('-sel_type', help='Subset of variants to have as sel sfs',
+                        choices=['CDS', 'intron', 'intergenic', 'non-coding'],
+                        default='CDS')
     parser.add_argument('-c', help='Number of classes to run model with', required=True, type=int)
     parser.add_argument('-dfe', help='type of dfe to fit, discrete or continuous', default='discrete',
                         choices=['discrete', 'continuous'])
@@ -248,6 +266,7 @@ def main():
     # construct process
     sel_v_neu_anavar(mode=args.mode,
                      vcf=args.vcf, call=call_site_dict,
+                     sel_region=args.sel_type,
                      constraint=args.constraint,
                      n=args.n, c=args.c, dfe=args.dfe,
                      out_stem=out_pre,
