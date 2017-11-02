@@ -28,7 +28,13 @@ faCount < /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa | grep -v ^# | cu
 bedtools makewindows -g gt_genome.txt -w 2000000 | ~/biased_gene_conversion/create_windows/add_window_id.py | bgzip -c > gt_windows.2Mb.bed.gz
 tabix -p bed gt_windows.2Mb.bed.gz
 
+zgrep ^# /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz > gt_indels_non_coding.vcf
+zgrep -v ^# /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz | grep ANNO=int >> gt_indels_non_coding.vcf
+
+bgzip gt_indels_non_coding.vcf
+tabix -p vcf gt_indels_non_coding.vcf.gz
+
 python ~/biased_gene_conversion/create_windows/calc_window_rec_rates.py --infile ~/biased_gene_conversion/create_windows/rec_rate_files/gt_genetic_physical_pos.txt \
 	--genome gt_genome.txt --bed gt_windows.2Mb.bed.gz \
-	--vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz \
+	--vcf /gt_indels_non_coding.vcf.gz \
 > gt_2Mb_window_rec_rates.txt
