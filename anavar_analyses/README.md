@@ -26,13 +26,14 @@ After identifying the best fitting model as ```best model``` we fit this model t
 
 ## Recombination window analysis
 
-2Mb window coordinates were generated and mean recombination rates were calculated per window using scripts from the biased gene conversion project. 
+2Mb window coordinates were generated and mean recombination rates were calculated per window using scripts from the biased gene conversion project. Windows without recombination rate estimates and with less than 500 polarisable INDELs were excluded.
 
 ```
 # sharc
 $ qsub prepare_windows.sh
 
 # local
+$ cd ~/parus_indel/anavar_analyses
 $ python consolidate_window_info.py > all_2Mb_windows.txt
 $ python filter_windows.py
 ```
