@@ -36,5 +36,5 @@ tabix -p vcf gt_indels_non_coding.vcf.gz
 
 python ~/biased_gene_conversion/create_windows/calc_window_rec_rates.py --infile ~/biased_gene_conversion/create_windows/rec_rate_files/gt_genetic_physical_pos.txt \
 	--genome gt_genome.txt --bed gt_windows.2Mb.bed.gz \
-	--vcf /gt_indels_non_coding.vcf.gz \
+	--vcf gt_indels_non_coding.vcf.gz \
 > gt_2Mb_window_rec_rates.txt
