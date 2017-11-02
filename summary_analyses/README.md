@@ -72,4 +72,10 @@ $ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bir
 $ Rscript collate_indel_divergence.R 
 ```
 
-![div_plot](indel_divergence.png)
+Alpha was calculated (see Equation 1 Eyre-walker 2006) for INDELs:
+
+```
+$ Rscript alpha.R 
+```
+
+This yields an alpha estimate of **0.1524897**
