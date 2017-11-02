@@ -60,3 +60,16 @@ $ Rscript summary_stats.R
 ```
 
 ![stats_plot](gt_summary_stats.png)
+
+## INDEL divergence and alpha
+
+Simple INDEL divergence estimates were obtained from the whole genome alignment for coding and non-coding regions and plotted as follows.
+
+```
+$ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -bed /fastdata/bop15hjb/GT_ref/gt_cds.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_cds_indel_divergence.txt
+$ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -bed /fastdata/bop15hjb/GT_ref/gt_noncoding.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_noncoding_indel_divergence.txt
+
+$ Rscript collate_indel_divergence.R 
+```
+
+![div_plot](indel_divergence.png)
