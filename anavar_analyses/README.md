@@ -20,6 +20,14 @@ $ ~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/
 $ ~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -c 1 -dfe continuous -degree 500 -n_search 25 -split 200 -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_ar/gt_cds_ar_ref_continuous_equal_t -constraint equal_mutation_rate
 ```
 
+The results were gathered:
+
+```
+$ ls ~/sharc_fastdata/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_ar/*merged* | ./process_anavar_results.py > gt_cds_v_ar_anavar_results_indels.aic.csv
+```
+
+And can be found [here](gt_cds_v_ar_anavar_results_indels.aic.csv).
+
 ## Regional anavar with neutral reference
 
 After identifying the best fitting model as ```best model``` we fit this model to different genomic regions, including intergenic, intronic and CDS.
