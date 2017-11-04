@@ -72,6 +72,9 @@ def main():
     # everything else per window
     for window in open(args.windows):
 
+        if 'start' in window:
+            continue
+
         window_info = window.split()
         coords = window_info[0:3]
         window_id = window_info[3]
