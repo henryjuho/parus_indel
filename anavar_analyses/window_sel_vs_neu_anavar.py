@@ -90,7 +90,7 @@ def main():
         del_counts = sfs2counts(del_sfs, 20)
 
         # get sel call sites
-        call_sites = window_call_sites(call_fasta, nc_bed, coords)
+        call_sites = window_call_sites(call_fasta, nc_bed, (coords[0], int(coords[1]), int(coords[2])))
 
         # anavar setup
         sfs_data = {'selected_INS': (ins_counts, call_sites), 'selected_DEL': (del_counts, call_sites),
