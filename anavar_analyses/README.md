@@ -53,11 +53,14 @@ $ Rscript regional_anavar.R
 2Mb window coordinates were generated and mean recombination rates were calculated per window using scripts from the biased gene conversion project. Windows without recombination rate estimates and with less than 500 polarisable INDELs were excluded.
 
 ```
-# sharc
 $ qsub prepare_windows.sh
-
-# local
 $ cd ~/parus_indel/anavar_analyses
 $ python consolidate_window_info.py > all_2Mb_windows.txt
 $ python filter_windows.py
+```
+
+Anavar was then run on each window, with a continuous gamma model:
+
+```
+$ ~/parus_indel/anavar_analyses/window_sel_vs_neu_anavar.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -windows ~/parus_indel/anavar_analyses/filtered_2Mb_windows.txt -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -noncoding_bed /fastdata/bop15hjb/GT_ref/gt_noncoding.bed.gz -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/window_analysis/gt_window_anavar
 ```
