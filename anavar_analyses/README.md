@@ -59,6 +59,14 @@ $ python consolidate_window_info.py > all_2Mb_windows.txt
 $ python filter_windows.py
 ```
 
+The relationship between recombination rate and the ratio of deletions to insertions (rDI) was tested and plotted:
+
+```
+$ Rscript window_rdi.R
+```
+
+[rdi_plot](window_rdi.png)
+
 Anavar was then run on each window, with a continuous gamma model:
 
 ```
