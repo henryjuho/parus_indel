@@ -125,7 +125,7 @@ def main():
         window_cmd = anavar_cmd.format(path=anavar_path, ctl=ctl_name, rslts=result_name, log=log_name,
                                        seed=int(window_id))
 
-        q_sub([window_cmd], out=out_stem, t=8, evolgen=args.evolgen)
+        q_sub([window_cmd], out=out_stem, t=24, evolgen=args.evolgen)
 
 
 if __name__ == '__main__':
