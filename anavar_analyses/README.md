@@ -65,7 +65,7 @@ The relationship between recombination rate and the ratio of deletions to insert
 $ Rscript window_rdi.R
 ```
 
-[rdi_plot](window_rdi.png)
+![rdi_plot](window_rdi.png)
 
 Anavar was then run on each window, with a continuous gamma model:
 
