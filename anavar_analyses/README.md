@@ -57,6 +57,7 @@ $ qsub prepare_windows.sh
 $ cd ~/parus_indel/anavar_analyses
 $ python consolidate_window_info.py > all_2Mb_windows.txt
 $ python filter_windows.py
+$ ./add_window_indel_subs.py -windows filtered_2Mb_windows.txt -wga_bed /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz > filtered_2Mb_windows_with_subs.txt
 ```
 
 The relationship between recombination rate and the ratio of deletions to insertions (rDI) was tested and plotted:
