@@ -68,9 +68,16 @@ $ Rscript window_rdi.R
 
 ![rdi_plot](window_rdi.png)
 
+Additionally the relationship between theta and recombination rate and Tajima's D and recombination was explored for both insertions and deletions.
+
+```
+$ Rscript window_summary.R
+```
+
+![sum_stats](window_summary.png)
+
 Anavar was then run on each window, with a continuous gamma model:
 
 ```
 $ ~/parus_indel/anavar_analyses/window_sel_vs_neu_anavar.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -windows ~/parus_indel/anavar_analyses/filtered_2Mb_windows.txt -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -noncoding_bed /fastdata/bop15hjb/GT_ref/gt_noncoding.bed.gz -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/window_analysis/gt_window_anavar -evolgen
-
 ```
