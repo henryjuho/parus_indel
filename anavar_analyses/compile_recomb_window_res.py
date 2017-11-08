@@ -32,7 +32,7 @@ def main():
         line = line.rstrip()
 
         if line.startswith('run'):
-            print(*line.split(',') + [windows[1].split('window\t')[1]], sep=',')
+            print(*line.split(',') + windows[1].split('window\t')[1].split(), sep=',')
         else:
             line = line.split(',')
             line_window = line[-1]
