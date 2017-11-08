@@ -32,13 +32,13 @@ def main():
         line = line.rstrip()
 
         if line.startswith('run'):
-            print(*line.split(',') + [windows[1].split('window\t')[1]])
+            print(*line.split(',') + [windows[1].split('window\t')[1]], sep=',')
         else:
             line = line.split(',')
             line_window = line[-1]
             window_stats = windows[0][line_window][4:]
 
-            print(*line + window_stats, sep='\t')
+            print(*line + window_stats, sep=',')
 
 
 if __name__ == '__main__':
