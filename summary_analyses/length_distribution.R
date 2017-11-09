@@ -13,10 +13,10 @@ length_data = read.delim('gt_indel_lengths.txt')
 
 # prop length distro
 non_coding_pol = subset(length_data, variant!='indel' & region=='non-coding')
-ins_data = subset(non_coding_pol, variant='ins')
+ins_data = subset(non_coding_pol, variant=='ins')
 no_ins = sum(ins_data$count)
 ins_data$prop = ins_data$count/no_ins
-del_data = subset(non_coding_pol, variant='del')
+del_data = subset(non_coding_pol, variant=='del')
 no_del = sum(del_data$count)
 del_data$prop = del_data$count/no_del
 prop_data = rbind(ins_data, del_data)
