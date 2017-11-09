@@ -41,6 +41,8 @@ def main():
                         help=argparse.SUPPRESS)
     parser.add_argument('-equal_theta', help='if specified runs with equal mutation ratesbetween neu and sel sites',
                         default=False, action='store_true')
+    parser.add_argument('-dfe', help='determines type of distribution to have in model',
+                        choices=['discrete', 'continuous'], default='continuous')
     parser.add_argument('-out_pre', help='output prefix', required=True)
     parser.add_argument('-evolgen', help='if specified will run on lab queue', default=False, action='store_true')
     args = parser.parse_args()
@@ -112,8 +114,9 @@ def main():
                          epsabs=1e-20, epsrel=1e-9, rftol=1e-9,
                          maxtime=3600, optional=True)
 
-        ctl.set_data(sfs_data, 20, dfe='continuous', c=1,
-                     theta_r=(1e-10, 0.1), r_r=(0.01, 100), scale_r=(0.1, 5000.0))
+        ctl.set_data(sfs_data, 20, dfe=args.dfe, c=1,
+                     theta_r=(1e-10, 0.1), r_r=(0.01, 100),
+                     scale_r=(0.1, 5000.0), gamma_r=(-5e4, 1e2))
 
         ctl.set_constraint(constraint)
         ctl_contents = ctl.construct()
