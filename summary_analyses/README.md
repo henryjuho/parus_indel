@@ -79,3 +79,15 @@ $ Rscript alpha.R
 ```
 
 This yields an alpha estimate of **0.1524897**
+
+## Length summary
+
+The length distribution of the INDELs was summarised as follows:
+
+```
+$ cd ~/parus_indel/summary_analyses/
+$ ./indel_lengths.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -region CDS -region non-coding -auto_only > gt_indel_lengths.txt
+$ Rscript length_distribution.R
+```
+
+![length_plots](gt_lengths.png)
