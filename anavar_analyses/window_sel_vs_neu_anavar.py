@@ -19,7 +19,10 @@ def window_call_sites(call_fa, region_bed, window_coords):
     :return: int
     """
 
-    regions = region_bed.fetch(window_coords[0], window_coords[1], window_coords[2], parser=pysam.asTuple())
+    if region_bed is None:
+        regions = [(window_coords[0], window_coords[1], window_coords[2])]
+    else:
+        regions = region_bed.fetch(window_coords[0], window_coords[1], window_coords[2], parser=pysam.asTuple())
 
     call_sites = 0
 
