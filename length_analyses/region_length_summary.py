@@ -5,6 +5,7 @@ import argparse
 import pysam
 import sys
 import os
+import gzip
 sys.path.insert(0, os.getenv('HOME') + '/parus_indel/summary_analyses')
 sys.path.insert(0, os.getenv('HOME') + '/parus_indel/anavar_analyses')
 from indel_lengths import indel_type
@@ -112,7 +113,7 @@ def main():
 
     # per chromosome
     first = True
-    for line in open(args.chr_bed):
+    for line in gzip.open(args.chr_bed):
         contig, start_pos, end_pos = line.split()[0], int(line.split()[1]), int(line.split()[2])
 
         # per chromo genome wide
