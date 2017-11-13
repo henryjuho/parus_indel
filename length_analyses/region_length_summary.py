@@ -46,13 +46,13 @@ def print_dict(len_dict, chromo, region_id, n_callable, include_header=False):
     # prints header
     if include_header:
         header = ['chr'] + indivs + ['total', 'indel_type', 'region', 'callable']
-        print(*header, sep='\t')
+        print(*header, sep=',')
 
     # prints data
     for x in ['ins', 'del']:
         bp_list = [len_dict[z][x] for z in indivs]
         data_line = [chromo] + bp_list + [sum(bp_list), x, region_id, n_callable]
-        print(*data_line, sep='\t')
+        print(*data_line, sep=',')
 
 
 def sum_loss_gain_dict(dict1, dict2):
