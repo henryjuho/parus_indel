@@ -50,3 +50,7 @@ The calculation of summary statistics and other data summary analyses are docume
 ## Anavar analyses
 
 Analysis of the INDEL data with the ```anavar``` package is described here: [anavar_analyses/](anavar_analyses).
+
+## Length analyses
+
+Analysis of the amount of sequence inserted and deleted in various genomic contexts is documented here: [length_analyses/](length_analyses).
