@@ -12,6 +12,23 @@ from indel_lengths import indel_type
 from window_sel_vs_neu_anavar import window_call_sites
 
 
+def missing_genotypes(vcf_line):
+
+    """
+    flags vcf lines with genotypes missing
+    :param vcf_line: pysam.VariantRecord
+    :return: bool
+    """
+
+    genotypes = [vcf_line.samples[x]['GT'] for x in vcf_line.samples.keys()]
+    geno_list = sum([list(x) for x in genotypes], [])
+
+    if None in geno_list:
+        return True
+    else:
+        return False
+
+
 def print_dict(len_dict, chromo, region_id, n_callable, include_header=False):
 
     """
@@ -28,12 +45,13 @@ def print_dict(len_dict, chromo, region_id, n_callable, include_header=False):
 
     # prints header
     if include_header:
-        header = ['chr'] + indivs + ['indel_type', 'region', 'callable']
+        header = ['chr'] + indivs + ['total', 'indel_type', 'region', 'callable']
         print(*header, sep='\t')
 
     # prints data
     for x in ['ins', 'del']:
-        data_line = [chromo] + [len_dict[z][x] for z in indivs] + [x, region_id, n_callable]
+        bp_list = [len_dict[z][x] for z in indivs]
+        data_line = [chromo] + bp_list + [sum(bp_list), x, region_id, n_callable]
         print(*data_line, sep='\t')
 
 
@@ -75,6 +93,11 @@ def sequence_loss_gain(chromo, start, stop, pysam_vcf):
     length_dict = {x: {'ins': 0, 'del': 0} for x in indiv_ids}
 
     for line in pysam_vcf.fetch(chromo, start, stop):
+
+        # skips individuals with missing genotypes
+        if missing_genotypes(line):
+            continue
+
         indel_var = indel_type(line)
 
         # skip unpolarised sites
@@ -101,15 +124,15 @@ def main():
     parser.add_argument('-chr_bed', help='bed file of chromosomes to calc callable sites for', required=True)
     parser.add_argument('-opt_bed', help='Optional bed file of regions to count callables sites, with associated label'
                                          'i.e. /path/to/file.bed.gz,my_sub_region', action='append')
-    # parser.add_argument('-sub', help='If specified will submit script to cluster', action='store_true', default=False)
-    # parser.add_argument('-evolgen', help='If specified will submit to lab queue', default=False, action='store_true')
-    # parser.add_argument('-out', help='Output file if submitted')
     args = parser.parse_args()
 
     # file types
     vcf = pysam.VariantFile(args.vcf)
     call_fa = pysam.FastaFile(args.call_fa)
-    region_beds = [(pysam.TabixFile(x.split(',')[0]), x.split(',')[1]) for x in args.opt_bed]
+    if args.opt_bed is None:
+        region_beds = []
+    else:
+        region_beds = [(x.split(',')[0], x.split(',')[1]) for x in args.opt_bed]
 
     # per chromosome
     first = True
@@ -122,12 +145,14 @@ def main():
 
         print_dict(seq_lost_gain, contig, 'gwide', call_sites, include_header=first)
 
+        first = False
+
         # and per chromo per optional regional bed file
         for reg in region_beds:
 
             first = True
             region = reg[1]
-            bed = region[0]
+            bed = pysam.TabixFile(reg[0])
 
             # for each region in bed file
             seq_lost_gain = {}
@@ -136,13 +161,13 @@ def main():
             for bed_line in bed.fetch(contig, start_pos, end_pos, parser=pysam.asTuple()):
 
                 if first:
-                    seq_lost_gain = sequence_loss_gain(bed_line[0], bed_line[1], bed_line[2], vcf)
+                    seq_lost_gain = sequence_loss_gain(bed_line[0], int(bed_line[1]), int(bed_line[2]), vcf)
 
                 else:
-                    iterations_loss_gain = sequence_loss_gain(bed_line[0], bed_line[1], bed_line[2], vcf)
+                    iterations_loss_gain = sequence_loss_gain(bed_line[0], int(bed_line[1]), int(bed_line[2]), vcf)
                     seq_lost_gain = sum_loss_gain_dict(seq_lost_gain, iterations_loss_gain)
 
-                call_sites += window_call_sites(call_fa, None, [bed_line[0], bed_line[1], bed_line[2]])
+                call_sites += window_call_sites(call_fa, None, [bed_line[0], int(bed_line[1]), int(bed_line[2])])
 
                 first = False
 
