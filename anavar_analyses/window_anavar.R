@@ -7,9 +7,12 @@ library(ggplot2)
 library(gridExtra)
 library(reshape2)
 
+in_file = 'gt_windows_noncoding_continuous_full_results.windowdata.csv'
+out_stem = 'continuous'
+
 cbPalette <- c("#E69F00", 'tomato 3', 'steel blue', "#999999", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-window_data = read.csv('gt_windows_noncoding_continuous_full_results.windowdata.csv')
+window_data = read.csv(in_file)
 window_data$mean_gamma = as.numeric(window_data$scale) * as.numeric(window_data$shape) * -1
 
 window_data_sel = subset(window_data, sel_type=='sel')
@@ -85,19 +88,19 @@ error_plot = ggplot(window_data_sel, aes(x=rec_rate, y=e, colour=var_type)) +
       'p =', round(error_del_test$p.value, digits=7)))
 
 # saving
-png(file='window_anavar.png', width=9, height=6, units='in', res=360)
+png(file=paste(out_stem, 'window_anavar.png', sep='_'), width=9, height=6, units='in', res=360)
 
 grid.arrange(theta_plot, gamma_plot, nrow=2)
 
 dev.off()
 
-png(file='rdi_anavar.png', width=9, height=3, units='in', res=360)
+png(file=paste(out_stem, 'rdi_anavar.png', sep='_'), width=9, height=3, units='in', res=360)
 
 rdi_plot
 
 dev.off()
 
-png(file='error_anavar.png', width=9, height=3, units='in', res=360)
+png(file=paste(out_stem, 'error_anavar.png', sep='_'), width=9, height=3, units='in', res=360)
 
 error_plot
 
