@@ -12,7 +12,7 @@ cbPalette <- c("#E69F00", 'tomato 3', 'steel blue', "#999999", "#56B4E9", "#009E
 bgi_lengths = read.csv('bgi_10birds_bp_loss_gain.csv')
 
 gwide_lens = summarise(group_by(subset(bgi_lengths, chr!='chrZ'), indel_type, region),
-    call = sum(callable), total_bp = sum(total))
+    call = sum(callable), total_bp = sum(total), n_indel = sum(n_indel))
 
 gwide_lens$indel_per_base = (gwide_lens$total_bp / 20.0) / gwide_lens$call
 gwide_lens$region = factor(gwide_lens$region,
@@ -43,7 +43,13 @@ rdi_plot = ggplot(rdi_data, aes(x=region, y=rdi,)) +
     ylab('Ratio of deleted bp to inserted bp') + xlab('') +
     theme(legend.position='none')
 
+mean_len = ggplot(gwide_lens, aes(x=region, y=(total_bp / 20.0) / n_indel, fill=indel_type)) +
+    geom_bar(stat='identity', position='dodge') +
+    theme_bw() +
+    scale_fill_manual(values=cbPalette) +
+    ylab('Mean INDEL length') + xlab('') +
+    theme(legend.position='none')
 
-png('regional_length_plots.png', height=3, width=9, units='in', res=320)
-grid.arrange(length_plot, rate_plot, rdi_plot, nrow=1)
+png('regional_length_plots.png', height=6, width=6, units='in', res=320)
+grid.arrange(length_plot, mean_len, rate_plot, rdi_plot, nrow=2)
 dev.off()
