@@ -42,16 +42,17 @@ def print_dict(len_dict, chromo, region_id, n_callable, include_header=False):
     """
 
     indivs = sorted(len_dict.keys())
+    indivs.remove('n_indel')
 
     # prints header
     if include_header:
-        header = ['chr'] + indivs + ['total', 'indel_type', 'region', 'callable']
+        header = ['chr'] + indivs + ['total', 'n_indel', 'indel_type', 'region', 'callable']
         print(*header, sep=',')
 
     # prints data
     for x in ['ins', 'del']:
         bp_list = [len_dict[z][x] for z in indivs]
-        data_line = [chromo] + bp_list + [sum(bp_list), x, region_id, n_callable]
+        data_line = [chromo] + bp_list + [sum(bp_list), len_dict['n_indel'][x], x, region_id, n_callable]
         print(*data_line, sep=',')
 
 
@@ -90,7 +91,10 @@ def sequence_loss_gain(chromo, start, stop, pysam_vcf):
     """
 
     indiv_ids = pysam_vcf.header.samples
-    length_dict = {x: {'ins': 0, 'del': 0} for x in indiv_ids}
+    length_dict = {x: {'ins': 0, 'del': 0} for x in list(indiv_ids) + ['n_indel']}
+
+    n_ins = 0
+    n_del = 0
 
     for line in pysam_vcf.fetch(chromo, start, stop):
 
@@ -106,12 +110,22 @@ def sequence_loss_gain(chromo, start, stop, pysam_vcf):
 
         allele_lens = {0: len(line.ref) - 1, 1: len(line.alts[0]) - 1}
 
+        # update counters
+        if indel_var == 'ins':
+            n_ins += 1
+        else:
+            n_del += 1
+
         # get genotype for each indiv
         for indiv in indiv_ids:
             geno = line.samples[indiv]['GT']
 
             for allele in geno:
                 length_dict[indiv][indel_var] += allele_lens[allele]
+
+    # update indel counts
+    length_dict['n_indel']['ins'] = n_ins
+    length_dict['n_indel']['del'] = n_del
 
     return length_dict
 
