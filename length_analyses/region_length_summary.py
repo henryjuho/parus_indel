@@ -43,16 +43,18 @@ def print_dict(len_dict, chromo, region_id, n_callable, include_header=False):
 
     indivs = sorted(len_dict.keys())
     indivs.remove('n_indel')
+    indivs.remove('total_event_length')
 
     # prints header
     if include_header:
-        header = ['chr'] + indivs + ['total', 'n_indel', 'indel_type', 'region', 'callable']
+        header = ['chr'] + indivs + ['total', 'n_indel', 'total_event_length', 'indel_type', 'region', 'callable']
         print(*header, sep=',')
 
     # prints data
     for x in ['ins', 'del']:
         bp_list = [len_dict[z][x] for z in indivs]
-        data_line = [chromo] + bp_list + [sum(bp_list), len_dict['n_indel'][x], x, region_id, n_callable]
+        data_line = [chromo] + bp_list + [sum(bp_list), len_dict['n_indel'][x], len_dict['total_event_length'][x],
+                                          x, region_id, n_callable]
         print(*data_line, sep=',')
 
 
@@ -91,10 +93,10 @@ def sequence_loss_gain(chromo, start, stop, pysam_vcf):
     """
 
     indiv_ids = pysam_vcf.header.samples
-    length_dict = {x: {'ins': 0, 'del': 0} for x in list(indiv_ids) + ['n_indel']}
+    length_dict = {x: {'ins': 0, 'del': 0} for x in list(indiv_ids) + ['n_indel', 'total_event_length']}
 
-    n_ins = 0
-    n_del = 0
+    n_ins, len_ins = 0, 0
+    n_del, len_del = 0, 0
 
     for line in pysam_vcf.fetch(chromo, start, stop):
 
@@ -113,8 +115,10 @@ def sequence_loss_gain(chromo, start, stop, pysam_vcf):
         # update counters
         if indel_var == 'ins':
             n_ins += 1
+            len_ins += abs(len(line.ref) - len(line.alts[0]))
         else:
             n_del += 1
+            len_del += abs(len(line.ref) - len(line.alts[0]))
 
         # get genotype for each indiv
         for indiv in indiv_ids:
@@ -126,6 +130,8 @@ def sequence_loss_gain(chromo, start, stop, pysam_vcf):
     # update indel counts
     length_dict['n_indel']['ins'] = n_ins
     length_dict['n_indel']['del'] = n_del
+    length_dict['total_event_length']['ins'] = len_ins
+    length_dict['total_event_length']['del'] = len_del
 
     return length_dict
 
