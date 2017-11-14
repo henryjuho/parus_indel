@@ -153,6 +153,7 @@ def main():
     parser.add_argument('-chr_bed', help='bed file of chromosomes to calc callable sites for', required=True)
     parser.add_argument('-opt_bed', help='Optional bed file of regions to count callables sites, with associated label'
                                          'i.e. /path/to/file.bed.gz,my_sub_region', action='append')
+    parser.add_argument('-analysis', help='type of analysis', choices=['summary', 'window'], default='summary')
     args = parser.parse_args()
 
     # file types
@@ -163,33 +164,47 @@ def main():
     else:
         region_beds = [(x.split(',')[0], x.split(',')[1]) for x in args.opt_bed]
 
+    if args.analysis == 'summary':
+        open_bed = gzip.open(args.chr_bed)
+    else:
+        open_bed = open(args.chr_bed)
+
     # per chromosome
     first = True
-    for line in gzip.open(args.chr_bed):
+    for line in open_bed:
+
+        if args.analysis == 'window' and 'start' in line:
+            continue
+
         contig, start_pos, end_pos = line.split()[0], int(line.split()[1]), int(line.split()[2])
 
         # per chromo genome wide
-        seq_lost_gain = sequence_loss_gain(contig, start_pos, end_pos, vcf)
-        call_sites = window_call_sites(call_fa, None, [contig, start_pos, end_pos])
+        if args.analysis == 'summary':
+            seq_lost_gain = sequence_loss_gain(contig, start_pos, end_pos, vcf)
+            call_sites = window_call_sites(call_fa, None, [contig, start_pos, end_pos])
 
-        print_dict(seq_lost_gain, contig, 'gwide', call_sites, include_header=first)
+            print_dict(seq_lost_gain, contig, 'gwide', call_sites, include_header=first)
 
-        first = False
+            first = False
 
         # and per chromo per optional regional bed file
         for reg in region_beds:
 
-            first = True
-            region = reg[1]
+            if args.analysis == 'summary':
+                region = reg[1]
+            else:
+                region = line.split()[3]
+
             bed = pysam.TabixFile(reg[0])
 
             # for each region in bed file
             seq_lost_gain = {}
             call_sites = 0
 
+            first_sub = True
             for bed_line in bed.fetch(contig, start_pos, end_pos, parser=pysam.asTuple()):
 
-                if first:
+                if first_sub:
                     seq_lost_gain = sequence_loss_gain(bed_line[0], int(bed_line[1]), int(bed_line[2]), vcf)
 
                 else:
@@ -198,10 +213,12 @@ def main():
 
                 call_sites += window_call_sites(call_fa, None, [bed_line[0], int(bed_line[1]), int(bed_line[2])])
 
-                first = False
+                first_sub = False
 
-            print_dict(seq_lost_gain, contig, region, call_sites)
+            print_dict(seq_lost_gain, contig, region, call_sites, include_header=first)
+            first = False
 
+    open_bed.close()
 
 if __name__ == '__main__':
     main()
