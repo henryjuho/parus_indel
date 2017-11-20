@@ -52,11 +52,11 @@ def main():
         for indel_type in ['insertion', 'deletion']:
             cmd = indel_extract.format(args.wga_bed, chromo, int(start) - 1, stop, args.bed, indel_type)
 
-            variants = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].split('\n')
+            variants = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).communicate()[0].split('\n')[:-1]
 
             var_len, n_var = wga_indel_lengths(variants)
 
-            print(window + '{}\t{}\t{}\t{}'.format(var_len, n_var, n_sites, indel_type))
+            print(window + '\t{}\t{}\t{}\t{}'.format(var_len, n_var, n_sites, indel_type))
 
 
 if __name__ == '__main__':
