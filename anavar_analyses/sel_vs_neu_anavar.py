@@ -106,7 +106,10 @@ def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
     sfs_nd = sfs2counts(n_d_sfs, n)
 
     # get callable sites
-    sel_m = call['ALL'][call_sel_reg]['pol']
+    if call_sel_reg == 'non-coding':
+        sel_m = call['ALL']['intergenic']['pol'] + call['ALL']['intron']['pol']
+    else:
+        sel_m = call['ALL'][call_sel_reg]['pol']
     neu_m = call['ALL']['AR']['pol']
 
     # construct control file sfs
@@ -142,7 +145,10 @@ def prepare_snp_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
     sfs_neu = sfs2counts(neu_sfs, n)
 
     # get callable sites
-    sel_m = call['ALL'][call_sel_reg]['pol']
+    if call_sel_reg == 'non-coding':
+        sel_m = call['ALL']['intergenic']['pol'] + call['ALL']['intron']['pol']
+    else:
+        sel_m = call['ALL'][call_sel_reg]['pol']
     neu_m = call['ALL']['fourfold']['pol']
 
     # construct control file sfs
