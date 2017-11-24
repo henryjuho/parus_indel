@@ -197,7 +197,7 @@ def main():
         delta = delta_aic(line[-1], best_aic)
         out_data.append((delta, line + [delta]))
 
-    for line in sorted(out_data):
+    for line in sorted(out_data, reverse=True):
         print(*line[1], sep=',')
 
 if __name__ == '__main__':
