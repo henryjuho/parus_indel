@@ -44,7 +44,7 @@ $ ls /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_ar/*merged* 
 $ ls /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/non-coding_vs_ar/*merged* | ./process_anavar_results.py > gt_non-coding_v_ar_anavar_results_indels.aic.csv
 ```
 
-CDS results can be found [here](gt_cds_v_ar_anavar_results_indels.aic.csv) and nom-coding [here](gt_non-coding_v_ar_anavar_results_indels.aic.csv).
+CDS results can be found [here](gt_cds_v_ar_anavar_results_indels.aic.csv) and non-coding [here](gt_non-coding_v_ar_anavar_results_indels.aic.csv).
 
 ## Regional anavar with neutral reference
 
