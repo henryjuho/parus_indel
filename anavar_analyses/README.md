@@ -23,10 +23,12 @@ $ ~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/
 The results were gathered:
 
 ```
+$ cd /home/bop15hjb/parus_indel/anavar_analyses
 $ ls /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_ar/*merged* | ./process_anavar_results.py > gt_cds_v_ar_anavar_results_indels.aic.csv
+$ ls /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/non-coding_vs_ar/*merged* | ./process_anavar_results.py > gt_non-coding_v_ar_anavar_results_indels.aic.csv
 ```
 
-And can be found [here](gt_cds_v_ar_anavar_results_indels.aic.csv).
+CDS results can be found [here](gt_cds_v_ar_anavar_results_indels.aic.csv) and nom-coding [here](gt_non-coding_v_ar_anavar_results_indels.aic.csv).
 
 Secondly this process was repeated to determine the best model for the non-coding data.
 
