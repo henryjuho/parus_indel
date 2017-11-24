@@ -192,9 +192,13 @@ def main():
 
     print(*all_res[0] + ['delta_AIC'], sep=',')
 
+    out_data = []
     for line in all_res[1:]:
         delta = delta_aic(line[-1], best_aic)
-        print(*line + [delta], sep=',')
+        out_data.append((delta, line + [delta]))
+
+    for line in sorted(out_data):
+        print(*line[1], sep=',')
 
 if __name__ == '__main__':
     main()
