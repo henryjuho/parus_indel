@@ -29,7 +29,14 @@ def main():
                         choices=['discrete', 'continuous'], default='continuous')
     parser.add_argument('-out_pre', help='output prefix', required=True)
     parser.add_argument('-evolgen', help='if specified will run on lab queue', default=False, action='store_true')
+    parser.add_argument('-sub', help='If specified will submit script to cluster', action='store_true', default=False)
     args = parser.parse_args()
+
+    # submission loop
+    if args.sub is True:
+        command_line = [' '.join([x for x in sys.argv if x != '-sub'])]
+        q_sub(command_line, args.out_pre + '.control_job')
+        sys.exit()
 
     # flags
     if args.equal_theta:
