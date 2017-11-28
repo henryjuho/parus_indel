@@ -3,7 +3,7 @@ import sys
 import gzip
 from vcf2raw_sfs import vcf2sfs
 
-vcf = '/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz'
+vcf = '/fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz'
 
 bin_dict = {}
 for bin_file in sys.stdin:
