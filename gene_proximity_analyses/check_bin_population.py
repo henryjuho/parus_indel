@@ -1,30 +1,26 @@
 from __future__ import print_function
 import sys
-import gzip
-from vcf2raw_sfs import vcf2sfs
+import subprocess
 
-vcf = '/fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz'
 
-bin_dict = {}
-for bin_file in sys.stdin:
-    bin_file = bin_file.rstrip()
+vcf = ('/fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/'
+       'bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz')
 
-    bin_id = bin_file.replace('.bed.gz', '').split('.')[-1].replace('bin', '')
-    n_ins = 0
-    n_del = 0
-
-    for line in gzip.open(bin_file):
-        chromo, start, stop = line.split()[0], int(line.split()[1]), int(line.split()[2])
-
-        ins = vcf2sfs(vcf, mode='ins', chromo=chromo, start=start, stop=stop, regions=['intergenic'], auto_only=True)
-        dels = vcf2sfs(vcf, mode='del', chromo=chromo, start=start, stop=stop, regions=['intergenic'], auto_only=True)
-
-        n_ins += len(list(ins))
-        n_del += len(list(dels))
-
-    bin_dict[bin_id] = {'ins': n_ins, 'del': n_del}
+bin_files = sorted([(int(x.rstrip().replace('.bed.gz', '').split('.')[-1].replace('bin', '')),
+                     x.rstrip()) for x in sys.stdin])
 
 print('bin\tcount\ttype')
-for x in sorted(bin_dict.keys()):
-    for z in ['ins', 'del']:
-        print(x, bin_dict[x][z], z, sep='\t')
+
+for bin_file in bin_files:
+
+    sfs_cmd = ('bedtools intersect -header -a {} -b {} | '
+               '~/sfs_utils/vcf2raw_sfs.py -region intergenic -mode {} | '
+               'wc -l')
+
+    for var in ['ins', 'del']:
+
+        n = subprocess.Popen(sfs_cmd.format(vcf, bin_file[1], var),
+                             shell=True, stdout=subprocess.PIPE).communicate()[0].split('\n')[0]
+
+        print(bin_file[0], n, var, sep='\t')
+
