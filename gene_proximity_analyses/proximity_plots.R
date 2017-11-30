@@ -5,11 +5,13 @@
 
 library(ggplot2)
 library(gridExtra)
+library(gtools)
 
 cbPalette <- c("#E69F00", 'tomato 3', 'steel blue', "#999999", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 prox_data = read.csv('gt_sel_neu_ref_genedist.results.csv')
-prox_data$bin = factor(prox_data$bin, levels=c('1', '2', '3', '4', '5', '6', '7', '8', '9', '10-16'))
+
+prox_data$bin = factor(prox_data$bin, levels=mixedsort(as.character(subset(prox_data, sel_type=='sel' & var_type=='ins')$bin)))
 prox_data$mean_gamma = as.numeric(as.character(prox_data$shape)) * as.numeric(as.character(prox_data$scale)) * -1
 
 ins_theta = subset(prox_data, sel_type == 'sel' & var_type == 'ins', select=c(bin, theta))
