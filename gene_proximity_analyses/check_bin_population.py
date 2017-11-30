@@ -14,7 +14,7 @@ print('bin\tcount\ttype')
 for bin_file in bin_files:
 
     sfs_cmd = ('bedtools intersect -header -a {} -b {} | '
-               '~/sfs_utils/vcf2raw_sfs.py -region intergenic -mode {} | '
+               '~/sfs_utils/vcf2raw_sfs.py -region intergenic -region intron -mode {} | '
                'wc -l')
 
     for var in ['ins', 'del']:

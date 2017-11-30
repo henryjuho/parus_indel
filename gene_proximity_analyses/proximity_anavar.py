@@ -85,9 +85,9 @@ def main():
                 continue
 
             # get sel sfs
-            reg_ins_sfs = vcf2sfs(args.vcf, mode='ins', regions=['intergenic'],
+            reg_ins_sfs = vcf2sfs(args.vcf, mode='ins', regions=['intergenic', 'intron'],
                                   chromo=coords[0], start=int(coords[1]), stop=int(coords[2]))
-            reg_del_sfs = vcf2sfs(args.vcf, mode='del', regions=['intergenic'],
+            reg_del_sfs = vcf2sfs(args.vcf, mode='del', regions=['intergenic', 'intron'],
                                   chromo=coords[0], start=int(coords[1]), stop=int(coords[2]))
 
             ins_sfs += list(reg_ins_sfs)
