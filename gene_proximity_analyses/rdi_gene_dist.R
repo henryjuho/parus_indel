@@ -46,7 +46,7 @@ rdi_plot = ggplot(dist_rdi, aes(x=distance, y=rdi)) +
       theme_bw() +
       geom_smooth(method='lm') +
       ylab('rDI')  + xlab('Distance from gene') +
-      facet_wrap(~window_size) #, scale='free')
+      facet_wrap(~window_size, scale='free_y')
 
 png(file='distance_rdi_counts.png', width=9, height=3, units='in', res=360)
 
