@@ -33,16 +33,16 @@ error_del_test = cor.test(del_data$e, del_data$rec_rate, method='spearman', exac
 
 # theta plot
 
-theta_plot = ggplot(window_data_sel, aes(x=rec_rate, y=theta, colour=var_type)) +
+theta_plot = ggplot(window_data_sel, aes(x=log(rec_rate + 1), y=theta, colour=var_type)) +
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
       scale_colour_manual(values=cbPalette) +
-      xlab('Recombination rate')  + ylab(expression(theta[w])) +
+      xlab('Recombination rate (log)')  + ylab(expression(theta)) +
       ggtitle(paste('Ins: ', expression(rho), '=', round(theta_ins_test$estimate, digits=2),
       'p =', round(theta_ins_test$p.value, digits=7),
-      'Del: ', expression(rho), '=', round(theta_del_test$estimate, digits=2),
-      'p =', round(theta_del_test$p.value, digits=7)))
+      '\nDel: ', expression(rho), '=', round(theta_del_test$estimate, digits=2),
+      'p =', round(theta_del_test$p.value, digits=7))) + theme(legend.position=c(0.8, 0.2))
 
 # rdi plot
 
@@ -52,55 +52,43 @@ rdi_data$rdi = rdi_data$del_theta / rdi_data$ins_theta
 
 rdi_test = cor.test(rdi_data$ins_rec_rate, rdi_data$rdi, method='spearman', exact=NULL)
 
-rdi_plot = ggplot(rdi_data, aes(x=ins_rec_rate, y=rdi)) +
+rdi_plot = ggplot(rdi_data, aes(x=log(ins_rec_rate + 1), y=rdi)) +
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
-      xlab('Recombination rate')  + ylab('rDI') +
-      ggtitle(paste(expression(rho), '=', round(rdi_test$estimate, digits=2),
+      xlab('Recombination rate')  + ylab('\nrDI') +
+      ggtitle(paste('\n', expression(rho), '=', round(rdi_test$estimate, digits=2),
       'p =', round(rdi_test$p.value, digits=7)))
 
 # gamma plot
 
-gamma_plot = ggplot(window_data_sel, aes(x=rec_rate, y=gamma, colour=var_type)) +
+gamma_plot = ggplot(window_data_sel, aes(x=log(rec_rate +1), y=gamma, colour=var_type)) +
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
       scale_colour_manual(values=cbPalette) +
-      xlab('Recombination rate')  + ylab("Gamma") +
+      xlab('Recombination rate (log)')  + ylab("Gamma") +
       ggtitle(paste('Ins: ', expression(rho), '=', round(gamma_ins_test$estimate, digits=2),
       'p =', round(gamma_ins_test$p.value, digits=7),
-      'Del: ', expression(rho), '=', round(gamma_del_test$estimate, digits=2),
-      'p =', round(gamma_del_test$p.value, digits=7)))
+      '\nDel: ', expression(rho), '=', round(gamma_del_test$estimate, digits=2),
+      'p =', round(gamma_del_test$p.value, digits=7))) + theme(legend.position='none')
 
 # error plot
 
-error_plot = ggplot(window_data_sel, aes(x=rec_rate, y=e, colour=var_type)) +
+error_plot = ggplot(window_data_sel, aes(x=log(rec_rate + 1), y=e, colour=var_type)) +
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
       scale_colour_manual(values=cbPalette) +
-      xlab('Recombination rate')  + ylab("Polarisation error") +
+      xlab('Recombination rate (log)')  + ylab("Polarisation error") +
       ggtitle(paste('Ins: ', expression(rho), '=', round(error_ins_test$estimate, digits=2),
       'p =', round(error_ins_test$p.value, digits=7),
-      'Del: ', expression(rho), '=', round(error_del_test$estimate, digits=2),
-      'p =', round(error_del_test$p.value, digits=7)))
+      '\nDel: ', expression(rho), '=', round(error_del_test$estimate, digits=2),
+      'p =', round(error_del_test$p.value, digits=7))) + theme(legend.position='none')
 
 # saving
 png(file=paste(out_stem, 'window_anavar.png', sep='_'), width=9, height=6, units='in', res=360)
 
-grid.arrange(theta_plot, gamma_plot, nrow=2)
-
-dev.off()
-
-png(file=paste(out_stem, 'rdi_anavar.png', sep='_'), width=9, height=3, units='in', res=360)
-
-rdi_plot
-
-dev.off()
-
-png(file=paste(out_stem, 'error_anavar.png', sep='_'), width=9, height=3, units='in', res=360)
-
-error_plot
+grid.arrange(theta_plot, gamma_plot, rdi_plot, error_plot, nrow=2)
 
 dev.off()
