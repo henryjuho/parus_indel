@@ -65,6 +65,16 @@ $ Rscript proximity_plots_5kb_nc.R
 
 ![5kb_nc](distance_estimates_5kb_nc.png)
 
+## all non-coding data (5kb) and distance from genes **OR** UCNE
+
+```
+$ mkdir distance_bin_beds_5kb_noncoding_UCNE
+$ zcat /fastdata/bop15hjb/GT_ref/gt_noncoding_withoutUCNE.bed.gz | ./create_gene_proximity_bins.py -bin_size 5000 -out_prefix distance_bin_beds_5kb_noncoding_UCNE/gt_noncoding_conserved_region_proximity_5kbwindows
+$ ls distance_bin_beds_5kb_noncoding_UCNE/*.bed.gz | python check_bin_population.py > distance_bin_beds_5kb_noncoding_UCNE/bin_summaries_5kb_nc_UCNE.txt
+$ ls distance_bin_beds_5kb_noncoding_UCNE/*bed.gz | python clump_end_bins.py distance_bin_beds_5kb_noncoding_UCNE/bin_summaries_5kb_nc_UCNE.txt > distance_bin_beds_5kb_noncoding_UCNE/distance_bin_beds_5kb_nc_UCNE.txt
+$ ./proximity_anavar.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -bed_list distance_bin_beds_5kb_noncoding_UCNE/distance_bin_beds_5kb_nc_UCNE.txt -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/anavar_cds_distance_5kb_nc_UCNE/gt_sel_neu_ref_conserveddist_5kb -sub
+```
+
 ## rDI summary for different windows
 
 ```
