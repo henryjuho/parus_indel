@@ -117,5 +117,5 @@ $ Rscript window_anavar_equal_t.R
 ![window_plots](continuous_window_anavar.png)
 
 
-Reduced model results: [](continuous_window_anavar_equal_t.png).
-Discrete model results: [](discrete_window_anavar.png)
+Reduced model results [here](continuous_window_anavar_equal_t.png).
+Discrete model results [here](discrete_window_anavar.png).

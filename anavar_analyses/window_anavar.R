@@ -58,7 +58,7 @@ rdi_plot = ggplot(rdi_data, aes(x=log(ins_rec_rate + 1), y=rdi)) +
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
-      xlab('Recombination rate (log)')  + ylab('rDI') +
+      xlab('Recombination rate (log)')  + ylab('\nrDI') +
       ggtitle(paste('\n', expression(rho), '=', round(rdi_test$estimate, digits=2),
       'p =', round(rdi_test$p.value, digits=7)))
 
