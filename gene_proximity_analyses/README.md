@@ -57,6 +57,8 @@ data following our 5kb window approach.
 $ mkdir distance_bin_beds_5kb_noncoding
 $ zcat /fastdata/bop15hjb/GT_ref/gt_noncoding.bed.gz | ./create_gene_proximity_bins.py -bin_size 5000 -out_prefix distance_bin_beds_5kb_noncoding/gt_noncoding_cds_proximity_5kbwindows
 $ ls distance_bin_beds_5kb_noncoding/*.bed.gz | python check_bin_population.py > distance_bin_beds_5kb_noncoding/bin_summaries_5kb_nc.txt
+$ ls distance_bin_beds_5kb_noncoding/*bed.gz | python clump_end_bins.py distance_bin_beds_5kb_noncoding/bin_summaries_5kb_nc.txt > distance_bin_beds_5kb_noncoding/distance_bin_beds_5kb_nc.txt
+$ ./proximity_anavar.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -bed_list distance_bin_beds_5kb_noncoding/distance_bin_beds_5kb_nc.txt -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/anavar_cds_distance_5kb_nc/gt_sel_neu_ref_cdsdist_5kb -sub
 ```
 
 ## rDI summary for different windows
