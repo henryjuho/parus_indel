@@ -59,7 +59,10 @@ $ zcat /fastdata/bop15hjb/GT_ref/gt_noncoding.bed.gz | ./create_gene_proximity_b
 $ ls distance_bin_beds_5kb_noncoding/*.bed.gz | python check_bin_population.py > distance_bin_beds_5kb_noncoding/bin_summaries_5kb_nc.txt
 $ ls distance_bin_beds_5kb_noncoding/*bed.gz | python clump_end_bins.py distance_bin_beds_5kb_noncoding/bin_summaries_5kb_nc.txt > distance_bin_beds_5kb_noncoding/distance_bin_beds_5kb_nc.txt
 $ ./proximity_anavar.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -bed_list distance_bin_beds_5kb_noncoding/distance_bin_beds_5kb_nc.txt -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/anavar_cds_distance_5kb_nc/gt_sel_neu_ref_cdsdist_5kb -sub
+$ ls /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/anavar_cds_distance_5kb_nc/*results* | ../anavar_analyses/process_anavar_results.py -file_pattern bin,_bin\(\\d+-\?\\d\*\)\\. | cut -f 1-18 -d ',' > gt_sel_neu_ref_cdsdist_5kb.results.csv 
 ```
+
+![5kb_nc](distance_estimates_5kb_nc.png)
 
 ## rDI summary for different windows
 
