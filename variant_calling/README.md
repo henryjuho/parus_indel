@@ -1,4 +1,4 @@
-# Generating the dataset
+# Generating the INDEL dataset
 
 ## Creating a 'set of known variants' or 'truth set'
 
@@ -123,3 +123,29 @@ The number of INDELs removed at each step are listed below:
 |Allele no. & length|1431198         |181750        |
 |Depth              |1373399         |57799         |
 |Repeat             |1240366         |133033        |
+
+# SNP calling and VQSR
+
+SNP calling and VQSR were performed as in [Corcoran et al. 2017](https://academic.oup.com/gbe/article-lookup/doi/10.1093/gbe/evx213)). Except variants passing 99.0 tranche level were retained rather than 99.9.
+
+## Post VQSR filters
+
+The output vcf from the 99.0 tranche level was filtered to include only biallelic sites, non-repetative regions, and sites with a depth between half and twice the mean depth of 44X. The command lines are as follows:
+
+```
+python ~/qsub_gen.py -cmd "cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/" -cmd "java -Xmx6g -jar /usr/local/packages6/apps/binapps/GATK/3.4-46/GenomeAnalysisTK.jar -T SelectVariants -R ../../../GT_ref/Parus_major_1.04.rename.fa -V gt_10birds_recalibrated_snps_99.vcf.gz -selectType SNP -trimAlternates -env -o gt_10birds_recalibrated_snps_only_99.vcf.gz" -mem 10 -rmem 10 -o /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/snp_extract -OM q -evolgen
+python ~/qsub_gen.py -cmd "cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/" -cmd "java -Xmx6g -jar \$GATKHOME/GenomeAnalysisTK.jar -T SelectVariants -R ../../../GT_ref/Parus_major_1.04.rename.fa -V  gt_10birds_recalibrated_snps_only_99.vcf.gz -o gt_10birds_recalibrated_snps_only_99pass.vcf.gz --excludeFiltered" -mem 10 -rmem 10 -o /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/vqsr_pass -evolgen -OM q
+gunzip gt_10birds_recalibrated_snps_only_99pass.vcf.gz
+python filter_length_biallelic.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa
+python ~/depth_filter.py -vcf gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.vcf
+python repeat_filter.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed 
+```
+
+The number of SNPs removed at each step are listed below:
+
+|Filter             |SNPs retained |SNPs removed  |
+|:------------------|:------------:|:------------:|
+|None               |11784675      |NA            |
+|Allele no          |11648889      |135786        |
+|Depth              |11644621      |4268          |
+|Repeat             |10772087      |872534        |

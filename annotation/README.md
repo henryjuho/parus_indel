@@ -1,4 +1,20 @@
 # Annotating the data 
+
+## Region coordinates
+
+Bed files with coordinates for different genomic contexts were created as follows:
+
+```
+$ zgrep -v ^# GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz | cut -f 1-5 | grep region | grep -v chrU | grep -v MT | gff2bed.py > gt_chromosomes.bed
+$ zgrep -v ^# GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz | cut -f 1-5 | grep gene | grep -v chrU | grep -v MT | gff2bed.py | sort -k1,1 -k2,2n | bedtools merge > gt_genes.bed
+$ zgrep -v ^# GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz | cut -f 1-5 | grep exon | grep -v chrU | grep -v MT | gff2bed.py | sort -k1,1 -k2,2n | bedtools merge > gt_exons.bed
+$ zgrep -v ^# GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz | cut -f 1-5 | grep CDS | grep -v chrU | grep -v MT | gff2bed.py | sort -k1,1 -k2,2n | bedtools merge > gt_cds.bed
+$ bedtools subtract -a gt_genes.bed -b gt_exons.bed > gt_introns.bed
+$ bedtools subtract -a gt_chromosomes.bed -b gt_genes.bed > gt_intergenic.bed
+$ cat gt_intergenic.bed gt_introns.bed | sort -k1,1 -k2,2n | bedtools merge > gt_noncoding.bed
+$ bedtools subtract -a gt_noncoding.bed.gz -b UCNEs_gtit1.0.4.sorted.bed.gz | bgzip -c > gt_noncoding_withoutUCNE.bed.gz
+```
+
 ## Genomic regions
 
 Firstly INDELs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'CDS_frameshift', 'intron' or 'intergenic' as follows:
@@ -28,6 +44,41 @@ Secondly the recombination category of each INDEL was annotated using linkage ma
 ```
 
 The file specified by ```-poly``` is a list of variables for each chromosome's polynomial.
+
+# Annotating the SNP data
+
+Firstly SNPs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'intron' or 'intergenic' as follows:
+
+```
+./annotate_all_vcf_chr.py -gff /data/bop15hjb/annotating_gt_snps/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz -vcf /data/bop15hjb/annotating_gt_snps/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.vcf -evolgen
+```
+
+A breakdown of this annotation is shown below:
+
+|Category             | Number SNPs  |
+|:--------------------|:------------:|
+|All                  | 10643865     |
+|CDS                  | 155463       |
+|Intron               | 5489556      |
+|Intergenic           | 4718020      |
+|Unannotated          | 280826       |
+
+Secondly the degeneracy of SNPs in coding seqences was annotated as follows:
+
+```
+./annotate_degeneracy.py -gff /fastdata/bop15hjb/GT_ref/GCF_001522545.1_Parus_major1.0.3_genomic.rename.gff.gz -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.vcf -ref /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -db_dir /data/bop15hjb/databases/greattit/ -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/ degeneracy_annotation/ -evolgen
+```
+
+Annotation summary below:
+
+|Category          | Number SNPs     |
+|:-----------------|:---------------:|
+|All               | 10643865        |
+|CDS               | 155463          |
+|0fold             | 46792           |
+|2fold             | 46786           |
+|3fold             | 4240            |
+|4fold             | 57169           |
 
 ## LINEs
 
