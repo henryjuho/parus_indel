@@ -21,7 +21,11 @@ fivekb_nc = read.delim('distance_bin_beds_5kb_noncoding/bin_summaries_5kb_nc.txt
 fivekb_nc$window_size = 5000
 fivekb_nc$window_id = '5kb nc'
 
-all_data = rbind(fiftykb, fivekb, onekb, fivekb_nc)
+fivekb_nc_ucne = read.delim('distance_bin_beds_5kb_noncoding_UCNE/bin_summaries_5kb_nc_UCNE.txt')
+fivekb_nc_ucne$window_size = 5000
+fivekb_nc_ucne$window_id = '5kb nc UCNE'
+
+all_data = rbind(fiftykb, fivekb, onekb, fivekb_nc, fivekb_nc_ucne)
 
 all_data
 
@@ -33,7 +37,7 @@ colnames(del_data) = c('bin', 'del_count', 'window_size', 'window_id')
 
 dist_rdi = data.frame(cbind(ins_data, del_data$del_count))
 colnames(dist_rdi) = c('bin', 'ins_count', 'window_size', 'window_id', 'del_count')
-dist_rdi = subset(dist_rdi, ins_count > 5 & del_count > 5)
+dist_rdi = subset(dist_rdi, ins_count > 10 & del_count > 10)
 
 dist_rdi$rdi = as.numeric(as.character(dist_rdi$del_count)) / as.numeric(as.character(dist_rdi$ins_count))
 dist_rdi$distance = as.numeric(as.character(dist_rdi$bin)) * dist_rdi$window_size
@@ -52,8 +56,13 @@ one_test
 
 five_test_d_nc = subset(dist_rdi, window_size==5000 & window_id=='5kb nc')
 five_test_nc = cor.test(five_test_d_nc$rdi, five_test_d_nc$distance, method='spearman', exact=NULL)
+
+five_test_d_nc_ucne = subset(dist_rdi, window_size==5000 & window_id=='5kb nc UCNE')
+five_test_nc_ucne = cor.test(five_test_d_nc_ucne$rdi, five_test_d_nc_ucne$distance, method='spearman', exact=NULL)
+
 five_test
 five_test_nc
+five_test_nc_ucne
 
 rdi_plot = ggplot(dist_rdi, aes(x=distance, y=rdi)) +
       geom_point(stat='identity', size = 2) +
