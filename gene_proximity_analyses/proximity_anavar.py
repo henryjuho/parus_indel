@@ -36,7 +36,7 @@ def main():
     # submission loop
     if args.sub is True:
         command_line = [' '.join([x for x in sys.argv if x != '-sub'])]
-        q_sub(command_line, args.out_pre + '.control_job')
+        q_sub(command_line, args.out_pre + '.control_job', evolgen=args.evolgen)
         sys.exit()
 
     # flags
