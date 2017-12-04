@@ -19,37 +19,43 @@ tajd_del_test = cor.test(window_data$tajd_del, window_data$rec_rate, method='spe
 
 # theta plot
 theta_data = subset(window_data, select=c(window, rec_rate, theta_ins, theta_del))
+colnames(theta_data) = c('window', 'rec_rate', 'ins', 'del')
 theta_data = melt(theta_data, id=c('window', 'rec_rate'))
+theta_data$variable = factor(theta_data$variable, levels=c('del', 'ins'))
 
-theta_plot = ggplot(theta_data, aes(x=rec_rate, y=value, colour=variable)) +
+theta_plot = ggplot(theta_data, aes(x=log(rec_rate + 1), y=value, colour=variable)) +
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
       scale_colour_manual(values=cbPalette) +
-      xlab('Recombination rate')  + ylab(expression(theta[w])) +
+      xlab('Recombination rate (log)')  + ylab(expression(theta[w])) +
       ggtitle(paste('Ins: ', expression(rho), '=', round(theta_ins_test$estimate, digits=2),
       'p =', round(theta_ins_test$p.value, digits=5),
-      'Del: ', expression(rho), '=', round(theta_del_test$estimate, digits=2),
-      'p =', round(theta_del_test$p.value, digits=5)))
+      '\nDel: ', expression(rho), '=', round(theta_del_test$estimate, digits=2),
+      'p =', round(theta_del_test$p.value, digits=5))) +
+      theme(legend.position = 'none')
 
 
 # tajd plot
 tajd_data = subset(window_data, select=c(window, rec_rate, tajd_ins, tajd_del))
+colnames(tajd_data) = c('window', 'rec_rate', 'ins', 'del')
 tajd_data = melt(tajd_data, id=c('window', 'rec_rate'))
+tajd_data$variable = factor(tajd_data$variable, levels=c('del', 'ins'))
 
-tajd_plot = ggplot(tajd_data, aes(x=rec_rate, y=value, colour=variable)) +
+tajd_plot = ggplot(tajd_data, aes(x=log(rec_rate + 1), y=value, colour=variable)) +
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
       scale_colour_manual(values=cbPalette) +
-      xlab('Recombination rate')  + ylab("Tajima's D") +
+      xlab('Recombination rate (log)')  + ylab("Tajima's D") +
       ggtitle(paste('Ins: ', expression(rho), '=', round(tajd_ins_test$estimate, digits=2),
       'p =', round(tajd_ins_test$p.value, digits=5),
-      'Del: ', expression(rho), '=', round(tajd_del_test$estimate, digits=2),
-      'p =', round(tajd_del_test$p.value, digits=5)))
+      '\nDel: ', expression(rho), '=', round(tajd_del_test$estimate, digits=2),
+      'p =', round(tajd_del_test$p.value, digits=5))) +
+      theme(legend.position=c(0.9, 0.2), legend.title=element_blank(), legend.background=element_blank())
 
-png(file='window_summary.png', width=9, height=6, units='in', res=360)
+png(file='window_summary.png', width=6, height=3, units='in', res=360)
 
-grid.arrange(theta_plot, tajd_plot, nrow=2)
+grid.arrange(theta_plot, tajd_plot, nrow=1)
 
 dev.off()
