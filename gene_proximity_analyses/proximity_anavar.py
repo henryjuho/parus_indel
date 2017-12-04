@@ -10,6 +10,7 @@ import gzip
 import random
 import sys
 import os
+import subprocess
 sys.path.insert(0, os.getenv('HOME') + '/parus_indel/anavar_analyses')
 from sel_vs_neu_anavar import sfs2counts, read_callable_csv
 from window_sel_vs_neu_anavar import window_call_sites
@@ -73,9 +74,15 @@ def main():
 
         out_stem = '{}_bin{}'.format(args.out_pre, bin_id)
 
-        ins_sfs = []
-        del_sfs = []
         call_sites = 0
+
+        sfs_cmd = ('bedtools intersect -header -a {} -b {} | '
+                   '~/sfs_utils/vcf2raw_sfs.py -region intergenic -region intron -mode {} -auto_only')
+
+        ins_sfs = subprocess.Popen(sfs_cmd.format(args.vcf, bin_bed, 'ins'), shell=True, stdout=subprocess.PIPE
+                                   ).communicate()[0].split('\n')[:-1]
+        del_sfs = subprocess.Popen(sfs_cmd.format(args.vcf, bin_bed, 'del'), shell=True, stdout=subprocess.PIPE
+                                   ).communicate()[0].split('\n')[:-1]
 
         for coord_set in gzip.open(bin_bed):
 
@@ -83,15 +90,6 @@ def main():
 
             if coords[0] == 'chrZ':
                 continue
-
-            # get sel sfs
-            reg_ins_sfs = vcf2sfs(args.vcf, mode='ins', regions=['intergenic', 'intron'],
-                                  chromo=coords[0], start=int(coords[1]), stop=int(coords[2]))
-            reg_del_sfs = vcf2sfs(args.vcf, mode='del', regions=['intergenic', 'intron'],
-                                  chromo=coords[0], start=int(coords[1]), stop=int(coords[2]))
-
-            ins_sfs += list(reg_ins_sfs)
-            del_sfs += list(reg_del_sfs)
 
             # get sel call sites
             call_sites += window_call_sites(call_fasta, None, (coords[0], int(coords[1]), int(coords[2])))
