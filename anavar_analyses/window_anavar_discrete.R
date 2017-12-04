@@ -42,7 +42,8 @@ theta_plot = ggplot(window_data_sel, aes(x=log(rec_rate + 1), y=theta, colour=va
       ggtitle(paste('Ins: ', expression(rho), '=', round(theta_ins_test$estimate, digits=2),
       'p =', round(theta_ins_test$p.value, digits=7),
       '\nDel: ', expression(rho), '=', round(theta_del_test$estimate, digits=2),
-      'p =', round(theta_del_test$p.value, digits=7))) + theme(legend.position=c(0.8, 0.2))
+      'p =', round(theta_del_test$p.value, digits=7))) +
+      theme(legend.position=c(0.9, 0.2), legend.title=element_blank())
 
 # rdi plot
 
@@ -56,7 +57,7 @@ rdi_plot = ggplot(rdi_data, aes(x=log(ins_rec_rate + 1), y=rdi)) +
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
-      xlab('Recombination rate')  + ylab('\nrDI') +
+      xlab('Recombination rate (log)')  + ylab('\nrDI') +
       ggtitle(paste('\n', expression(rho), '=', round(rdi_test$estimate, digits=2),
       'p =', round(rdi_test$p.value, digits=7)))
 
