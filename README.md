@@ -51,6 +51,10 @@ The calculation of summary statistics and other data summary analyses are docume
 
 Analysis of the INDEL data with the ```anavar``` package is described here: [anavar_analyses/](anavar_analyses).
 
+## Proximity analyses
+
+Analysis of INDEL data in windows of increasing distance from conserved regions (CDS and UCNEs) is described here: [gene_proximity_analyses/](gene_proximity_analyses).
+
 ## Length analyses
 
 Analysis of the amount of sequence inserted and deleted in various genomic contexts is documented here: [length_analyses/](length_analyses).
