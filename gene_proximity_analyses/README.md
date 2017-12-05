@@ -72,7 +72,45 @@ $ mkdir distance_bin_beds_5kb_noncoding_UCNE
 $ zcat /fastdata/bop15hjb/GT_ref/gt_noncoding_withoutUCNE.bed.gz | ./create_gene_proximity_bins.py -bin_size 5000 -out_prefix distance_bin_beds_5kb_noncoding_UCNE/gt_noncoding_conserved_region_proximity_5kbwindows
 $ ls distance_bin_beds_5kb_noncoding_UCNE/*.bed.gz | python check_bin_population.py > distance_bin_beds_5kb_noncoding_UCNE/bin_summaries_5kb_nc_UCNE.txt
 $ ls distance_bin_beds_5kb_noncoding_UCNE/*bed.gz | python clump_end_bins.py distance_bin_beds_5kb_noncoding_UCNE/bin_summaries_5kb_nc_UCNE.txt > distance_bin_beds_5kb_noncoding_UCNE/distance_bin_beds_5kb_nc_UCNE.txt
-$ ./proximity_anavar.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -bed_list distance_bin_beds_5kb_noncoding_UCNE/distance_bin_beds_5kb_nc_UCNE.txt -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/anavar_cds_distance_5kb_nc_UCNE/gt_sel_neu_ref_conserveddist_5kb -sub
+$ ./proximity_anavar.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -bed_list distance_bin_beds_5kb_noncoding_UCNE/distance_bin_beds_5kb_nc_UCNE.txt -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/anavar_cds_distance_5kb_nc_UCNE/gt_sel_neu_ref_conserveddist_5kb -sub -evolgen
+$ ls /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/anavar_cds_distance_5kb_nc_UCNE/*results* | ../anavar_analyses/process_anavar_results.py -file_pattern bin,_bin\(\\d+-\?\\d\*\)\\. | cut -f 1-18 -d ',' > gt_sel_neu_ref_conserveddist_5kb.results.csv
+$ Rscript proximity_plots_5kb_nc_UCNE.R 
+```
+
+![5kb_nc_ucne](distance_estimates_5kb_nc_UCNE.png)
+
+Stats:
+
+```
+       Spearman's rank correlation rho
+
+data:  as.numeric(ins_theta$ins_theta) and ins_theta$distance
+S = 3626, p-value = 5.721e-07
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.7061826 
+
+
+        Spearman's rank correlation rho
+
+data:  as.numeric(del_theta$del_theta) and del_theta$distance
+S = 8008, p-value = 0.02315
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.3511061 
+
+
+        Spearman's rank correlation rho
+
+data:  as.numeric(rdi_data$rdi) and as.numeric(rdi_data$bin)
+S = 15690, p-value = 0.08233
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+       rho 
+-0.2713718 
+
 ```
 
 ## rDI summary for different windows
