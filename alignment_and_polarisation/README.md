@@ -2,7 +2,70 @@
 
 ## Alignment
 
-Multispecies alignment was performed between zebra finch, flycatcher and great tit as described here: <https://github.com/henryjuho/bird_alignments/tree/master/Zebrafinch_Flycatcher_Greattit>.
+### Genomes used
+
+|Species           |Version           |Available from                                                        |
+|:-----------------|:-----------------|:---------------------------------------------------------------------|
+|zebra finch       |TaeGut3.2.4       |<ftp://ftp.ensembl.org/pub/release-84/fasta/taeniopygia_guttata/dna/> |
+|great tit         |Parus_major1.0.4  |```/fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa```            |
+|flycatcher        |FicAlb1.5         |<http://www.ncbi.nlm.nih.gov/genome/?term=flycatcher>                 |
+
+### Preparing fasta files
+
+All chromosomal fasta sequences were renamed to include species information (and converted from NCBI headers where applicable) as follows:
+
+```
+$ ~/rename_chromosomal_fasta_headers.py -fas_in ./
+$ ls *rename.fa | while read i; do ~/fasta_add_header_prefix.py -fa $i -pre 'Flycatcher.chr'; done
+$ ls *fa | cut -d '.' -f 1-6 | while read i; do mv $i.rename.fa $i.fa ; done
+$ ls *fa | while read i; do ~/fasta_add_header_prefix.py -fa $i -pre 'Greattit.'; done
+$ ls *fa | while read i; do ~/fasta_add_header_prefix.py -fa $i -pre 'Zebrafinch.chr'; done
+```
+
+Next list files (tab delim) were generated that contained chromosomal fasta paths and sequence nicknames for use by lastz with the following script:
+
+```
+$ ./make_chromo_list.py -dir /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/genomes/Greattit/renamed_headers/ -spp Greattit
+$ ./make_chromo_list.py -dir /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/genomes/Zebrafinch/renamed_headers/ -spp Zebrafinch
+$ ./make_chromo_list.py -dir /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/genomes/Flycatcher/renamed_headers/ -spp Flycatcher
+```
+
+### Pairwise alignments
+
+LastZ was used to generate chromosomal pairwise alignments between the zebrafinch  and each of the query species. This used a python wrapper script as follows, which encorporates alignment, chaining and netting with lastz, axtChain and ChainNet respectively:
+
+```
+$ ./chromosomal_lastz_chain_net.py -target_list /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/fasta_lists/Zebrafinch.chromosome.list -query_list /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/fasta_lists/Greattit.chromosome.list -out /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/pairwise_zhang_param/Zebrafinch_Greattit/
+$ ./chromosomal_lastz_chain_net.py -target_list /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/fasta_lists/Zebrafinch.chromosome.list -query_list /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/fasta_lists/Flycatcher.chromosome.list -out /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/pairwise_zhang_param/Zebrafinch_Flycatcher/ -evolgen
+```
+
+Chromosomal mafs were then concatenated to form a whole genome maf as follows:
+
+```
+$ ~/merge_mafs.py -dir ./ -out_maf ../whole_genome_pairwise_mafs/Zebrafinch_ref/Zebrafinch.Greattit.maf
+$ ~/merge_mafs.py -dir ./ -out_maf ../whole_genome_pairwise_mafs/Zebrafinch_ref/Zebrafinch.Flycatcher.maf
+```
+
+### Multiple alignment
+
+Single coverage of the reference genome was then ensured using 'single_cov2' to satisfy multiz as follows:
+
+```
+$ ./single_cov.py -dir /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/pairwise_zhang_param/whole_genome_pairwise_mafs/Zebrafinch_ref/ -ref_name Zebrafinch -evolgen
+```
+
+Multiple alignment was run with 'multiz' using the 'roast' wrapper in the python script ```roast_birds.py``` as follows:
+
+```
+$ ./roast_birds.py -maf_dir /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/pairwise_zhang_param/whole_genome_pairwise_mafs/Zebrafinch_ref/zf_fc_gt_single_coverage/ -ref Zebrafinch -tree "'((Zebrafinch Flycatcher) Greattit)'" -out /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.maf -evolgen
+```
+
+The resulting maf file was then converted to a whole genome alignment bed files (one for each species) as follows:
+
+```
+$ automate_maf_to_bed.py -maf /fastdata/bop15hjb/bird_alignments/gbgc_proj/Zebrafinch.Flycatcher.Greattit.maf.gz -ref_sp Greattit -ref_fa /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -out_pre /fastdata/bop15hjb/bird_alignments/gbgc_proj/Greattit.Zebrafinch.Flycatcher
+$ tabix -pbed Greattit.Zebrafinch.Flycatcher.wga.bed.gz
+```
 
 ## Getting ancestral repeats using the WGA
 
