@@ -13,7 +13,7 @@ parser.add_argument('-S', '--Sorted', help='If specified runs CatVariants with -
                     action='store_true', default=False)
 args = parser.parse_args()
 
-# prepares list of VCFs from either list file or individually specified files
+# prepares list of VCF files from either list file or individually specified files
 vcf_file_data = args.VCF
 if len(vcf_file_data) == 1 and not vcf_file_data[0].endswith('.vcf'):
     input_vcfs = [vcf.rstrip('\n') for vcf in open(vcf_file_data[0])]
