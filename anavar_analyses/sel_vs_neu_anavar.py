@@ -157,7 +157,8 @@ def prepare_snp_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
     return sfs_m
 
 
-def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, out_stem, search, degree, spread, evolgen):
+def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nnoimp, maximp,
+                     out_stem, search, degree, spread, evolgen):
 
     """
     submits anavar jobs to cluster after writing required files etc
@@ -169,6 +170,9 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, out_ste
     :param n: int
     :param c: int
     :param dfe: str
+    :param alg: str
+    :param nnoimp: int
+    :param maximp: int
     :param out_stem: str
     :param search: int
     :param degree: int
@@ -203,11 +207,12 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, out_ste
                                      call_sel_reg=sel_region)
         ctl = an.IndelNeuSelControlFile()
 
-    ctl.set_alg_opts(search=search, alg='NLOPT_LD_SLSQP', key=3,
+    ctl.set_alg_opts(search=search, alg=alg, key=3,
                      epsabs=1e-20, epsrel=1e-9, rftol=1e-9,
-                     maxtime=3600, optional=True)
+                     maxtime=3600, optional=True,
+                     maximp=maximp, nnoimp=nnoimp)
 
-    ctl.set_data(sfs_data, n, dfe=dfe, c=c, gamma_r=(-5e4, 1e2), theta_r=(1e-10, 0.1), r_r=(0.01, 100),
+    ctl.set_data(sfs_data, n, dfe=dfe, c=c, gamma_r=(-5e4, 1e3), theta_r=(1e-10, 0.1), r_r=(0.01, 100),
                  scale_r=(0.1, 5000.0))
     if degree != 50:
         ctl.set_dfe_optional_opts(degree=degree, optional=True)
@@ -258,6 +263,10 @@ def main():
     parser.add_argument('-constraint', help='Constraint for model', choices=['none', 'equal_mutation_rate'],
                         default='none')
     parser.add_argument('-n_search', help='Number of searches to conduct per job', default=500, type=int)
+    parser.add_argument('-alg', help='Algorithm to use', default='NLOPT_LD_SLSQP',
+                        choices=['NLOPT_LD_SLSQP', 'NLOPT_LD_LBFGS', 'NLOPT_LN_NELDERMEAD'])
+    parser.add_argument('-nnoimp', help='nnoimp value', default=1, type=int)
+    parser.add_argument('-maximp', help='maximp value', default=3, type=int)
     parser.add_argument('-split', help='Number of jobs to split runs across, each job will run the control file once'
                                        'with a different seed given to anavar', default=1, type=int)
     parser.add_argument('-degree', help='changes degree setting in anavar', default=50, type=int)
@@ -275,6 +284,8 @@ def main():
                      sel_region=args.sel_type,
                      constraint=args.constraint,
                      n=args.n, c=args.c, dfe=args.dfe,
+                     alg=args.alg,
+                     nnoimp=args.nnoimp, maximp=args.maximp,
                      out_stem=out_pre,
                      search=args.n_search,
                      degree=args.degree,
