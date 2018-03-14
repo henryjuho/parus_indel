@@ -22,7 +22,7 @@ def main():
         os.makedirs(args.out_dir)
 
     # sfs bed append cmd
-    cmd = 'zgrep ^{chromo} {bed} | python addSFS.py {vcf} {call_fa} > {output}'
+    cmd = 'zgrep ^{chromo} {bed} | python ~/parus_indel/gene_proximity_analyses/addSFS.py {vcf} {call_fa} > {output}'
 
     # input bed files
     bed_list = [args.bed_dir + x for x in os.listdir(args.bed_dir) if x.endswith('.bed.gz')]
