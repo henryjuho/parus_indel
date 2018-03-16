@@ -40,7 +40,7 @@ def main():
             sfs_cmd = cmd.format(chromo=chromo, bed=dist_bed, vcf=args.vcf, call_fa=args.call_fa, output=output_name)
             outs = output_name.replace('.bed', '')
             jid = outs.split('/')[-1] + '.sh'
-            q_sub([sfs_cmd], out=outs, jid=jid, evolgen=args.evolgen)
+            q_sub([sfs_cmd], t=24, out=outs, jid=jid, evolgen=args.evolgen)
             jid_list.append(jid)
 
         # gather cmds
