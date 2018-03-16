@@ -2,7 +2,6 @@
 
 from __future__ import print_function
 import argparse
-import pysam
 from vcf2raw_sfs import vcf2sfs
 import anavar_utils as an
 from qsub import q_sub
@@ -10,11 +9,8 @@ import gzip
 import random
 import sys
 import os
-import subprocess
-from itertools import chain
 sys.path.insert(0, os.getenv('HOME') + '/parus_indel/anavar_analyses')
 from sel_vs_neu_anavar import sfs2counts, read_callable_csv
-from window_sel_vs_neu_anavar import window_call_sites
 
 
 def bootstrap(boot_list_list):
@@ -31,12 +27,18 @@ def bootstrap(boot_list_list):
     return new_list_list
 
 
+def merge_sfs_counts(sfses):
+
+    summed_sfs = [sum(x) for x in zip(*sfses)]
+
+    return summed_sfs
+
+
 def main():
     # argument parser
     parser = argparse.ArgumentParser()
     parser.add_argument('-vcf', help='vcf file with indels', required=True)
     parser.add_argument('-bed_list', help='list of bin beds', required=True)
-    parser.add_argument('-call_fa', help='callable sites fasta file', required=True)
     parser.add_argument('-call_csv', default='/fastdata/bop15hjb/GT_ref/gt_callable_summary.csv',
                         help=argparse.SUPPRESS)
     parser.add_argument('-equal_theta', help='if specified runs with equal mutation ratesbetween neu and sel sites',
@@ -60,9 +62,6 @@ def main():
         constraint = 'equal_mutation_rate'
     else:
         constraint = 'none'
-
-    # files
-    call_fasta = pysam.FastaFile(args.call_fa)
 
     # make a sorted list of form [('1', 'bin1.bed.gz'), ('2', 'bin2.bed.gz')]
     bed_files = sorted([(x.rstrip().split('.')[-3].replace('bin', ''), x.rstrip()) for
@@ -98,28 +97,21 @@ def main():
 
         bootstrapable_data = {'del': [], 'ins': [], 'call': []}
 
-        sfs_cmd = ('tabix -h {vcf} {chromo}:{start}-{end} | '
-                   '~/sfs_utils/vcf2raw_sfs.py -mode {mode}')
-
+        # read in sfs and m
         for coord_set in gzip.open(bin_bed):
 
-            coords = coord_set.split()
+            coords = coord_set.rstrip().split()
+            ins_wind_sfs = [int(x) for x in coords[-3].split(',')]
+            del_wind_sfs = [int(x) for x in coords[-2].split(',')]
+            wind_m = int(coords[-1])
 
             if coords[0] == 'chrZ':
                 continue
 
-            for indel_type in ['ins', 'del']:
-
-                sfs = subprocess.Popen(sfs_cmd.format(
-                    chromo=coords[0], start=coords[1], end=coords[2],
-                    vcf=args.vcf, mode=indel_type), shell=True, stdout=subprocess.PIPE
-                                   ).communicate()[0].split('\n')[:-1]
-
-                bootstrapable_data[indel_type].append(sfs)
-
-            # get sel call sites
-            bootstrapable_data['call'].append(window_call_sites(call_fasta, None,
-                                                                (coords[0], int(coords[1]), int(coords[2]))))
+            # add window data to dict
+            bootstrapable_data['ins'].append(ins_wind_sfs)
+            bootstrapable_data['del'].append(del_wind_sfs)
+            bootstrapable_data['call'].append(wind_m)
 
         # ====BOOTSTRAPPING=====
         # sort file names
@@ -137,23 +129,20 @@ def main():
             call_list = bootstrapable_data['call']
 
             if i == 1:
-                ins_sfs = list(chain.from_iterable(ins_freqs))
-                del_sfs = list(chain.from_iterable(del_freqs))
+                ins_sfs = merge_sfs_counts(ins_freqs)
+                del_sfs = merge_sfs_counts(del_freqs)
                 call_sites = sum(call_list)
 
             else:
 
                 bs_ins, bs_del, bs_call = bootstrap([ins_freqs, del_freqs, call_list])
 
-                ins_sfs = list(chain.from_iterable(bs_ins))
-                del_sfs = list(chain.from_iterable(bs_del))
+                ins_sfs = merge_sfs_counts(bs_ins)
+                del_sfs = merge_sfs_counts(bs_del)
                 call_sites = sum(bs_call)
 
-            ins_counts = sfs2counts(ins_sfs, 20)
-            del_counts = sfs2counts(del_sfs, 20)
-
             # anavar setup
-            sfs_data = {'selected_INS': (ins_counts, call_sites), 'selected_DEL': (del_counts, call_sites),
+            sfs_data = {'selected_INS': (ins_sfs, call_sites), 'selected_DEL': (del_sfs, call_sites),
                         'neutral_INS': (sfs_ni, neu_m), 'neutral_DEL': (sfs_nd, neu_m)}
 
             # make control file
