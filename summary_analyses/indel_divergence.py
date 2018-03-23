@@ -38,7 +38,8 @@ def main():
         sys.exit()
 
     else:
-        callable_cmd = 'zgrep -w ^{} {} | bedtools intersect -a stdin -b {} | wga_bed_summary.py -callable'.format(
+        callable_cmd = ('zgrep -w ^{} {} | bedtools intersect -a stdin -b {} | '
+                        '~/WGAbed/wga_bed_summary.py -callable').format(
             args.chromo, args.wga, args.bed)
 
         print(callable_cmd, file=sys.stdout)
@@ -48,7 +49,7 @@ def main():
         n_sites = int(call_sites[1])
 
         indel_cmd = ('zgrep -w ^{} {} | bedtools intersect -a stdin -b {} | '
-                     'wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | wc -l').format(
+                     '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | wc -l').format(
             args.chromo, args.wga, args.bed)
 
         print(indel_cmd, file=sys.stdout)
