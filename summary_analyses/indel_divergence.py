@@ -19,6 +19,7 @@ def main():
     parser.add_argument('-bed', help='Coordinates to calc divergence for, bed format', required=True)
     parser.add_argument('-chromo', help=argparse.SUPPRESS, default='all')
     parser.add_argument('-out', help='Output path and file', required=True)
+    parser.add_argument('-evolgen', help='if specified will run on lab queue', default=False, action='store_true')
     args = parser.parse_args()
 
     if args.chromo == 'all':
@@ -32,7 +33,7 @@ def main():
             cmd = ' '.join(sys.argv) + ' -chromo {}'.format(x)
             outs = args.out.replace('.txt', '') + '_{}'.format(x)
 
-            q_sub([cmd], out=outs, evolgen=True)
+            q_sub([cmd], out=outs, evolgen=args.evolgen)
 
         sys.exit()
 
