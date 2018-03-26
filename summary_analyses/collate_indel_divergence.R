@@ -3,11 +3,14 @@ library(dplyr)
 
 cds_div = read.delim('/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/gt_cds_indel_divergence.txt')
 non_coding_div = read.delim('/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/gt_noncoding_indel_divergence.txt')
+line_div = read.delim('/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/gt_ancLINEs_indel_divergence.txt')
 
 cds_div$type = 'cds'
 non_coding_div$type = 'non-coding'
+line_div$type = 'ancestral LINEs'
 
-div = rbind(cds_div, non_coding_div)
+div = rbind(cds_div, non_coding_div, line_div)
+div$type = factor(div$type, levels = c('ancestral LINEs', 'non-coding', 'cds'))
 
 all_chr = summarise(group_by(subset(div, chromo != 'X' & chromo != 'XHet' & chromo != 'YHet' & chromo != 'chrZ'), type),
     chromo='autosomes', indels=sum(indels), callable=sum(callable))
