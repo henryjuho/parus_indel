@@ -227,7 +227,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
     with open(res_file_list, 'a') as res_list:
 
         # split into requested jobs
-        for i in range(start_index, spread+1):
+        for i in range(start_index, start_index+spread):
 
             split_stem = '{}.split{}'.format(out_stem, i)
 
