@@ -158,7 +158,7 @@ def prepare_snp_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
 
 
 def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nnoimp, maximp,
-                     out_stem, search, degree, spread, evolgen):
+                     out_stem, search, degree, spread, evolgen, start_index):
 
     """
     submits anavar jobs to cluster after writing required files etc
@@ -178,6 +178,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
     :param degree: int
     :param spread: int
     :param evolgen: bool
+    :param start_index: int
     :return: None
     """
 
@@ -223,10 +224,10 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
 
     res_file_list = out_stem + '.allres.list.txt'
     hjids = []
-    with open(res_file_list, 'w') as res_list:
+    with open(res_file_list, 'a') as res_list:
 
         # split into requested jobs
-        for i in range(1, spread+1):
+        for i in range(start_index, spread+1):
 
             split_stem = '{}.split{}'.format(out_stem, i)
 
@@ -271,6 +272,7 @@ def main():
                                        'with a different seed given to anavar', default=1, type=int)
     parser.add_argument('-degree', help='changes degree setting in anavar', default=50, type=int)
     parser.add_argument('-out_pre', help='File path and prefix for output', required=True)
+    parser.add_argument('-start_index', help='ID for first bin and for first seed', default=1, type=int)
     parser.add_argument('-evolgen', help='If specified will run on evolgen', default=False, action='store_true')
     args = parser.parse_args()
 
@@ -290,7 +292,8 @@ def main():
                      search=args.n_search,
                      degree=args.degree,
                      spread=args.split,
-                     evolgen=args.evolgen)
+                     evolgen=args.evolgen,
+                     start_index=args.start_index)
 
 if __name__ == '__main__':
     main()
