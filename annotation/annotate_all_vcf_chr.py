@@ -26,7 +26,7 @@ hold_list = []
 for chromo in chromo_list:
     chr_jid = 'gt_annotation_' + chromo + '.sh'
     hold_list.append(chr_jid)
-    annotate_vcf_cmd = ('./annotate_vcf.py '
+    annotate_vcf_cmd = ('~/parus_indel/annotation/annotate_vcf.py '
                         '-gff ' + gff + ' '
                         '-vcf ' + vcf + ' '
                         '-chr ' + chromo + ' ')
@@ -38,7 +38,7 @@ for chromo in chromo_list:
           evolgen=evolgen)
 
 # submit concat job
-cat_cmd = ('./catVCFs.py '
+cat_cmd = ('~/parus_indel/annotation/catVCFs.py '
            '-out_vcf ' + vcf.replace('.vcf', '.annotated.vcf'))
 for out_vcf in vcf_outs:
     cat_cmd += ' -vcf ' + out_vcf
