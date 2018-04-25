@@ -72,7 +72,7 @@ with open(vcf_name) as vcf:
                 output_bed.write(bed_line)
 
 # write and submit array job for extract_maf_region.py
-extract_maf_region_cmd = ('./maf2var.py '
+extract_maf_region_cmd = ('~/parus_indel/alignment_and_polarisation/maf2var.py '
                           '-bed ' + bed_prefix + '$SGE_TASK_ID.bed '
                           '-maf ' + maf)
 
@@ -83,7 +83,7 @@ q_sub([extract_maf_region_cmd],
       array=[1, int(no_jobs)])
 
 # write hold job to concatonate all output files
-concat_cmd = ('./concat_seq_files.py '
+concat_cmd = ('~/parus_indel/alignment_and_polarisation/concat_seq_files.py '
               '-out ' + output_dir + 'all_variants.alignment_states.txt ')
 
 for output in output_list:
