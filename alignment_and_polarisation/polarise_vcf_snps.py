@@ -97,8 +97,8 @@ for line in open(vcf_file):
 
         else:
             # identify if ref or alt is ancestral
-            target_seq = alignment_info[spp][1]
-            out_group_seqs = [alignment_info[out_spp][1] for out_spp in alignment_info.keys() if out_spp != spp]
+            target_seq = alignment_info[spp][1].upper()
+            out_group_seqs = [alignment_info[out_spp][1].upper() for out_spp in alignment_info.keys() if out_spp != spp]
             ref_anc = True
             alt_anc = True
 
