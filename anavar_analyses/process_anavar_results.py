@@ -174,7 +174,7 @@ def main():
         mod_name = '{}_{}_{}class{}'.format(variant, dfe, n_class, constraint)
 
         reformed = reformat_mle(mle, n_class, variant, results.converged(),
-                                results.bounds_hit(gamma_r=(-5e4, 1e3), theta_r=(1e-12, 0.1), r_r=(0.01, 100),
+                                results.bounds_hit(gamma_r=(-5e4, 1e4), theta_r=(1e-12, 0.1), r_r=(0.01, 100),
                                                    scale_r=(0.1, 5000.0)),
                                 mod_name, free_params, dfe, results.num_runs(),
                                 custom_col=spec_col, custom_val=spec_val)
