@@ -1,5 +1,12 @@
 # Annotating the data 
 
+## RefSeq contig key file generation
+
+```
+$ zgrep -A 2 ^##sequence GCF_001522545.1_Parus_major1.0.3_genomic.gff.gz | grep ^NC | cut -f 1,9 | cut -d '=' -f 1,5 | cut -d ';' -f 1 | sed -e 's/ID=/chr/g' > contigs_key.txt
+$ cp contigs_key.txt ~/parus_indel/annotation/
+```
+
 ## Region coordinates
 
 Bed files with coordinates for different genomic contexts were created as follows:

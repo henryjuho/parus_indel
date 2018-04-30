@@ -5,6 +5,19 @@ import argparse
 import gzip
 
 
+def contig_dict(key_file):
+
+    contigs = {}
+
+    for line in open(key_file):
+
+        refseq, chr_id = line.rstrip().split()
+
+        contigs[refseq] = chr_id
+
+    return contigs
+
+
 def degeneracy(codon):
 
     # codon table
@@ -52,8 +65,17 @@ def degeneracy(codon):
 def cds_coord_to_codon_coords(fa_coord, direction):
 
     iter_coord = [x.split('..') for x in fa_coord.split(',')]
+
+    # catch lone coords
+    iter_coord_new = []
+    for pos_pair in iter_coord:
+        if len(pos_pair) == 1:
+            iter_coord_new.append([pos_pair[0], pos_pair[0]])
+        else:
+            iter_coord_new.append(pos_pair)
+
     all_positions = []
-    for block in iter_coord:
+    for block in iter_coord_new:
         block_poss = range(int(block[0]), int(block[1])+1)
         all_positions += block_poss
     if direction == 'complement':
@@ -102,29 +124,28 @@ def main():
     parser.add_argument('-cds_fa', help='Fasta file with CDS sequences in', required=True)
     parser.add_argument('-degen', help='Degeneracy of sites to extract positions for', required=True,
                         action='append', choices=[0, 2, 3, 4], type=int)
+    parser.add_argument('-contig_key', help=argparse.SUPPRESS, default='contigs_key.txt')
     args = parser.parse_args()
 
     # variables
     fa = args.cds_fa
     out_degens = set(args.degen)
     degen_data = {}
+    contig_data = contig_dict(args.contig_key)
 
     # loop through fasta
     sequence, chromo, coords, skip, trans_name = '', '', [], False, ''
     for line in gzip.open(fa):
 
-        # skip sequence line following skipped header
+        # skip sequence lines following skipped header
         if skip is True:
-            skip = False
-            continue
+            if not line.startswith('>'):
+                continue
+            else:
+                skip = False
 
         # if a header line
         if line.startswith('>'):
-
-            # skips records with both and forward and reverse strand in coords
-            if 'complement' in line and 'join' in line:
-                skip = True
-                continue
 
             # process prev sequence
             if sequence != '' and len(sequence) % 3 == 0 and start_stop_ok(sequence):
@@ -147,17 +168,31 @@ def main():
                             degen_data[chromo][trans_name][degen] = set()
                         degen_data[chromo][trans_name][degen] |= {site_pos}
 
+            # skips records with partial cds or low quality
+            if 'partial' in line or 'LOW QUALITY PROTEIN' in line:
+                skip = True
+                continue
+
             # reset holders and store details of next sequence
             sequence = ''
-            header_info = line.split(';')[1]
-            chromo = header_info.split(':')[0].replace('loc=', '')
-            trans_name = line.split(' ')[0].strip('>')
-            if '(' in header_info:
-                method = header_info.split('(')[0].split(':')[1]
-                coords = cds_coord_to_codon_coords(header_info.split('(')[1].rstrip(')'), method)
+            ref_seq_chromo = '_'.join(line.split('[')[0].split('|')[1].split('_')[0:2])
+
+            if ref_seq_chromo not in contig_data.keys():
+                skip = True
+                continue
+
+            chromo = contig_data[ref_seq_chromo]
+            trans_name = line.split('[')[1].split('ID:')[1].rstrip().rstrip(']')
+            coord_data = line.split('[')[-1].rstrip().rstrip(']').replace('location=', '')
+
+            # determine if complement or not
+            if 'complement' in coord_data:
+                method = 'complement'
             else:
                 method = 'join'
-                coords = cds_coord_to_codon_coords(header_info.split(':')[1], method)
+
+            coord_string = coord_data.split('(')[-1].rstrip(')')
+            coords = cds_coord_to_codon_coords(coord_string, method)
 
         # if a sequence line add to seq string
         else:
