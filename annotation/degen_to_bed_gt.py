@@ -124,7 +124,7 @@ def main():
     parser.add_argument('-cds_fa', help='Fasta file with CDS sequences in', required=True)
     parser.add_argument('-degen', help='Degeneracy of sites to extract positions for', required=True,
                         action='append', choices=[0, 2, 3, 4], type=int)
-    parser.add_argument('-contig_key', help=argparse.SUPPRESS, default='contigs_key.txt')
+    parser.add_argument('-contig_key', help=argparse.SUPPRESS, default='~/parus_indel/annotation/contigs_key.txt')
     args = parser.parse_args()
 
     # variables
