@@ -184,7 +184,7 @@ def main():
                 continue
 
             chromo = contig_data[ref_seq_chromo]
-            trans_name = line.split('[')[1].split('ID:')[1].rstrip().rstrip(']')
+            trans_name = line.split('ID:')[1].split('[')[0].rstrip().rstrip(']')
             coord_data = line.split('[')[-1].rstrip().rstrip(']').replace('location=', '')
 
             # determine if complement or not

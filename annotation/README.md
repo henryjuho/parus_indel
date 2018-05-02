@@ -20,6 +20,7 @@ $ bedtools subtract -a gt_genes.bed -b gt_exons.bed > gt_introns.bed
 $ bedtools subtract -a gt_chromosomes.bed -b gt_genes.bed > gt_intergenic.bed
 $ cat gt_intergenic.bed gt_introns.bed | sort -k1,1 -k2,2n | bedtools merge > gt_noncoding.bed
 $ bedtools subtract -a gt_noncoding.bed.gz -b UCNEs_gtit1.0.4.sorted.bed.gz | bgzip -c > gt_noncoding_withoutUCNE.bed.gz
+$ ~/parus_indel/annotation/degen_to_bed_gt.py -cds_fa cds_fasta/GCF_001522545.1_Parus_major1.0.3_cds_from_genomic.fna.gz -degen 0 | sort -k1,1 -k2,2n | bedtools merge > gt_0fold.bed
 ```
 
 ## Genomic regions
