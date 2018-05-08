@@ -34,7 +34,8 @@ for chromo in chromo_list:
     threeway_intersect = ('zgrep ^' + chromo + ' ' + wga + ' | '
                           'bedtools intersect -a stdin -b ' + ref_lines + ' ')
     for query in query_lines:
-        threeway_intersect += '| non_ref_intersect.py -b ' + query[1] + ' -q ' + query[0] + ' -c ' + chromo + ' '
+        threeway_intersect += ('| ~/WGAbed/non_ref_intersect.py '
+                               '-b ' + query[1] + ' -q ' + query[0] + ' -c ' + chromo + ' ')
     threeway_intersect += ' | bgzip -c > ' + chromo_out
 
     # submit to cluster
