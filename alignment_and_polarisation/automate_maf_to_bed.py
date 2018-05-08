@@ -49,7 +49,7 @@ def main():
     for chromo in chromo_list:
         chromo_bed_out = maf_stem + '.' + chromo + '.wga.bed.gz'
         out_list_ordered.append(chromo_bed_out)
-        maf_to_bed_cmd = ('~/maf_parse/maf_to_bed.py '
+        maf_to_bed_cmd = ('~/WGAbed/maf_to_bed.py '
                           '-i ' + maf + ' '
                           '-r ' + ref_sp + ' '
                           '-c ' + chromo + ' | '
