@@ -4,13 +4,16 @@ library(dplyr)
 cds_div = read.delim('/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/gt_cds_indel_divergence.txt')
 non_coding_div = read.delim('/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/gt_noncoding_indel_divergence.txt')
 line_div = read.delim('/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/gt_ancLINEs_indel_divergence.txt')
+new_line_div = read.delim('/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/gt_ancLINEs_new_indel_divergence.txt')
+
 
 cds_div$type = 'cds'
 non_coding_div$type = 'non-coding'
-line_div$type = 'ancestral LINEs'
+line_div$type = 'ancestral LINEs prebug'
+new_line_div$type = 'ancestral LINEs new'
 
-div = rbind(cds_div, non_coding_div, line_div)
-div$type = factor(div$type, levels = c('ancestral LINEs', 'non-coding', 'cds'))
+div = rbind(cds_div, non_coding_div, line_div, new_line_div)
+div$type = factor(div$type, levels = c('ancestral LINEs prebug', 'ancestral LINEs new', 'non-coding', 'cds'))
 
 all_chr = summarise(group_by(subset(div, chromo != 'X' & chromo != 'XHet' & chromo != 'YHet' & chromo != 'chrZ'), type),
     chromo='autosomes', indels=sum(indels), callable=sum(callable))
@@ -20,11 +23,12 @@ all_chr$divergence = all_chr$indels / all_chr$callable
 div_plot = ggplot(all_chr, aes(x=type, y=divergence)) +
     geom_bar(stat='identity', position='dodge') +
     theme_bw(base_size = 10) +
-    xlab('') + ylab('divergence')
+    xlab('') + ylab('divergence') +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-pdf(file='indel_divergence.pdf', width=3, height=3)
-div_plot
-dev.off()
+# pdf(file='indel_divergence.pdf', width=3, height=3)
+# div_plot
+# dev.off()
 
 png(file='indel_divergence.png', width=3, height=3, units='in', res=320)
 div_plot

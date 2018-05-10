@@ -69,6 +69,7 @@ Simple INDEL divergence estimates were obtained from the whole genome alignment 
 $ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -bed /fastdata/bop15hjb/GT_ref/gt_cds.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_cds_indel_divergence.txt
 $ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -bed /fastdata/bop15hjb/GT_ref/gt_noncoding.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_noncoding_indel_divergence.txt
 $ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -bed /fastdata/bop15hjb/GT_ref/Zebrafinch.Flycatcher.Greattit.ancLINEs.sorted.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_ancLINEs_indel_divergence.txt
+$ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/gbgc_proj/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -bed /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/LINE_intersect/Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_ancLINEs_new_indel_divergence.txt -evolgen
 
 $ Rscript collate_indel_divergence.R 
 ```
