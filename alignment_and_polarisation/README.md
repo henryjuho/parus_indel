@@ -63,7 +63,7 @@ $ ./roast_birds.py -maf_dir /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/pai
 The resulting maf file was then converted to a whole genome alignment bed files (one for each species) as follows:
 
 ```
-$ automate_maf_to_bed.py -maf /fastdata/bop15hjb/bird_alignments/gbgc_proj/Zebrafinch.Flycatcher.Greattit.maf.gz -ref_sp Greattit -ref_fa /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -out_pre /fastdata/bop15hjb/bird_alignments/gbgc_proj/Greattit.Zebrafinch.Flycatcher
+$ ~/parus_indel/alignment_and_polarisation/automate_maf_to_bed.py -maf /fastdata/bop15hjb/bird_alignments/gbgc_proj/Zebrafinch.Flycatcher.Greattit.maf.gz -ref_sp Greattit -ref_fa /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -out_pre /fastdata/bop15hjb/bird_alignments/gbgc_proj/Greattit.Zebrafinch.Flycatcher -evolgen
 $ tabix -pbed Greattit.Zebrafinch.Flycatcher.wga.bed.gz
 ```
 
@@ -99,9 +99,10 @@ zcat GCF_001522545.1_Parus_major1.0.3_rm.out.LINEs.bed.gz | rename_bedchromsomes
 The overlap of all three files was then taken using the whole genome alignment as follows (note this script wraps some utilities from <https://github.com/padraicc/WGAbed>):
 
 ```
-get_conserved_LINEs.py -wga_bed /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -r_bed Tit_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/GCF_001522545.1_Parus_major1.0.3_rm.out.LINEs.rename.bed.gz -q_bed Zebrafinch,Tit_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/Taeniopygia_guttata.RepeatMasker.out.LINEs.rename.tab.sorted.bed.gz -q_bed Flycatcher,Tit_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/FicAlb1.5.masking_coordinates.LINEs.rename.bed.gz -chr_list /fastdata/bop15hjb/GT_ref/chromosome_list.bed -out Tit_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/LINE_intersect/Zebrafinch.Flycatcher.Greattit -evolgen
-zcat Zebrafinch.Flycatcher.Greattit.LINEs.wga.bed.gz | sort -k1,1 -k2,2n | bgzip -c > Zebrafinch.Flycatcher.Greattit.LINEs.sorted.wga.bed.gz
-zcat Zebrafinch.Flycatcher.Greattit.LINEs.sorted.wga.bed.gz | cut -f 1-3 | bedtools merge -i stdin | bgzip -c > Zebrafinch.Flycatcher.Greattit.ancLINEs.sorted.bed.gz
+~/parus_indel/alignment_and_polarisation/get_conserved_LINEs.py -wga_bed /fastdata/bop15hjb/bird_alignments/gbgc_proj/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -r_bed /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/GCF_001522545.1_Parus_major1.0.3_rm.out.LINEs.rename.bed.gz -q_bed Zebrafinch,/fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/Taeniopygia_guttata.RepeatMasker.out.LINEs.rename.tab.sorted.bed.gz -q_bed Flycatcher,/fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/FicAlb1.5.masking_coordinates.LINEs.rename.bed.gz -chr_list /fastdata/bop15hjb/GT_ref/chromosome_list.bed -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/LINE_intersect/Greattit.Zebrafinch.Flycatcher -evolgen
+zcat Greattit.Zebrafinch.Flycatcher.LINEs.wga.bed.gz | sort -k1,1 -k2,2n | bgzip -c > Greattit.Zebrafinch.Flycatcher.LINEs.sorted.wga.bed.gz
+zcat Greattit.Zebrafinch.Flycatcher.LINEs.sorted.wga.bed.gz | cut -f 1-3 | bedtools merge -i stdin | bgzip -c > Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz
+
 ```
 
 ## INDEL polarisation
