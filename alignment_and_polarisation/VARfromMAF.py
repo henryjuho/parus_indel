@@ -12,6 +12,7 @@ parser.add_argument('-maf', help='MAF file with alignment to find variants in', 
 parser.add_argument('-target_spp', help='Name of target species as it appears in the maf file', required=True)
 parser.add_argument('-out', help='Output directory', required=True)
 parser.add_argument('-no_jobs', help='Number of jobs to split maf variant extraction over', required=True)
+parser.add_argument('-evolgen', help='if specified will run on lab queue', default=False, action='store_true')
 args = parser.parse_args()
 
 # variables
@@ -80,7 +81,7 @@ q_sub([extract_maf_region_cmd],
       bed_dir+'var_from_maf',
       t=72,
       jid='var_from_maf.sh',
-      array=[1, int(no_jobs)])
+      array=[1, int(no_jobs)], evolgen=args.evolgen)
 
 # write hold job to concatonate all output files
 concat_cmd = ('~/parus_indel/alignment_and_polarisation/concat_seq_files.py '
@@ -91,4 +92,4 @@ for output in output_list:
 
 q_sub([concat_cmd],
       output_dir + 'merge_alignment_variants',
-      hold=['var_from_maf.sh'])
+      hold=['var_from_maf.sh'], evolgen=args.evolgen)
