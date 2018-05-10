@@ -64,7 +64,9 @@ The resulting maf file was then converted to a whole genome alignment bed files 
 
 ```
 $ ~/parus_indel/alignment_and_polarisation/automate_maf_to_bed.py -maf /fastdata/bop15hjb/bird_alignments/gbgc_proj/Zebrafinch.Flycatcher.Greattit.maf.gz -ref_sp Greattit -ref_fa /fastdata/bop15hjb/GT_ref/Parus_major_1.04.rename.fa -out_pre /fastdata/bop15hjb/bird_alignments/gbgc_proj/Greattit.Zebrafinch.Flycatcher -evolgen
+$ cd /fastdata/bop15hjb/bird_alignments/gbgc_proj/
 $ tabix -pbed Greattit.Zebrafinch.Flycatcher.wga.bed.gz
+$ cp Greattit.Zebrafinch.Flycatcher.wga.bed.gz* /fastdata/bop15hjb/GT_ref/
 ```
 
 ## Getting ancestral repeats using the WGA
@@ -100,9 +102,10 @@ The overlap of all three files was then taken using the whole genome alignment a
 
 ```
 ~/parus_indel/alignment_and_polarisation/get_conserved_LINEs.py -wga_bed /fastdata/bop15hjb/bird_alignments/gbgc_proj/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -r_bed /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/GCF_001522545.1_Parus_major1.0.3_rm.out.LINEs.rename.bed.gz -q_bed Zebrafinch,/fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/Taeniopygia_guttata.RepeatMasker.out.LINEs.rename.tab.sorted.bed.gz -q_bed Flycatcher,/fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/FicAlb1.5.masking_coordinates.LINEs.rename.bed.gz -chr_list /fastdata/bop15hjb/GT_ref/chromosome_list.bed -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/LINE_intersect/Greattit.Zebrafinch.Flycatcher -evolgen
+cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/LINE_intersect/
 zcat Greattit.Zebrafinch.Flycatcher.LINEs.wga.bed.gz | sort -k1,1 -k2,2n | bgzip -c > Greattit.Zebrafinch.Flycatcher.LINEs.sorted.wga.bed.gz
 zcat Greattit.Zebrafinch.Flycatcher.LINEs.sorted.wga.bed.gz | cut -f 1-3 | bedtools merge -i stdin | bgzip -c > Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz
-
+cp Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz* /fastdata/bop15hjb/GT_ref/
 ```
 
 ## INDEL polarisation
