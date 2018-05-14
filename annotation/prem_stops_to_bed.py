@@ -166,7 +166,7 @@ def process_transcript(sequence, coords, trans_name, nonsense_data, snps, chromo
                 # is a premature stop possible?
                 if prem_stop(codon, pos):
 
-                    nonsense_data[trans_name]['call'] |= set(site_pos)
+                    nonsense_data[trans_name]['call'] |= {site_pos}
 
                     # if snp at site
                     if site_pos in snps[chromo]:
@@ -183,7 +183,7 @@ def process_transcript(sequence, coords, trans_name, nonsense_data, snps, chromo
                         if not snp_makes_stop(snp_record, pos, codon, base_pos):
                             continue
 
-                        nonsense_data[trans_name]['snps'] |= set(site_pos)
+                        nonsense_data[trans_name]['snps'] |= {site_pos}
 
                     # move on if no snp at position
                     else:
