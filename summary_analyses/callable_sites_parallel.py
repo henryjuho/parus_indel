@@ -64,7 +64,7 @@ def main():
             fa_out = '{}_{}_part{}.fa'.format(out_pre, chromo, part[0])
             print(fa_out, file=file_list)
 
-            cmd_line = ('~/parus_indel/callable_sites_from_vcf_regional.py '
+            cmd_line = ('~/parus_indel/summary_analyses/callable_sites_from_vcf_regional.py '
                         '-vcf {vcf} '
                         '-bed {bed} '
                         '-ar_bed {ar} '
@@ -86,7 +86,7 @@ def main():
     file_list.close()
 
     # concat job
-    cat_cmd = 'cat {} | ~/parus_indel/fa_cat.py > {}.fa'.format(out_pre + '_falist.txt', out_pre)
+    cat_cmd = 'cat {} | ~/parus_indel/alignment_and_polarisation/fa_cat.py > {}.fa'.format(out_pre + '_falist.txt', out_pre)
     q_sub([cat_cmd], out=out_pre + '_cat', hold=jids, evolgen=True)
 
 if __name__ == '__main__':
