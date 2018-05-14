@@ -166,7 +166,7 @@ def process_transcript(sequence, coords, trans_name, nonsense_data, snps, chromo
                 # is a premature stop possible?
                 if prem_stop(codon, pos):
 
-                    nonsense_data[trans_name]['call'] |= site_pos
+                    nonsense_data[trans_name]['call'] |= set(site_pos)
 
                     # if snp at site
                     if site_pos in snps[chromo]:
@@ -183,7 +183,7 @@ def process_transcript(sequence, coords, trans_name, nonsense_data, snps, chromo
                         if not snp_makes_stop(snp_record, pos, codon, base_pos):
                             continue
 
-                        nonsense_data[trans_name]['snps'] |= site_pos
+                        nonsense_data[trans_name]['snps'] |= set(site_pos)
 
                     # move on if no snp at position
                     else:
@@ -200,7 +200,7 @@ def main():
     parser.add_argument('-cds_fa', help='Fasta file with CDS sequences in', required=True)
     parser.add_argument('-chr', help='chromosome', required=True)
     parser.add_argument('-vcf', help='SNP vcf path', required=True)
-    parser.add_argument('-out', help='output file', required=True)
+    parser.add_argument('-out', help='output file stem', required=True)
     parser.add_argument('-contig_key', help=argparse.SUPPRESS,
                         default='{}/parus_indel/annotation/contigs_key.txt'.format(os.getenv('HOME')))
     args = parser.parse_args()
@@ -211,6 +211,8 @@ def main():
     snps = cds_snp_coords(args.vcf)
     vcf_records = pysam.VariantFile(args.vcf)
     contig_data = contig_dict(args.contig_key)
+    possible_nonsense = open('{}_{}_nonsense_potential.bed'.format(args.out, args.chr), 'w')
+    actual_nonsense = open('{}_{}_nonsense_actual.bed'.format(args.out, args.chr), 'w')
 
     # loop through fasta
     sequence, chromo, coords, skip, trans_name = '', '', [], False, ''
@@ -272,10 +274,12 @@ def main():
         nonse_pos = nonsense_data[trans]['call']
         nonse_snp_pos = nonsense_data[trans]['snps']
 
-        for positions in [nonse_pos, nonse_snp_pos]:
-            for position in list(positions):
-                print(nonse_chromo, str(int(position) - 1), position, trans, sep='\t')
+        for positions in [[nonse_pos, possible_nonsense], [nonse_snp_pos, actual_nonsense]]:
+            for position in list(positions[0]):
+                print(nonse_chromo, str(int(position) - 1), position, trans, sep='\t', file=positions[1])
 
+    possible_nonsense.close()
+    actual_nonsense.close()
 
 if __name__ == '__main__':
     main()
