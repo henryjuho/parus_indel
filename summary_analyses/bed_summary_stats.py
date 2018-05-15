@@ -86,9 +86,12 @@ def main():
 
         sfs = [float(x) for x in popen_grab(sfs_cmd)]
 
-        tw = theta_w(n, len(sfs))
-        pi_val = pi(n, sfs)
-        tajd = tajimas_d(n, sfs)
+        try:
+            tw = theta_w(n, len(sfs))
+            pi_val = pi(n, sfs)
+            tajd = tajimas_d(n, sfs)
+        except ZeroDivisionError:
+            tw, pi_val, tajd = 0, 0, float('nan')
 
         print(args.tag, mode.upper(), len(sfs), tw, pi_val, tajd, sep='\t')
 
