@@ -78,7 +78,7 @@ def main():
         else:
             vcf_file = args.indel_vcf
 
-        sfs_cmd = ('bedtools intersect -a {vcf} -b {bed} | '
+        sfs_cmd = ('bedtools intersect -header -a {vcf} -b {bed} | '
                    '~/sfs_utils/vcf2raw_sfs.py -mode {mode}{fold_flag}{sex_flag}'
                    .format(vcf=vcf_file, bed=args.bed, mode=mode, fold_flag=folded, sex_flag=sex_flag))
 
