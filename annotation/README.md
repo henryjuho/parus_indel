@@ -28,6 +28,18 @@ $ ls *fold.bed | while read i; do bgzip $i; done
 $ ls *fold.bed.gz | while read i; do tabix -pbed $i; done
 ```
 
+## Nonsense mutations
+
+Positions where nonsense mutations are possible and where premature stop codons appear in the great tit data were identified using the cds fasta file and SNP vcf as follows:
+
+```
+$ mkdir /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/nonsense_annotation
+$ ~/parus_indel/annotation/automated_nonsense.py -cds_fa /fastdata/bop15hjb/GT_ref/cds_fasta/GCF_001522545.1_Parus_major1.0.3_cds_from_genomic.fna.gz -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.line.vcf.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/nonsense_annotation/gt_snps -evolgen
+$ cat *potential.bed | sort -k1,1 -k2,2n | bedtools merge -c 4 -o distinct | bgzip -c > gt_snps_nonsense_potential.bed.gz
+$ ls *gz | while read i; do tabix -pbed $i; done
+$ cp *gz* /fastdata/bop15hjb/GT_ref/
+```
+
 ## Genomic regions
 
 Firstly INDELs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'CDS_frameshift', 'intron' or 'intergenic' as follows:
