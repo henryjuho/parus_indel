@@ -16,7 +16,7 @@ def main():
     args = parser.parse_args()
 
     # get chromosome list
-    grep_cmd = 'grep -v ^# {} | cut -f 1 | uniq'.format(args.vcf)
+    grep_cmd = 'zgrep -v ^# {} | cut -f 1 | uniq'.format(args.vcf)
     chromo_list = subprocess.Popen(grep_cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split('\n')[:-1]
     chromo_list = [x for x in chromo_list if x.startswith('chr')]
 
