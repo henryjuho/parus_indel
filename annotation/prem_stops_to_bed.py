@@ -246,6 +246,12 @@ def main():
                 continue
 
             chromo = contig_data[ref_seq_chromo]
+
+            # skip non target chromos
+            if chromo != args.chr:
+                skip = True
+                continue
+
             trans_name = line.split('ID:')[1].split('[')[0].rstrip().rstrip(']')
             coord_data = line.split('[')[-1].rstrip().rstrip(']').replace('location=', '')
 
@@ -270,7 +276,7 @@ def main():
     for trans in sorted(nonsense_data.keys()):
 
         # trans_len = nonsense_data[trans]['length']
-        nonse_chromo = nonsense_data['chromo']
+        nonse_chromo = nonsense_data[trans]['chromo']
         nonse_pos = nonsense_data[trans]['call']
         nonse_snp_pos = nonsense_data[trans]['snps']
 
