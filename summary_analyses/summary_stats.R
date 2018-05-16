@@ -2,62 +2,84 @@ library(ggplot2)
 library(gridExtra)
 library(dplyr)
 
-# The palette with grey:
-cbPalette <- c("#E69F00", 'tomato 3', 'steel blue', "#999999", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+summary_data = read.delim('bgi10_stats.txt', na=0)
+call_data = read.delim('bgi10_call.txt')
 
-snp_sum_stats <- read.delim('~/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.snps.summary_stats.txt')
-indel_sum_stats <- read.delim('~/sharc_fastdata/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.indels.summary_stats.txt')
+all_data = cbind(summary_data, call_data)
 
-snp_no_ar = subset(snp_sum_stats, bin!='AR')
+all_data[7] = NULL
+all_data[7] = NULL
 
-plot_stats = subset(rbind(indel_sum_stats, snp_no_ar), bin!='CDS_frameshift' & bin!='CDS_non_frameshift' & bin!='intron' & bin!='intergenic')
+all_data$tw_per_site = all_data$theta_w / all_data$call
+all_data$pi_per_site = all_data$pi / all_data$call
 
-#snp_sum_stats$bin <- as.character(snp_sum_stats$bin)
-#for(x in 1:length(snp_sum_stats$bin)){
-#  line = snp_sum_stats[x,]
-#  if(line$bin == 'intergenic'){snp_sum_stats[x,]$bin <- 'neutral'}
-#}
+write.csv(all_data, 'bgi10_summary_stats.csv', row.names=FALSE)
 
-#all_sum_stats = rbind(snp_sum_stats, indel_sum_stats, LINE_sum_stats)
+all_data = subset(all_data, category != 'noncoding_noUCNEs'
+  & category != 'cds_frameshift' & category != 'cds_non_frameshift'
+  & category != 'noncoding')
 
-#all_sum_stats$bin = as.character(all_sum_stats$bin)
-#for(x in 1:length(all_sum_stats$bin)){
-#  line = all_sum_stats[x,]
-#  if(line$bin == 'CDS'){all_sum_stats[x,]$bin <- 'coding'}
-#}
+all_data$category = factor(all_data$category,
+  levels=rev(c('CDS', '0fold', 'nonsense', 'UCNE', '4fold', 'ALL', 'introns', 'intergenic', 'AR')))
 
-#all_sum_stats$bin <- factor(all_sum_stats$bin, levels=c('neutral', 'intergenic', 'intron', 'coding'))
+# reset 0fold 4fold nonsense indel tajd to 0
+
+# 0fold
+all_data[2,]$tajD = NA
+all_data[3,]$tajD = NA
+all_data[4,]$tajD = NA
+all_data[2,]$pi_per_site = NA
+all_data[3,]$pi_per_site = NA
+all_data[4,]$pi_per_site = NA
+all_data[2,]$tw_per_site = NA
+all_data[3,]$tw_per_site = NA
+all_data[4,]$tw_per_site = NA
+
+# 4fold
+all_data[6,]$tajD = NA
+all_data[7,]$tajD = NA
+all_data[8,]$tajD = NA
+all_data[6,]$pi_per_site = NA
+all_data[7,]$pi_per_site = NA
+all_data[8,]$pi_per_site = NA
+all_data[6,]$tw_per_site = NA
+all_data[7,]$tw_per_site = NA
+all_data[8,]$tw_per_site = NA
 
 # theta_w
-tw = ggplot(plot_stats, aes(x=bin, y=theta_w, colour=type))+
+tw = ggplot(all_data, aes(x=category, y=tw_per_site, colour=variation))+
   geom_point(stat='identity', position = position_dodge(width=0.9), size = 2) +
-  #geom_errorbar(aes(ymin = t_lwr, ymax = t_upr), stat = 'identity', position = position_dodge(width=0.9), width=0.2) +
   theme_bw() +
-  scale_color_manual(values=cbPalette) +
   xlab('')  + ylab(expression(theta[w])) +
-  theme(legend.title=element_blank(), legend.position='none')
+  theme(legend.title=element_blank(), legend.position='none',
+  axis.text.x=element_text(angle=45, hjust=1))
 
 # pi
-pi = ggplot(plot_stats, aes(x=bin, y=pi, colour=type))+
+pi = ggplot(all_data, aes(x=category, y=pi_per_site, colour=variation))+
   geom_point(stat='identity', position = position_dodge(width=0.9), size = 2) +
-  #geom_errorbar(aes(ymin = pi_lwr, ymax = pi_upr), stat = 'identity', position = position_dodge(width=0.9), width=0.2) +
   theme_bw() +
-  scale_color_manual(values=cbPalette) +
   xlab('')  + ylab(expression(pi)) +
-  theme(legend.title=element_blank(), legend.position='none')
+  theme(legend.title=element_blank(), legend.position='none',
+  axis.text.x=element_text(angle=45, hjust=1))
 
 # tajD
-tajd = ggplot(plot_stats, aes(x=bin, y=tajD, colour=type))+
+tajd = ggplot(all_data, aes(x=category, y=tajD, colour=variation))+
   geom_point(stat='identity', position = position_dodge(width=0.9), size = 2) +
-  #geom_errorbar(aes(ymin = tajD_lwr, ymax = tajD_upr), stat = 'identity', position = position_dodge(width=0.9), width=0.2) +
   theme_bw() +
-  scale_color_manual(values=cbPalette) +
   xlab('')  + ylab("Tajima's D") +
-  theme(legend.title=element_blank(), legend.position=c(0.16, 0.4))
+  #ylim(-1.3, -0.2) +
+  theme(legend.title=element_blank(), legend.position=c(0.2, 0.3),
+  axis.text.x=element_text(angle=45, hjust=1))
 
-pdf(file='gt_summary_stats.pdf', width=9, height=3)
+# pdf(file='gt_summary_stats.pdf', width=9, height=3)
+#
+# grid.arrange(tajd, tw, pi, nrow=1)
+#
+# dev.off()
 
-grid.arrange(tajd, tw, pi, nrow=1)
+png(file='gt_tajd.png', width=3, height=3, units='in', res=360)
+
+tajd
 
 dev.off()
 
