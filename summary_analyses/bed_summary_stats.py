@@ -48,7 +48,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-indel_vcf', help='Vcf file to get summary stats for', required=True)
     parser.add_argument('-snp_vcf', help='Vcf file to get summary stats for', required=True)
-    # parser.add_argument('-region_list', help='text file with pairs of labels and bed files', required=True)
     parser.add_argument('-bed', help='regions to summarise', required=True)
     parser.add_argument('-tag', help='region name', required=True)
     parser.add_argument('-no_z', help=argparse.SUPPRESS, required=False, default=True, action='store_false')
@@ -81,8 +80,6 @@ def main():
         sfs_cmd = ('bedtools intersect -header -a {vcf} -b {bed} | '
                    '~/sfs_utils/vcf2raw_sfs.py -mode {mode}{fold_flag}{sex_flag}'
                    .format(vcf=vcf_file, bed=args.bed, mode=mode, fold_flag=folded, sex_flag=sex_flag))
-
-        print(sfs_cmd)
 
         sfs = [float(x) for x in popen_grab(sfs_cmd)]
 
