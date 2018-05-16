@@ -42,14 +42,13 @@ Fasta files of callable sites were created and summarised using the following co
 $ ~/parus_indel/summary_analyses/callable_sites_parallel.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/bgi_10birds.raw.snps.indels.all_sites.vcf.bgz -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed -ar_bed /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz -chr_bed /fastdata/bop15hjb/GT_ref/chromosome_list.bed -pol /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable
 $ samtools faidx bgi_10birds.callable.fa
 $ cp /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa* /fastdata/bop15hjb/GT_ref/
-
-$ ~/parus_indel/summary_analyses/callable_sites_summary_nogff.py -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -chr_list /fastdata/bop15hjb/GT_ref/gt_autosomes.txt -opt_bed /fastdata/bop15hjb/GT_ref/gt_cds.bed.gz,CDS -opt_bed /fastdata/bop15hjb/GT_ref/gt_introns.bed.gz,intron -opt_bed /fastdata/bop15hjb/GT_ref/gt_intergenic.bed.gz,intergenic > /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv
 ```
 
 The statistics were then calculated with the following script:
 
 ```
 $ cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats
+
 $ ~/parus_indel/summary_analyses/automate_bed_summary.py -indel_vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -snp_vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.line.vcf.gz -region_list ~/parus_indel/summary_analyses/gt_stat_regions.txt -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi10 -evolgen
 $ head -n 1 bgi10_0fold_stats.txt > bgi10_stats.txt
 $ cat *txt | grep -v cat >> bgi10_stats.txt
