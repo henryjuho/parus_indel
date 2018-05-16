@@ -39,27 +39,34 @@ Fasta files of callable sites were created and summarised using the following co
 | AR unpolarised  | r     |
 
 ```
-$ ~/parus_indel/summary_analyses/callable_sites_parallel.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/bgi_10birds.raw.snps.indels.all_sites.vcf.bgz -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed -ar_bed /fastdata/bop15hjb/GT_ref/Zebrafinch.Flycatcher.Greattit.ancLINEs.sorted.bed.gz -chr_bed /fastdata/bop15hjb/GT_ref/chromosome_list.bed -pol /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable
+$ ~/parus_indel/summary_analyses/callable_sites_parallel.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/bgi_10birds.raw.snps.indels.all_sites.vcf.bgz -bed /fastdata/bop15hjb/GT_ref/ParusMajorBuild1_v24032014_reps.bed -ar_bed /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz -chr_bed /fastdata/bop15hjb/GT_ref/chromosome_list.bed -pol /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable
+$ samtools faidx bgi_10birds.callable.fa
+$ cp /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa* /fastdata/bop15hjb/GT_ref/
+
 $ ~/parus_indel/summary_analyses/callable_sites_summary_nogff.py -call_fa /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable.fa -chr_list /fastdata/bop15hjb/GT_ref/gt_autosomes.txt -opt_bed /fastdata/bop15hjb/GT_ref/gt_cds.bed.gz,CDS -opt_bed /fastdata/bop15hjb/GT_ref/gt_introns.bed.gz,intron -opt_bed /fastdata/bop15hjb/GT_ref/gt_intergenic.bed.gz,intergenic > /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv
 ```
 
 The statistics were then calculated with the following script:
 
 ```
-$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode INDEL -no_sex -sub -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.indels.summary_stats.txt
-$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode INDEL -no_sex -bootstrap 10000 -sub -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.indels.summary_stats.bs10000.txt
-$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode SNP -no_sex -sub -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.snps.summary_stats.txt
-$ ~/parus_indel/summary_analyses/summary_stats_gt.py -vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/SNP_data/gt_10birds_recalibrated_snps_only_99pass.maxlength50.biallelic.coveragefiltered.pass.repeatfilter.pass.polarised.annotated.degen.vcf.gz -call_csv /fastdata/bop15hjb/GT_ref/gt_callable_summary.csv -mode SNP -no_sex -bootstrap 10000 -sub -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi_10birds.snps.summary_stats.bs10000.txt
-```
+$ cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats
+$ ~/parus_indel/summary_analyses/automate_bed_summary.py -indel_vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -snp_vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.line.vcf.gz -region_list ~/parus_indel/summary_analyses/gt_stat_regions.txt -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi10 -evolgen
+$ head -n 1 bgi10_0fold_stats.txt > bgi10_stats.txt
+$ cat *txt | grep -v cat >> bgi10_stats.txt
+$ cp bgi10_stats.txt ~/parus_indel/summary_analyses/
 
-And plotted:
+$ ~/parus_indel/summary_analyses/automate_bed_callable.py -call_fa /fastdata/bop15hjb/GT_ref/bgi_10birds.callable.fa -chr_list /fastdata/bop15hjb/GT_ref/gt_autosomes.txt -region_list ~/parus_indel/summary_analyses/gt_call_regions.txt -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_call -evolgen
+$ head -n 1 gt_call_0fold.txt > bgi10_call.txt
+$ cat gt_call_*txt | grep -v ^cat >> bgi10_call.txt 
+$ cp bgi10_call.txt ~/parus_indel/summary_analyses/
 
-```
-$ cd ~/parus_indel/summary_analyses/
-$ Rscript summary_stats.R
+$ Rscript summary_stats.R 
 ```
 
 ![stats_plot](gt_summary_stats.png)
+
+Summary table [here](bgi10_summary_stats.csv).
+
 
 ## INDEL divergence and alpha
 
