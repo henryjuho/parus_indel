@@ -60,6 +60,16 @@ A summary of this annotation is shown below:
 |Intergenic           | 537246       |
 |Unannotated          | 35344        |
 
+Bed files of in-frame and frame-shift INDELs were also created 
+
+```
+$ cd /fastdata/bop15hjb/GT_ref/
+$ bedtools intersect -a /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -b gt_cds.bed.gz | python ~/parus_indel/annotation/vcf2indel_bed.py -read_frame inframe | bgzip -c > gt_cds_inframe_indels.bed.gz
+$ tabix -pbed gt_cds_inframe_indels.bed.gz 
+$ bedtools intersect -a /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -b gt_cds.bed.gz | python ~/parus_indel/annotation/vcf2indel_bed.py -read_frame shift | bgzip -c > gt_cds_frameshift_indels.bed.gz
+$ tabix -pbed gt_cds_frameshift_indels.bed.gz
+```
+
 ## Recombination regions
 
 Secondly the recombination category of each INDEL was annotated using linkage map data to estimate recombination rates. First, 3rd order polynomials were fitted to plots of physical position versus map length. Second, the derivative of each chromosome's polynomial was used to estimate recombination rate for each INDEL start position. This predicition was implemented in the following python script:
