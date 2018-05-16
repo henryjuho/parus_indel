@@ -21,7 +21,7 @@ def main():
         elif args.read_frame == 'shift' and indel_len % 3 == 0:
             continue
 
-        print(chromo, pos-1, pos-1+ref_len)
+        print(chromo, pos-1, pos-1+ref_len, sep='\t')
 
 
 if __name__ == '__main__':
