@@ -29,6 +29,35 @@ def read_callable_csv(csv):
     return call_sites
 
 
+def read_callable_txt(txt):
+
+    """
+    reads in a callable sites summary file
+    :param txt: str
+    :return: dict
+    """
+
+    call_sites = {'ALL': {}}
+    for line in open(txt):
+        if not line.startswith('category'):
+            info = line.rstrip().split('\t')
+            reg, var, call = info
+
+            if reg not in call_sites['ALL'].keys():
+                call_sites['ALL'][reg] = {}
+
+            if var == 'SNP':
+                call_sites['ALL'][reg]['all'] = float(call)
+
+            elif var == 'INS':
+                call_sites['ALL'][reg]['pol'] = float(call)
+
+            else:
+                continue
+
+    return call_sites
+
+
 def resample_replace(site_freqs):
 
     """
@@ -106,10 +135,7 @@ def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
     sfs_nd = sfs2counts(n_d_sfs, n)
 
     # get callable sites
-    if call_sel_reg == 'non-coding':
-        sel_m = call['ALL']['intergenic']['pol'] + call['ALL']['intron']['pol']
-    else:
-        sel_m = call['ALL'][call_sel_reg]['pol']
+    sel_m = call['ALL'][call_sel_reg]['pol']
     neu_m = call['ALL']['AR']['pol']
 
     # construct control file sfs
@@ -145,11 +171,8 @@ def prepare_snp_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
     sfs_neu = sfs2counts(neu_sfs, n)
 
     # get callable sites
-    if call_sel_reg == 'non-coding':
-        sel_m = call['ALL']['intergenic']['pol'] + call['ALL']['intron']['pol']
-    else:
-        sel_m = call['ALL'][call_sel_reg]['pol']
-    neu_m = call['ALL']['fourfold']['pol']
+    sel_m = call['ALL'][call_sel_reg]['pol']
+    neu_m = call['ALL']['4fold']['pol']
 
     # construct control file sfs
     sfs_m = {'selected_SNP': (sfs_sel, sel_m), 'neutral_SNP': (sfs_neu, neu_m)}
@@ -193,7 +216,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
     region_combs = {'CDS': ['CDS_frameshift', 'CDS_non_frameshift'],
                     'intron': ['intron'],
                     'intergenic': ['intergenic'],
-                    'non-coding': ['intergenic', 'intron']}
+                    'noncoding': ['intergenic', 'intron']}
 
     # make control file
     if mode == 'snp':
@@ -252,11 +275,11 @@ def main():
     # arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-mode', help='variant type to run on', choices=['snp', 'indel'], required=True)
-    parser.add_argument('-call_csv', help='Callable sites summary file', required=True)
+    parser.add_argument('-call_txt', help='Callable sites summary file', required=True)
     parser.add_argument('-vcf', help='VCF file to extract site frequencies from', required=True)
     parser.add_argument('-n', help='Sample size', required=True)
     parser.add_argument('-sel_type', help='Subset of variants to have as sel sfs',
-                        choices=['CDS', 'intron', 'intergenic', 'non-coding'],
+                        choices=['CDS', 'intron', 'intergenic', 'noncoding'],
                         default='CDS')
     parser.add_argument('-c', help='Number of classes to run model with', required=True, type=int)
     parser.add_argument('-dfe', help='type of dfe to fit, discrete or continuous', default='discrete',
@@ -277,7 +300,7 @@ def main():
     args = parser.parse_args()
 
     # variables
-    call_site_dict = read_callable_csv(args.call_csv)
+    call_site_dict = read_callable_txt(args.call_txt)
     out_pre = args.out_pre
 
     # construct process
