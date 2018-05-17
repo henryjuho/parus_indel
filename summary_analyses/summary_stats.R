@@ -77,7 +77,7 @@ tajd = ggplot(all_data, aes(x=category, y=tajD, colour=variation))+
 #
 # dev.off()
 
-png(file='gt_tajd.png', width=3, height=3, units='in', res=360)
+pdf(file='gt_tajd.pdf', width=3, height=3)
 
 tajd
 
