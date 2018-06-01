@@ -3,7 +3,7 @@
 from __future__ import print_function
 import argparse
 import subprocess
-from qsub import q_print as q_sub
+from qsub import q_sub
 
 
 def main():
