@@ -26,7 +26,7 @@ def main():
                '-bed {} -tag {} '
                '> {}').format(args.indel_vcf, args.snp_vcf, bed, tag, out_stem + '_stats.txt')
 
-        q_sub([cmd], out=out_stem, mem=10, rmem=10)
+        q_sub([cmd], out=out_stem, mem=10, rmem=10, evolgen=args.evolgen)
 
 
 if __name__ == '__main__':

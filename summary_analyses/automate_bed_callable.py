@@ -26,7 +26,7 @@ def main():
                '-bed {} -tag {} '
                '> {}').format(args.call_fa, args.chr_list, bed, tag, out_stem + '.txt')
 
-        q_sub([cmd], out=out_stem, mem=10, rmem=10)
+        q_sub([cmd], out=out_stem, mem=10, rmem=10, evolgen=args.evolgen)
 
 
 if __name__ == '__main__':
