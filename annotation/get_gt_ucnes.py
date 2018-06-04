@@ -29,6 +29,7 @@ def main():
         cmd = ('zcat {} | '
                '~/WGAbed/non_ref_intersect.py '
                '-b {} -q Zebrafinch -c {} | '
+               'grep -v "?" | '
                'cut -f 1-3 | '
                'sort -k1,1 -k2,2n | '
                'bedtools merge '
