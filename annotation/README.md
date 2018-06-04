@@ -40,6 +40,24 @@ $ ls *gz | while read i; do tabix -pbed $i; done
 $ cp *gz* /fastdata/bop15hjb/GT_ref/
 ```
 
+## UCNE
+
+Ultra conserved non-coding elements in the Zebra finch genome were downloaded from: <ftp://ccg.vital-it.ch/UCNEbase/custom_tracks_UCSC/UCNEs_taeGut1.bed>
+
+```
+$ ./get_gt_ucnes.py -wga /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -ucne_bed /shared/evolgen1/shared_data/biased_gene_conversion_project/reference_files/zf/UCNEs_taeGut1.sorted.bed.gz -out_dir /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/ucne/ -evolgen
+```
+
+UCNEs coinciding with INDELs in the whole genome alignment were filtered out.
+
+```
+$ cd /fastdata/bop15hjb/GT_ref/
+$ zcat Greattit.Zebrafinch.Flycatcher.wga.bed.gz | ~/WGAbed/wga_bed_indels.py | bgzip -c > Greattit.Zebrafinch.Flycatcher.indels.wga.bed.gz
+$ tabix -pbed Greattit.Zebrafinch.Flycatcher.indels.wga.bed.gz 
+$ bedtools subtract -a /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/ucne/gt_ucne.bed.gz -b Greattit.Zebrafinch.Flycatcher.indels.wga.bed.gz | bgzip -c > gt_ucne.filtered.bed.gz
+$ tabix -pbed gt_ucne.filtered.bed.gz 
+```
+
 ## Genomic regions
 
 Firstly INDELs were annotated in the vcf file as belonging to either 'CDS_non_frameshift', 'CDS_frameshift', 'intron' or 'intergenic' as follows:
