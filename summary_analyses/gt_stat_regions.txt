@@ -9,5 +9,5 @@ cds_non_frameshift  /fastdata/bop15hjb/GT_ref/gt_cds_inframe_indels.bed.gz
 0fold   /fastdata/bop15hjb/GT_ref/gt_0fold.bed.gz
 4fold   /fastdata/bop15hjb/GT_ref/gt_4fold.bed.gz
 nonsense    /fastdata/bop15hjb/GT_ref/gt_snps_nonsense_actual.bed.gz
-UCNE    /fastdata/bop15hjb/GT_ref/UCNEs_gtit1.0.4.sorted.bed.gz
+UCNE    /fastdata/bop15hjb/GT_ref/gt_ucne.filtered.bed.gz
 AR  /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz
