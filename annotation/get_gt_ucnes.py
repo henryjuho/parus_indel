@@ -18,7 +18,7 @@ def main():
     # get chromosome list
     grep_cmd = 'zcat {} | cut -f 1 | uniq'.format(args.ucne_bed)
     chromo_list = subprocess.Popen(grep_cmd, stdout=subprocess.PIPE, shell=True).communicate()[0].split('\n')[:-1]
-    chromo_list = [x for x in chromo_list if x.startswith('chr')]
+    chromo_list = [x for x in chromo_list if x.startswith('chr') and 'random' not in x]
 
     jids = []
 
