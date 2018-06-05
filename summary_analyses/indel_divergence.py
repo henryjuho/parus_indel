@@ -3,8 +3,6 @@
 from __future__ import print_function
 import argparse
 import subprocess
-from qsub import q_sub
-import sys
 
 
 def popen_grab(cmd):
@@ -17,52 +15,62 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-wga', help='Whole genome alignment bed file', required=True)
     parser.add_argument('-bed', help='Coordinates to calc divergence for, bed format', required=True)
-    parser.add_argument('-chromo', help=argparse.SUPPRESS, default='all')
-    parser.add_argument('-out', help='Output path and file', required=True)
-    parser.add_argument('-evolgen', help='if specified will run on lab queue', default=False, action='store_true')
+    parser.add_argument('-tag', help='region name', required=True)
     args = parser.parse_args()
 
-    if args.chromo == 'all':
-        chromo_list = popen_grab('zcat {} | cut -f 1 | uniq'.format(args.wga))
+    callable_cmd = ('bedtools intersect -a {wga} -b {bed} | '
+                    'grep -v ^chrZ | '
+                    '~/WGAbed/wga_bed_summary.py -callable'
+                    ).format(wga=args.wga, bed=args.bed)
 
-        with open(args.out, 'w') as out_file:
-            print('chromo\tindels\tcallable\tdivergence', file=out_file)
+    # print(callable_cmd)
 
-        for x in chromo_list:
+    call_sites = [int(x.split('\t')[1]) for x in popen_grab(callable_cmd)]
+    n_sites = sum(call_sites)
 
-            cmd = ' '.join(sys.argv) + ' -chromo {}'.format(x)
-            outs = args.out.replace('.txt', '') + '_{}'.format(x)
+    # indels
+    indel_cmd = ('bedtools intersect -a {wga} -b {bed} | '
+                 'grep -v ^chrZ | '
+                 '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | '
+                 'wc -l').format(wga=args.wga, bed=args.bed)
 
-            q_sub([cmd], out=outs, evolgen=args.evolgen)
+    # print(indel_cmd)
 
-        sys.exit()
+    n_indels = int(popen_grab(indel_cmd)[0])
 
-    else:
-        callable_cmd = ('zgrep -w ^{} {} | bedtools intersect -a stdin -b {} | '
-                        '~/WGAbed/wga_bed_summary.py -callable').format(
-            args.chromo, args.wga, args.bed)
+    # ins
+    ins_cmd = ('bedtools intersect -a {wga} -b {bed} | '
+               'grep -v ^chrZ | '
+               '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | '
+               '~/WGAbed/polarise_wga_ref_indels.py -indel_type insertion | '
+               'wc -l').format(wga=args.wga, bed=args.bed)
 
-        print(callable_cmd, file=sys.stdout)
+    # print(ins_cmd)
 
-        call_sites = popen_grab(callable_cmd)[0].split('\t')
+    n_ins = int(popen_grab(ins_cmd)[0])
 
-        n_sites = int(call_sites[1])
+    # del
+    del_cmd = ('bedtools intersect -a {wga} -b {bed} | '
+               'grep -v ^chrZ | '
+               '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | '
+               '~/WGAbed/polarise_wga_ref_indels.py -indel_type deletion | '
+               'wc -l').format(wga=args.wga, bed=args.bed)
 
-        indel_cmd = ('zgrep -w ^{} {} | bedtools intersect -a stdin -b {} | '
-                     '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | wc -l').format(
-            args.chromo, args.wga, args.bed)
+    # print(del_cmd)
+    # print('\n\n')
 
-        print(indel_cmd, file=sys.stdout)
+    n_del = int(popen_grab(del_cmd)[0])
 
-        n_indels = int(popen_grab(indel_cmd)[0])
+    # process
+    print("category", "variation", "seg_sites", "callable", "divergence", sep='\t')
 
+    for var in [['INDEL', n_indels], ['INS', n_ins], ['DEL', n_del]]:
         if n_sites == 0:
             div = 0.0
         else:
-            div = float(n_indels)/float(n_sites)
+            div = float(var[1])/float(n_sites)
 
-        with open(args.out, 'a') as out_file:
-            print(args.chromo, n_indels, n_sites, div, file=out_file, sep='\t')
+        print(args.tag, var[0], var[1], n_sites, div, sep='\t')
 
 
 if __name__ == '__main__':
