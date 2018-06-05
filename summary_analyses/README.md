@@ -51,7 +51,7 @@ $ cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats
 
 $ ~/parus_indel/summary_analyses/automate_bed_summary.py -indel_vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -snp_vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.line.vcf.gz -region_list ~/parus_indel/summary_analyses/gt_stat_regions.txt -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/bgi10 -evolgen
 $ head -n 1 bgi10_0fold_stats.txt > bgi10_stats.txt
-$ cat *txt | grep -v cat >> bgi10_stats.txt
+$ cat bgi10_*stats.txt | grep -v cat >> bgi10_stats.txt
 $ cp bgi10_stats.txt ~/parus_indel/summary_analyses/
 
 $ ~/parus_indel/summary_analyses/automate_bed_callable.py -call_fa /fastdata/bop15hjb/GT_ref/bgi_10birds.callable.fa -chr_list /fastdata/bop15hjb/GT_ref/gt_autosomes.txt -region_list ~/parus_indel/summary_analyses/gt_call_regions.txt -out_pre /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_call -evolgen
@@ -59,6 +59,7 @@ $ head -n 1 gt_call_0fold.txt > bgi10_call.txt
 $ cat gt_call_*txt | grep -v ^cat >> bgi10_call.txt 
 $ cp bgi10_call.txt ~/parus_indel/summary_analyses/
 
+$ cd ~/parus_indel/summary_analyses/
 $ Rscript summary_stats.R 
 ```
 
