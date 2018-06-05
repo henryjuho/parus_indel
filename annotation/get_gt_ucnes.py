@@ -41,7 +41,7 @@ def main():
         q_sub([cmd], out=args.out_dir + out.replace('.bed', ''), jid=jid, evolgen=args.evolgen)
 
     # gather
-    gather = 'zcat {}*.bed | bgzip -c > {}gt_ucne.bed.gz'.format(args.out_dir, args.out_dir)
+    gather = 'cat {}*.bed | bgzip -c > {}gt_ucne.bed.gz'.format(args.out_dir, args.out_dir)
     index = 'tabix -pbed {}gt_ucne.bed.gz'.format(args.out_dir)
 
     q_sub([gather, index], out=args.out_dir + 'ucne_bed_merge', hold=jids, evolgen=args.evolgen)
