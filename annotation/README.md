@@ -55,7 +55,8 @@ $ cd /fastdata/bop15hjb/GT_ref/
 $ zcat Greattit.Zebrafinch.Flycatcher.wga.bed.gz | ~/WGAbed/wga_bed_indels.py | bgzip -c > Greattit.Zebrafinch.Flycatcher.indels.wga.bed.gz
 $ tabix -pbed Greattit.Zebrafinch.Flycatcher.indels.wga.bed.gz 
 $ bedtools subtract -a /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/ucne/gt_ucne.bed.gz -b Greattit.Zebrafinch.Flycatcher.nonref_indels.wga.bed.gz | bgzip -c > gt_ucne.filtered.bed.gz
-$ tabix -pbed gt_ucne.filtered.bed.gz 
+$ zcat gt_ucne.filtered.bed.gz | sort -k1,1 -k2,2n | bgzip -c > gt_ucne.filtered.sorted.bed.gz
+$ tabix -pbed gt_ucne.filtered.sorted.bed.gz 
 ```
 
 ## Genomic regions
