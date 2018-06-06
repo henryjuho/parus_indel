@@ -68,28 +68,26 @@ $ Rscript summary_stats.R
 Summary table [here](bgi10_summary_stats.csv).
 
 
-## INDEL divergence and alpha
+## Divergence
 
 Simple INDEL divergence estimates were obtained from the whole genome alignment for coding and non-coding regions and plotted as follows.
 
 ```
-$ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -bed /fastdata/bop15hjb/GT_ref/gt_cds.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_cds_indel_divergence.txt
-$ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -bed /fastdata/bop15hjb/GT_ref/gt_noncoding.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_noncoding_indel_divergence.txt
-$ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/UCSC_pipeline/multiple_zhang_param/Zebrafinch.Flycatcher.Greattit.wga.bed.gz -bed /fastdata/bop15hjb/GT_ref/Zebrafinch.Flycatcher.Greattit.ancLINEs.sorted.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_ancLINEs_indel_divergence.txt
-$ ~/parus_indel/summary_analyses/indel_divergence.py -wga /fastdata/bop15hjb/bird_alignments/gbgc_proj/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -bed /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/divergence_data/repeat_coordinates/LINE_intersect/Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz -out /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats/gt_ancLINEs_new_indel_divergence.txt -evolgen
+$ cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/indel_divergence/
+$ ~/parus_indel/summary_analyses/automate_indel_div.py -wga /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -region_list ~/parus_indel/summary_analyses/gt_call_regions.txt -out_dir /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/indel_divergence/ -evolgen
+$ cat *txt | grep -v ^cat | grep -v nonsense | grep -v fold | grep -v frame | grep -v noU >> gt_indel_div.txt 
+$ cp gt_indel_div.txt ~/parus_indel/summary_analyses/
 
 $ Rscript collate_indel_divergence.R 
 ```
 
+SNP divergence
+
+```
+todo
+```
+
 ![div](indel_divergence.png)
-
-Alpha was calculated (see Equation 1 Eyre-walker 2006) for INDELs:
-
-```
-$ Rscript alpha.R 
-```
-
-This yields an alpha estimate of **0.1524897**
 
 ## Length summary
 
