@@ -48,15 +48,17 @@ Ultra conserved non-coding elements in the Zebra finch genome were downloaded fr
 $ ./get_gt_ucnes.py -wga /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -ucne_bed /shared/evolgen1/shared_data/biased_gene_conversion_project/reference_files/zf/UCNEs_taeGut1.sorted.bed.gz -out_dir /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/ucne/ -evolgen
 ```
 
-UCNEs coinciding with INDELs in the whole genome alignment were filtered out.
+UCNEs coinciding with INDELs unique to the whole genome alignment outgroups were filtered out.
 
 ```
 $ cd /fastdata/bop15hjb/GT_ref/
 $ zcat Greattit.Zebrafinch.Flycatcher.wga.bed.gz | ~/WGAbed/wga_bed_indels.py | bgzip -c > Greattit.Zebrafinch.Flycatcher.indels.wga.bed.gz
 $ tabix -pbed Greattit.Zebrafinch.Flycatcher.indels.wga.bed.gz 
-$ bedtools subtract -a /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/ucne/gt_ucne.bed.gz -b Greattit.Zebrafinch.Flycatcher.nonref_indels.wga.bed.gz | bgzip -c > gt_ucne.filtered.bed.gz
-$ zcat gt_ucne.filtered.bed.gz | sort -k1,1 -k2,2n | bgzip -c > gt_ucne.filtered.sorted.bed.gz
-$ tabix -pbed gt_ucne.filtered.sorted.bed.gz 
+$ zcat Greattit.Zebrafinch.Flycatcher.wga.bed.gz | ~/WGAbed/wga_bed_indels.py -ref_specific | bgzip -c > Greattit.Zebrafinch.Flycatcher.ref_specific_indels.wga.bed.gz
+$ tabix -pbed Greattit.Zebrafinch.Flycatcher.ref_specific_indels.wga.bed.gz
+$ bedtools subtract -a Greattit.Zebrafinch.Flycatcher.indels.wga.bed.gz -b Greattit.Zebrafinch.Flycatcher.ref_specific_indels.wga.bed.gz | bgzip -c > Greattit.Zebrafinch.Flycatcher.nonref_indels.wga.bed.gz
+$ bedtools subtract -a /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/ucne/gt_ucne.bed.gz -b Greattit.Zebrafinch.Flycatcher.nonref_indels.wga.bed.gz | sort -k1,1 -k2,2n | bgzip -c > gt_ucne.filtered2.sorted.bed.gz
+$ tabix -pbed gt_ucne.filtered2.sorted.bed.gz 
 ```
 
 ## Genomic regions
