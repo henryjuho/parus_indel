@@ -7,7 +7,6 @@ from vcf2raw_sfs import vcf2sfs
 import anavar_utils as an
 from qsub import q_sub
 import gzip
-import random
 import sys
 import os
 import subprocess
@@ -129,7 +128,7 @@ def main():
 
         # submit anavar window job
         window_cmd = anavar_cmd.format(path=anavar_path, ctl=ctl_name, rslts=result_name, log=log_name,
-                                       seed=random.randint(0, 1000000))
+                                       seed=int(bin_id))
 
         q_sub([window_cmd], out=out_stem, t=24, evolgen=args.evolgen)
 
