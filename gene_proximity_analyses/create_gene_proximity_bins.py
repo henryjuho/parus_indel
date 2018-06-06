@@ -25,7 +25,7 @@ def update_bin_coords(bins, new_bins):
             bins[bin_id] += new_bins[bin_id]
 
 
-def range_to_bins(chromo, start, stop, window_size):
+def range_to_bins(chromo, start, stop, window_size, max_dist):
 
     """
     takes a bed interval and splits it into bins of distance
@@ -35,6 +35,7 @@ def range_to_bins(chromo, start, stop, window_size):
     :param start: int
     :param stop: int
     :param window_size: int
+    :param max_dist: int
     :return: dict
     """
 
@@ -52,7 +53,13 @@ def range_to_bins(chromo, start, stop, window_size):
 
         offset = i * window_size
 
-        # when reach midrange and final bin just taken remaining middle of range
+        # terminate when ben is beyond max dist
+        if max_dist is not None:
+
+            if bin_id * window_size > max_dist:
+                break
+
+        # when reach midrange and final bin just take remaining middle of range
         if i == n_bins - 1:
             bin_start = start + offset
             bin_end = stop - offset
@@ -78,6 +85,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-bin_size', help='Size of proximty bins in bp', default=1, type=int)
     parser.add_argument('-out_prefix', help='output location an file prefix', required=True)
+    parser.add_argument('-max_distance', help='maximum distance from region desired', type=int)
     args = parser.parse_args()
 
     bin_size = args.bin_size
@@ -88,7 +96,7 @@ def main():
 
         contig, start, stop = line.split()[0], int(line.split()[1]), int(line.split()[2])
 
-        line_bins = range_to_bins(contig, start, stop, bin_size)
+        line_bins = range_to_bins(contig, start, stop, bin_size, args.max_distance)
 
         update_bin_coords(bin_dict, line_bins)
 
