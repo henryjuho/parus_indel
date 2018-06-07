@@ -35,7 +35,7 @@ def delta_aic(current_d, best_d):
     return best_d - current_d
 
 
-def reformat_mle(line, n_classes, var_type, converged, b_hit, model, p, dfe, n_search,
+def reformat_mle(line, n_classes, var_type, converged, b_hit, model, p, dfe, n_search, alpha_ins, alpha_del,
                  custom_col=None, custom_val=None):
 
     """
@@ -49,6 +49,8 @@ def reformat_mle(line, n_classes, var_type, converged, b_hit, model, p, dfe, n_s
     :param p: int
     :param dfe: str
     :param n_search: int
+    :param alpha_ins: float
+    :param alpha_del: float
     :param custom_col: str
     :param custom_val: str
     :return: list
@@ -60,12 +62,14 @@ def reformat_mle(line, n_classes, var_type, converged, b_hit, model, p, dfe, n_s
     else:
         variants = ['']
 
+    alphas = {'ins': alpha_ins, 'del': alpha_del}
+
     # prepare header
     out_lines = []
     new_header = ['run', 'imp', 'exit_code',
                   'theta', 'scale', 'shape', 'gamma', 'e',
                   'var_type', 'site_class', 'sel_type', 'lnL',
-                  'boundaries_hit', 'searches', 'converged', 'model', 'params']
+                  'boundaries_hit', 'searches', 'converged', 'model', 'params', 'alpha']
 
     non_variable_vals = {'run': line['run'], 'imp': line['imp'], 'exit_code': line['exit_code'],
                          'lnL': line['lnL'], 'boundaries_hit': '|'.join(b_hit), 'converged': converged,
@@ -89,7 +93,7 @@ def reformat_mle(line, n_classes, var_type, converged, b_hit, model, p, dfe, n_s
 
         for site_class in range(1, n_class+1):
 
-            # ie for ins and del of just snp
+            # ie for ins and del or just snp
             for variant in variants:
                 if variant == '':
                     var_str = 'snp'
@@ -112,6 +116,9 @@ def reformat_mle(line, n_classes, var_type, converged, b_hit, model, p, dfe, n_s
 
                     elif col == 'sel_type':
                         col_val = sel.rstrip('_')
+
+                    elif col == 'alpha':
+                        col_val = alphas[var_str]
 
                     # leaving 'theta', 'scale', 'shape', 'gamma', 'e'
                     else:
@@ -171,12 +178,20 @@ def main():
         dfe = results.dfe()
         free_params = len(results.free_parameters())
 
+        if constraint == '_equal_t':
+            ins_alpha = results.get_alpha(dn=0.000121257528807, ds=0.00183918200407, var_type='ins')
+            del_alpha = results.get_alpha(dn=0.000200465669246, ds=0.00383421025726, var_type='del')
+        else:
+            ins_alpha = 'NA'
+            del_alpha = 'NA'
+
         mod_name = '{}_{}_{}class{}'.format(variant, dfe, n_class, constraint)
 
         reformed = reformat_mle(mle, n_class, variant, results.converged(),
                                 results.bounds_hit(gamma_r=(-5e4, 1e5), theta_r=(1e-12, 0.1), r_r=(0.01, 100),
                                                    scale_r=(0.1, 5000.0)),
                                 mod_name, free_params, dfe, results.num_runs(),
+                                alpha_ins=ins_alpha, alpha_del=del_alpha,
                                 custom_col=spec_col, custom_val=spec_val)
 
         if counter == 0:
