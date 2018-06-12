@@ -207,7 +207,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
 
     anavar_path = '/shared/evolgen1/shared_data/program_files/sharc/'
 
-    anavar_cmd = '{path}anavar1.22 {ctl} {rslts} {log} {seed}'
+    anavar_cmd = '{path}anavar1.4 {ctl} {rslts} {log} {seed}'
 
     # sort file names
     ctl_name = out_stem + '.control.txt'
