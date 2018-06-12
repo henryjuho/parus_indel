@@ -288,7 +288,8 @@ def main():
                         default='none')
     parser.add_argument('-n_search', help='Number of searches to conduct per job', default=500, type=int)
     parser.add_argument('-alg', help='Algorithm to use', default='NLOPT_LD_SLSQP',
-                        choices=['NLOPT_LD_SLSQP', 'NLOPT_LD_LBFGS', 'NLOPT_LN_NELDERMEAD'])
+                        choices=['NLOPT_LD_SLSQP', 'NLOPT_LD_LBFGS', 'NLOPT_LN_NELDERMEAD',
+                                 'NLOPT_LD_TNEWTON_PRECOND_RESTART'])
     parser.add_argument('-nnoimp', help='nnoimp value', default=1, type=int)
     parser.add_argument('-maximp', help='maximp value', default=3, type=int)
     parser.add_argument('-split', help='Number of jobs to split runs across, each job will run the control file once'
