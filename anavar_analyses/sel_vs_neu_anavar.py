@@ -236,7 +236,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
                      maxtime=3600, optional=True,
                      maximp=maximp, nnoimp=nnoimp)
 
-    ctl.set_data(sfs_data, n, dfe=dfe, c=c, gamma_r=(-5e4, 1e5), theta_r=(1e-12, 0.1), r_r=(0.01, 100),
+    ctl.set_data(sfs_data, n, dfe=dfe, c=c, gamma_r=(-5e4, 1e5), theta_r=(1e-14, 0.1), r_r=(0.01, 100),
                  scale_r=(0.1, 5000.0))
     if degree != 50:
         ctl.set_dfe_optional_opts(degree=degree, optional=True)
