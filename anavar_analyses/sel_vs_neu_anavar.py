@@ -224,7 +224,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
         else:
             # get best result from merged out
             best_res = an.ResultsFile(open(merge_out)).ml_estimate(as_string=True)
-            init = tuple(best_res.split())
+            init = tuple(best_res.split()[3:-1])
 
     # region combinations
     region_combs = {'CDS': ['CDS_frameshift', 'CDS_non_frameshift'],
