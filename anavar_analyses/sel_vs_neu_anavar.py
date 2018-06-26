@@ -7,6 +7,8 @@ from qsub import q_sub
 import random
 from collections import Counter
 from vcf2raw_sfs import vcf2sfs
+import os
+import sys
 
 
 def read_callable_csv(csv):
@@ -181,7 +183,7 @@ def prepare_snp_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
 
 
 def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nnoimp, maximp,
-                     out_stem, search, degree, spread, evolgen, start_index):
+                     out_stem, search, degree, spread, evolgen, start_index, given):
 
     """
     submits anavar jobs to cluster after writing required files etc
@@ -202,6 +204,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
     :param spread: int
     :param evolgen: bool
     :param start_index: int
+    :param given: bool
     :return: None
     """
 
@@ -211,6 +214,17 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
 
     # sort file names
     ctl_name = out_stem + '.control.txt'
+    merge_out = out_stem + '.merged.results.txt'
+
+    # catch given on first run
+    init = ()
+    if given:
+        if not os.path.isfile(merge_out):
+            sys.exit('Given True but no previous runs completed to take besty res from')
+        else:
+            # get best result from merged out
+            best_res = an.ResultsFile(open(merge_out)).ml_estimate(as_string=True)
+            init = tuple(best_res.split())
 
     # region combinations
     region_combs = {'CDS': ['CDS_frameshift', 'CDS_non_frameshift'],
@@ -238,8 +252,8 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
 
     ctl.set_data(sfs_data, n, dfe=dfe, c=c, gamma_r=(-5e4, 1e5), theta_r=(1e-14, 0.1), r_r=(0.01, 100),
                  scale_r=(0.1, 5000.0))
-    if degree != 50:
-        ctl.set_dfe_optional_opts(degree=degree, optional=True)
+    if degree != 50 or given:
+        ctl.set_dfe_optional_opts(degree=degree, optional=True, init=init)
     ctl.set_constraint(constraint)
     ctl_contents = ctl.construct()
     with open(ctl_name, 'w') as control:
@@ -266,8 +280,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
             hjids.append(split_stem.split('/')[-1] + '.sh')
 
     # hold job to merge outputs
-    merge_out = out_stem + '.merged.results.txt'
-    gather = 'cat {} | gather_searches.py {}'.format(res_file_list, merge_out)
+    gather = 'cat {} | ~/parus_indel/anavar_analyses/gather_searches.py {}'.format(res_file_list, merge_out)
     q_sub([gather], out=out_stem + '.merge', hold=hjids, evolgen=evolgen)
 
 
@@ -297,6 +310,8 @@ def main():
     parser.add_argument('-degree', help='changes degree setting in anavar', default=50, type=int)
     parser.add_argument('-out_pre', help='File path and prefix for output', required=True)
     parser.add_argument('-start_index', help='ID for first bin and for first seed', default=1, type=int)
+    parser.add_argument('-given', help='If specified takes prev best result as starting values for all runs',
+                        default=False, action='store_true')
     parser.add_argument('-evolgen', help='If specified will run on evolgen', default=False, action='store_true')
     args = parser.parse_args()
 
@@ -317,7 +332,8 @@ def main():
                      degree=args.degree,
                      spread=args.split,
                      evolgen=args.evolgen,
-                     start_index=args.start_index)
+                     start_index=args.start_index,
+                     given=args.given)
 
 if __name__ == '__main__':
     main()
