@@ -28,7 +28,7 @@ def main():
     out_file_str = '{}_{}.fna.gz'
     out_file = ''
 
-    for line in gzip.open(args.cds_fasta):
+    for line in gzip.open(args.cds_fa):
         if line.startswith('>'):
 
             ref_seq_chromo = '_'.join(line.split('[')[0].split('|')[1].split('_')[0:2])
