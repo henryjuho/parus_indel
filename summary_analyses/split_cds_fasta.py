@@ -50,13 +50,13 @@ def main():
 
                 prev_chromo = chromo
 
-                print(line, file=out_file)
+                print(line.rstrip(), file=out_file)
 
         else:
             if skip:
                 continue
             else:
-                print(line, file=out_file)
+                print(line.rstrip(), file=out_file)
 
 if __name__ == '__main__':
     main()
