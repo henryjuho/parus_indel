@@ -24,7 +24,7 @@ def main():
 
     skip = False
     prev_chromo = ''
-    out_file_stem = args.cds_fasta.replace('.fna.gz', '')
+    out_file_stem = args.cds_fa.replace('.fna.gz', '')
     out_file_str = '{}_{}.fna.gz'
     out_file = ''
 
