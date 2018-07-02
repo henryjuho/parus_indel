@@ -9,7 +9,7 @@ def main():
     print('rank', 'lnL', 'model', sep='\t')
     for res in res_files:
 
-        counter = 0
+        lnl_list = []
         model = res.split('/')[-1].split('.')[0]
 
         for line in open(res):
@@ -18,9 +18,11 @@ def main():
 
             if len(line) > 0 and line[0].isdigit():
 
-                counter += 1
+                lnl_list.append(line[-1])
 
-                print(counter, line[-1], model, sep='\t')
+        for i in range(1, len(lnl_list)+1):
+
+            print(i, lnl_list[-i], model, sep='\t')
 
 
 if __name__ == '__main__':
