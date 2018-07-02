@@ -6,7 +6,7 @@ def main():
 
     res_files = [x.rstrip() for x in sys.stdin]
 
-    print('rank', 'lnL', 'model')
+    print('rank', 'lnL', 'model', sep='\t')
     for res in res_files:
 
         counter = 0
@@ -20,7 +20,7 @@ def main():
 
                 counter += 1
 
-                print(counter, line[-1], model)
+                print(counter, line[-1], model, sep='\t')
 
 
 if __name__ == '__main__':
