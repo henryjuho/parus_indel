@@ -43,7 +43,7 @@ def main():
     parser.add_argument('-windows', help='window file', required=True)
     parser.add_argument('-call_fa', help='callable sites fasta file', required=True)
     parser.add_argument('-noncoding_bed', help='bed file of non-coding regions', required=True)
-    parser.add_argument('-call_txt', hwlp='call text', required=True)
+    parser.add_argument('-call_txt', help='call text', required=True)
     parser.add_argument('-equal_theta', help='if specified runs with equal mutation ratesbetween neu and sel sites',
                         default=False, action='store_true')
     parser.add_argument('-dfe', help='determines type of distribution to have in model',
