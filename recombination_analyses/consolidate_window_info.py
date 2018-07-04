@@ -35,8 +35,7 @@ def main():
     windows = '/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/anavar_analysis/' \
               'window_analysis/gt_windows.2Mb.bed.gz'
 
-    call_sites = pysam.FastaFile('/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/'
-                                 'Callable_sites/bgi_10birds.callable.fa')
+    call_sites = pysam.FastaFile('/Users/henryjuho/sharc_fastdata/GT_ref/bgi_10birds.callable.fa')
 
     noncoding_bed = '/Users/henryjuho/sharc_fastdata/GT_ref/gt_noncoding.bed.gz'
     rec_data = rec_rates(rec)
