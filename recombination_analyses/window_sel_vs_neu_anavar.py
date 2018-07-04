@@ -4,9 +4,11 @@ from __future__ import print_function
 import argparse
 import pysam
 from vcf2raw_sfs import vcf2sfs
-from sel_vs_neu_anavar import sfs2counts, read_callable_csv
 import anavar_utils as an
 from qsub import q_sub
+import sys
+sys.path.insert(0, os.getenv('HOME') + '/parus_indel/anavar_analyses')
+from sel_vs_neu_anavar import sfs2counts, read_callable_txt
 
 
 def window_call_sites(call_fa, region_bed, window_coords):
@@ -40,8 +42,7 @@ def main():
     parser.add_argument('-windows', help='window file', required=True)
     parser.add_argument('-call_fa', help='callable sites fasta file', required=True)
     parser.add_argument('-noncoding_bed', help='bed file of non-coding regions', required=True)
-    parser.add_argument('-call_csv', default='/fastdata/bop15hjb/GT_ref/gt_callable_summary.csv',
-                        help=argparse.SUPPRESS)
+    parser.add_argument('-call_txt', hwlp='call text', required=True)
     parser.add_argument('-equal_theta', help='if specified runs with equal mutation ratesbetween neu and sel sites',
                         default=False, action='store_true')
     parser.add_argument('-dfe', help='determines type of distribution to have in model',
@@ -72,7 +73,7 @@ def main():
     sfs_ni = sfs2counts(n_i_sfs, 20)
     sfs_nd = sfs2counts(n_d_sfs, 20)
 
-    neu_m = read_callable_csv(args.call_csv)['ALL']['AR']['pol']
+    neu_m = read_callable_txt(args.call_txt)['ALL']['AR']['pol']
 
     # everything else per window
     for window in open(args.windows):
@@ -103,7 +104,7 @@ def main():
 
         anavar_path = '/shared/evolgen1/shared_data/program_files/sharc/'
 
-        anavar_cmd = '{path}anavar1.22 {ctl} {rslts} {log} {seed}'
+        anavar_cmd = '{path}anavar1.4 {ctl} {rslts} {log} {seed}'
 
         # sort file names
         ctl_name = out_stem + '.control.txt'
@@ -118,8 +119,8 @@ def main():
                          maxtime=3600, optional=True)
 
         ctl.set_data(sfs_data, 20, dfe=args.dfe, c=1,
-                     theta_r=(1e-10, 0.1), r_r=(0.01, 100),
-                     scale_r=(0.1, 5000.0), gamma_r=(-5e4, 1e2))
+                     gamma_r=(-5e4, 1e5), theta_r=(1e-14, 0.1), r_r=(0.01, 100),
+                     scale_r=(0.1, 5000.0))
 
         ctl.set_constraint(constraint)
         ctl_contents = ctl.construct()
