@@ -7,6 +7,7 @@ from vcf2raw_sfs import vcf2sfs
 import anavar_utils as an
 from qsub import q_sub
 import sys
+import os
 sys.path.insert(0, os.getenv('HOME') + '/parus_indel/anavar_analyses')
 from sel_vs_neu_anavar import sfs2counts, read_callable_txt
 
