@@ -11,7 +11,7 @@ in_file = 'gt_windows_noncoding_continuous_full_results.windowdata.csv'
 out_stem = 'continuous'
 
 window_data = read.csv(in_file)
-window_data$mean_gamma = as.numeric(window_data$scale) * as.numeric(window_data$shape) * -1
+window_data$mean_gamma = as.numeric(as.character(window_data$scale)) * as.numeric(as.character(window_data$shape)) * -1
 
 window_data_sel = subset(window_data, sel_type=='sel')
 
