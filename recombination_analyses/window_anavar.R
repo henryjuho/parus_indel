@@ -10,8 +10,6 @@ library(reshape2)
 in_file = 'gt_windows_noncoding_continuous_full_results.windowdata.csv'
 out_stem = 'continuous'
 
-cbPalette <- c("#E69F00", 'tomato 3', 'steel blue', "#999999", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-
 window_data = read.csv(in_file)
 window_data$mean_gamma = as.numeric(window_data$scale) * as.numeric(window_data$shape) * -1
 
@@ -38,7 +36,6 @@ theta_plot = ggplot(window_data_sel, aes(x=log(rec_rate + 1), y=theta, colour=va
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
-      scale_colour_manual(values=cbPalette) +
       xlab('Recombination rate (log)')  + ylab(expression(theta)) +
       ggtitle(paste('Ins: ', expression(rho), '=', round(theta_ins_test$estimate, digits=2),
       'p =', round(theta_ins_test$p.value, digits=7),
@@ -68,7 +65,6 @@ gamma_plot = ggplot(window_data_sel, aes(x=log(rec_rate + 1), y=mean_gamma, colo
       geom_point(stat='identity', size = 2) +
       geom_smooth(method='lm') +
       theme_bw() +
-      scale_colour_manual(values=cbPalette) +
       xlab('Recombination rate (log)')  + ylab("Gamma") +
       ggtitle(paste('Ins: ', expression(rho), '=', round(gamma_ins_test$estimate, digits=2),
       'p =', round(gamma_ins_test$p.value, digits=7),
@@ -77,20 +73,20 @@ gamma_plot = ggplot(window_data_sel, aes(x=log(rec_rate + 1), y=mean_gamma, colo
 
 # error plot
 
-error_plot = ggplot(window_data_sel, aes(x=log(rec_rate + 1), y=e, colour=var_type)) +
-      geom_point(stat='identity', size = 2) +
-      geom_smooth(method='lm') +
-      theme_bw() +
-      scale_colour_manual(values=cbPalette) +
-      xlab('Recombination rate (log)')  + ylab("Polarisation error") +
-      ggtitle(paste('Ins: ', expression(rho), '=', round(error_ins_test$estimate, digits=2),
-      'p =', round(error_ins_test$p.value, digits=7),
-      '\nDel: ', expression(rho), '=', round(error_del_test$estimate, digits=2),
-      'p =', round(error_del_test$p.value, digits=7))) + theme(legend.position='none')
+# error_plot = ggplot(window_data_sel, aes(x=log(rec_rate + 1), y=e, colour=var_type)) +
+#       geom_point(stat='identity', size = 2) +
+#       geom_smooth(method='lm') +
+#       theme_bw() +
+#       scale_colour_manual(values=cbPalette) +
+#       xlab('Recombination rate (log)')  + ylab("Polarisation error") +
+#       ggtitle(paste('Ins: ', expression(rho), '=', round(error_ins_test$estimate, digits=2),
+#       'p =', round(error_ins_test$p.value, digits=7),
+#       '\nDel: ', expression(rho), '=', round(error_del_test$estimate, digits=2),
+#       'p =', round(error_del_test$p.value, digits=7))) + theme(legend.position='none')
 
 # saving
-png(file=paste(out_stem, 'window_anavar.png', sep='_'), width=9, height=6, units='in', res=360)
+png(file=paste(out_stem, 'window_anavar.png', sep='_'), width=9, height=3, units='in', res=360)
 
-grid.arrange(theta_plot, gamma_plot, rdi_plot, error_plot, nrow=2, ncol=2)
+grid.arrange(theta_plot, gamma_plot, rdi_plot, nrow=1)
 
 dev.off()
