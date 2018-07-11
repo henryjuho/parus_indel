@@ -52,7 +52,8 @@ def main():
     # submission loop
     if args.sub is True:
         command_line = [' '.join([x for x in sys.argv if x != '-sub' and x != '-evolgen'])]
-        q_sub(command_line, out=args.out_dir + 'cds_alignments_from_wga', evolgen=args.evolgen, t=96)
+        out_stem = args.cds_fa.split('/')[-1].replace('.fna.gz', '')
+        q_sub(command_line, out=args.out_dir + out_stem, evolgen=args.evolgen, t=96)
         sys.exit()
 
     # variables
