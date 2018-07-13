@@ -80,8 +80,8 @@ tajd_plot = ggplot(tajd_data, aes(x=log(rec_rate + 1), y=value, colour=variable)
       'p =', round(tajd_del_test$p.value, digits=5))) +
       theme(legend.position=c(0.9, 0.2), legend.title=element_blank(), legend.background=element_blank())
 
-png(file='window_summary.png', width=9, height=3, units='in', res=360)
+png(file='window_summary.png', width=6, height=6, units='in', res=360)
 
-grid.arrange(theta_plot, tajd_plot, rdi_plot, nrow=1)
+grid.arrange(theta_plot, pi_plot, tajd_plot, rdi_plot, nrow=2)
 
 dev.off()
