@@ -44,7 +44,7 @@ def main():
     # header
     print('chr', 'start', 'stop', 'window', 'rec_rate', 'callable',
           'n_ins', 'theta_ins', 'pi_ins', 'tajd_ins',
-          'n_del', 'theta_del', 'pi_del', 'tajd_del', sep='\t')
+          'n_del', 'theta_del', 'pi_del', 'tajd_del', 'n_indel', 'pol_success', sep='\t')
 
     for line in gzip.open(windows):
 
@@ -60,6 +60,13 @@ def main():
                        chromo=chromo, start=int(start), stop=int(stop),
                        regions=['intron', 'intergenic'])
         dels = list(dels)
+
+        indels = vcf2sfs(vcf, mode='indel',
+                         chromo=chromo, start=int(start), stop=int(stop),
+                         regions=['intron', 'intergenic'])
+
+        n_indels = len(list(indels))
+        pol_success = (len(ins) + len(dels)) / float(n_indels)
 
         # callsites
         n_call = window_call_sites(call_sites, nc_bed, (chromo, int(start), int(stop)))
@@ -81,7 +88,8 @@ def main():
 
         print(chromo, start, stop, wind_id, rr, n_call,
               len(ins), ins_t, ins_pi, ins_taj,
-              len(dels), dels_t, dels_pi, dels_taj, sep='\t')
+              len(dels), dels_t, dels_pi, dels_taj,
+              n_indels, pol_success, sep='\t')
 
 
 if __name__ == '__main__':
