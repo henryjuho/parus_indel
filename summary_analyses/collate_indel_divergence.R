@@ -23,7 +23,8 @@ div_plot = ggplot(div, aes(x=category, y=divergence, fill=variation)) +
     legend.title=element_blank(), legend.position=c(0.85, 0.8),
     legend.background=element_blank()) +
     scale_fill_viridis(discrete=TRUE)+
-    guides(fill = guide_legend(nrow = 2))
+    guides(fill = guide_legend(nrow = 2)) +
+    annotate("text", x = 3.5, y = 0.0065, label = '(SNPs: divergence x 10)', size=2.9) +
 
 # pdf(file='indel_divergence.pdf', width=3, height=3)
 # div_plot
