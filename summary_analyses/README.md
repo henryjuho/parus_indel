@@ -77,14 +77,22 @@ $ cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/indel_divergence/
 $ ~/parus_indel/summary_analyses/automate_indel_div.py -wga /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -region_list ~/parus_indel/summary_analyses/gt_call_regions.txt -out_dir /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/indel_divergence/ -evolgen
 $ cat *txt | grep -v ^cat | grep -v nonsense | grep -v fold | grep -v frame | grep -v noU >> gt_indel_div.txt 
 $ cp gt_indel_div.txt ~/parus_indel/summary_analyses/
+```
+
+SNP divergence were obtained using codeml and baseml. First phylip files were generated as follows:
+
+```
+$ cd ~/parus_indel/summary_analyses
+
+$ mkdir /fastdata/bop15hjb/hjb/GT_data/BGI_BWA_GATK/snp_divergence
+
+$ qsub get_wga_sub_region.sh
+$ qsub wga_sub_region_fasta.sh 
+$ qsub regional_snp_div.sh
+
+$ grep -v ^Fl /fastdata/bop15hjb/hjb/GT_data/BGI_BWA_GATK/snp_divergence/snp_div.out > snp_div.txt
 
 $ Rscript collate_indel_divergence.R 
-```
-
-SNP divergence
-
-```
-todo
 ```
 
 ![div](indel_divergence.png)
