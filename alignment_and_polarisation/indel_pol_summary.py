@@ -11,12 +11,13 @@ def main():
     parser.add_argument('-vcf', help='vcf file', required=True)
     parser.add_argument('-align_states', help='alignment states file used in polarisation', required=True)
     parser.add_argument('-out_dir', help='output directory', required=True)
+    parser.add_argument('-bed_list', help='change bed file list', default='regions_beds.txt')
     args = parser.parse_args()
 
     print('cat', 'count', 'percent', 'region', sep=',')
 
     # loop through region bed files
-    for line in open('regions_beds.txt'):
+    for line in open(args.bed_list):
         region, bed = line.rstrip('\n').split(',')
 
         # call bedtools intersect to get regional vcf
