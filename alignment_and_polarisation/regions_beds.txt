@@ -1,0 +1,4 @@
+cds,/fastdata/bop15hjb/h_j_b/GT_ref/gt_cds.bed.gz
+intron,/fastdata/bop15hjb/h_j_b/GT_ref/gt_introns.bed.gz
+intergenic,/fastdata/bop15hjb/h_j_b/GT_ref/gt_intergenic.bed.gz
+ar,/fastdata/bop15hjb/h_j_b/GT_ref/Greattit.Zebrafinch.Flycatcher.ancLINEs.sorted.bed.gz
