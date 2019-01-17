@@ -167,7 +167,7 @@ print('category\tcount\n'
       'low_coverage\t' + str(low_coverage) + '\n'
       'not_aligned\t' + str(not_aligned) + '\n'
       'ambiguous\t' + str(ambiguous) + '\n'
-      'unpolarised\t' + str(counter - match) + '\n')
+      'unpolarised\t' + str(counter - match))
 
 if not args.no_vcf:
     annotated_vcf.close()
