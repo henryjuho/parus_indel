@@ -33,7 +33,7 @@ def main():
         pol_cmd = ('~/parus_indel/alignment_and_polarisation/polarise_vcf_indels.py '
                    '-vcf {} '
                    '-align_data {} '
-                   '-target_spp Greattit'
+                   '-target_spp Greattit '
                    '-no_vcf > {}').format(vcf_out, args.align_states, sum_out)
         subprocess.call(pol_cmd, shell=True)
 
