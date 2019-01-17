@@ -43,7 +43,7 @@ def main():
             if res.startswith('categ'):
                 continue
 
-            res = res.split('\t')
+            res = res.rstrip('\n').split('\t')
 
             if res[0] == 'total':
                 total = float(res[1])
