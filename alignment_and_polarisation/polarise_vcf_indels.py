@@ -169,4 +169,5 @@ print('category\tcount\n'
       'ambiguous\t' + str(ambiguous) + '\n'
       'unpolarised\t' + str(counter - match) + '\n')
 
-annotated_vcf.close()
+if not args.no_vcf:
+    annotated_vcf.close()
