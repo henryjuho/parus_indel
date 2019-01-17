@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import argparse
 
 # arguments
@@ -11,11 +12,13 @@ parser.add_argument('-align_data',
                     required=True)
 parser.add_argument('-target_spp', help='Species of samples in VCF file, corresponding to align data file header',
                     required=True)
+parser.add_argument('-no_vcf', default=False, action='store_true', help=argparse.SUPPRESS)
 args = parser.parse_args()
 
 # variables
 vcf_file = args.vcf
-annotated_vcf = open(vcf_file.replace('.vcf', '.polarised.vcf'), 'w')
+if not args.no_vcf:
+    annotated_vcf = open(vcf_file.replace('.vcf', '.polarised.vcf'), 'w')
 align_file = args.align_data
 spp = args.target_spp
 
@@ -39,6 +42,7 @@ match = 0
 no_hotspot = 0
 low_coverage = 0
 ambiguous = 0
+not_aligned = 0
 
 # loop through vcf file and annotate INDELs
 previous_line = ''
@@ -46,9 +50,11 @@ for line in open(vcf_file):
     if line.startswith('#'):
         if line.startswith('##contig') and previous_line.startswith('##INFO'):
             new_info = '##INFO=<ID=AA,Number=1,Type=String,Description="Ancestral Allele">\n'
-            annotated_vcf.write(new_info)
+            if not args.no_vcf:
+                annotated_vcf.write(new_info)
         previous_line = line
-        annotated_vcf.write(line)
+        if not args.no_vcf:
+            annotated_vcf.write(line)
     else:
         counter += 1
         orig_line = line
@@ -61,7 +67,9 @@ for line in open(vcf_file):
         try:
             alignment_info = align_data[chrom + '_' + pos]
         except KeyError:
-            annotated_vcf.write(orig_line)
+            not_aligned += 1
+            if not args.no_vcf:
+                annotated_vcf.write(orig_line)
             continue
 
         # identify flanking INDELs and positions without full coverage
@@ -87,25 +95,29 @@ for line in open(vcf_file):
         # skips sites where ref allele differs from that in alignment, ie insertion within INDEL
         if not ref == alignment_info[spp][1].rstrip('-').upper():
             no_hotspot += 1
-            annotated_vcf.write(orig_line)
+            if not args.no_vcf:
+                annotated_vcf.write(orig_line)
             continue
 
         # skip sites with multiple INDELs in outgroups
         elif hotspot is True:
             no_hotspot += 1
-            annotated_vcf.write(orig_line)
+            if not args.no_vcf:
+                annotated_vcf.write(orig_line)
             continue
 
         # Skip sites without full species coverage
         elif full_coverage is False:
             low_coverage += 1
-            annotated_vcf.write(orig_line)
+            if not args.no_vcf:
+                annotated_vcf.write(orig_line)
             continue
 
         # skips sites that are flanked by INDELs
         elif neighbouring_deletions is True:
             no_hotspot += 1
-            annotated_vcf.write(orig_line)
+            if not args.no_vcf:
+                annotated_vcf.write(orig_line)
             continue
 
         else:
@@ -130,7 +142,8 @@ for line in open(vcf_file):
             # skip ambiguous sites
             if alt_anc is ref_anc:
                 ambiguous += 1
-                annotated_vcf.write(orig_line)
+                if not args.no_vcf:
+                    annotated_vcf.write(orig_line)
                 continue
 
             # set AA annotation
@@ -143,15 +156,17 @@ for line in open(vcf_file):
             # write annotation
             if not aa == 'NONE':
                 polarised_line = '\t'.join(line[0:7]) + '\t' + info + aa + '\t' + '\t'.join(line[8:])
-                annotated_vcf.write(polarised_line)
+                if not args.no_vcf:
+                    annotated_vcf.write(polarised_line)
             match += 1
 
-print('\n'
-      'Total no INDELs  : ' + str(counter) + '\n'
-      'INDELs polarised : ' + str(match) + '\n'
-      'Hotspots         : ' + str(no_hotspot) + '\n'
-      'Low spp coverage : ' + str(low_coverage) + '\n'
-      'Ambiguous        : ' + str(ambiguous) + '\n'
-      'Total unpolarised: ' + str(counter - match) + '\n')
+print('category\tcount\n'
+      'total\t' + str(counter) + '\n'
+      'polarised\t' + str(match) + '\n'
+      'hotspot\t' + str(no_hotspot) + '\n'
+      'low_coverage\t' + str(low_coverage) + '\n'
+      'not_aligned\t' + str(not_aligned) + '\n'
+      'ambiguous\t' + str(ambiguous) + '\n'
+      'unpolarised\t' + str(counter - match) + '\n')
 
 annotated_vcf.close()
