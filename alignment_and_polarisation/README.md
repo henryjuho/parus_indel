@@ -154,3 +154,17 @@ Secondly the output of the above script was used to annotate the ancestral state
 |Ambiguous        | 2399524        |
 |Not in alignment | 2515988        |
 |Total unpolarised| 6341381        |
+
+
+## INDEL polarisation by region summary 
+
+```bash
+mkdir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Polarisation/indel_pol_summary
+
+./indel_pol_summary.py -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -align_states /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Polarisation/all_indels.alignment_states.txt -out_dir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Polarisation/indel_pol_summary/ > polarisation_summary_indels_nonrep.csv
+./indel_pol_summary.py -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/divergence_data/polymorphic_non_repeat_filtered_vcfs/bgi_10birds.raw.snps.indels.all_sites.rawindels.recalibrated.filtered_t99.0.pass.maxlength50.biallelic.coveragefiltered.pass.LINEintersect.polarised.vcf.gz -align_states /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/divergence_data/polymorphic_non_repeat_filtered_vcfs/all_variants.alignment_states.txt -out_dir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Polarisation/indel_pol_summary/ -bed_list ar_bed.txt > polarisation_summary_indels_ar.csv
+
+Rscript pol_sum_indel.R
+```
+
+![](pol_success_indels.png)
