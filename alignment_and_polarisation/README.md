@@ -158,6 +158,12 @@ Secondly the output of the above script was used to annotate the ancestral state
 
 ## INDEL polarisation by region summary 
 
+INDEL polarisation success was compared across different regions. Note that as ancestral repeats were identified from
+the whole genome alignent the categories 'Not aligned' and 'Low coverage' do not apply as such regions of the alignment 
+would be unable to be identified as ancestral repeat in our pipeline. Therefore to roughly compare ancestral repeats
+with other regions we scaled the results by assuming that a similar number of INDELs were not aligned in ancestral 
+repeat regions as non-coding regions (~24% of INDELs).
+
 ```bash
 mkdir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Polarisation/indel_pol_summary
 
@@ -167,4 +173,4 @@ mkdir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Polarisation/indel_pol_summa
 Rscript pol_sum_indel.R
 ```
 
-![](pol_success_indels.png)
+![](pol_success_indels.png){:height="100%" width="100%"}
