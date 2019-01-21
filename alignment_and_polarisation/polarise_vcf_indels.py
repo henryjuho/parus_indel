@@ -13,6 +13,7 @@ parser.add_argument('-align_data',
 parser.add_argument('-target_spp', help='Species of samples in VCF file, corresponding to align data file header',
                     required=True)
 parser.add_argument('-no_vcf', default=False, action='store_true', help=argparse.SUPPRESS)
+parser.add_argument('-out_unaligned', default=False, action='store_true', help=argparse.SUPPRESS)
 args = parser.parse_args()
 
 # variables
@@ -67,6 +68,8 @@ for line in open(vcf_file):
         try:
             alignment_info = align_data[chrom + '_' + pos]
         except KeyError:
+            if args.out_unaligned:
+                print(line)
             not_aligned += 1
             if not args.no_vcf:
                 annotated_vcf.write(orig_line)
