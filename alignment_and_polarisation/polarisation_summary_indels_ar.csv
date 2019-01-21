@@ -1,0 +1,8 @@
+cat,count,percent,region
+total,19851,100.0,ar
+polarised,15341,77.2807415244,ar
+hotspot,3897,19.6312528336,ar
+low_coverage,10,0.0503752959549,ar
+not_aligned,117,0.589390962672,ar
+ambiguous,486,2.44823938341,ar
+unpolarised,4510,22.7192584756,ar
