@@ -173,4 +173,4 @@ mkdir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Polarisation/indel_pol_summa
 Rscript pol_sum_indel.R
 ```
 
-![](pol_success_indels.png){:height="100%" width="100%"}
+<img src='pol_success_indels.png' width='400' height='300'>
