@@ -83,8 +83,12 @@ def main():
 
             allele_freqs = length_freqs[v_type][length]
             n_var = len(allele_freqs)
-            len_pi = pi(20, allele_freqs)/call_sites
-            len_d = tajimas_d(20, allele_freqs)/call_sites
+            if n_var != 0:
+                len_pi = pi(20, allele_freqs)/call_sites
+                len_d = tajimas_d(20, allele_freqs)
+            else:
+                len_pi = 0
+                len_d = 'NA'
 
             print(length, n_var, call_sites, len_pi, len_d, v_type, sep=',')
 
