@@ -8,7 +8,7 @@ both in non-coding and coding DNA.
 - [x] easy enough to do
 - [x] but pi will negatively correlated, Tajima's D would be more interesting
 
-<img src='indel_length_summary_stats.png' width=450 height=450>
+<img src='length_analyses/indel_length_summary_stats.png' width=450 height=450>
 
 2. They estimate very high values of alpha, yet they also show that Tajima’s D is negative which is 
 consistent with population size expansion; it is therefore possible that the high alpha values are simply 
