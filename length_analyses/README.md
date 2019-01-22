@@ -9,4 +9,4 @@ bedtools intersect -header -a /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Anal
 Rscript length_sum_stats.R 
 ```
 
-<img src='indel_length_summary_stats.png' width=400 height=400>
+<img src='indel_length_summary_stats.png' width=700 height=700>
