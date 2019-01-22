@@ -3,7 +3,7 @@ library(viridis)
 
 non_r = read.csv('polarisation_summary_indels_nonrep.csv')
 ar = subset(read.csv('polarisation_summary_indels_ar.csv'), cat!='not_aligned' & cat!='low_coverage')
-ar$percent = (ar$count / (19851 * (1.24 + 0.3))) * 100
+#ar$percent = (ar$count / (19851 * (1.24 + 0.3))) * 100
 all_sum = rbind(non_r, ar)
 
 print(all_sum)
