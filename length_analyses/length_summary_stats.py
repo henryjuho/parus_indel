@@ -3,6 +3,8 @@
 from __future__ import print_function
 import argparse
 import pysam
+import sys
+sys.path.append('..')
 from summary_analyses.bed_summary_stats import tajimas_d, pi
 from vcf2raw_sfs import indel_length, get_derived_freq
 from anavar_analyses.sel_vs_neu_anavar import read_callable_txt
