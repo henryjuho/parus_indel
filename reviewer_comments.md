@@ -66,7 +66,7 @@ range of values like MBE paper?
 - [x] contrast polymorphism diversity and divergence with recomb?
 - [ ] don't see how it solves the problem, couldn't it still be caused by both, maybe I'm misunderstanding?
 
-<img src="div_recomb_plot.png" width=400 height=200>
+<img src="recombination_analyses/div_recomb_plot.png" width=400 height=200>
 
 MINOR COMMENTS
 
