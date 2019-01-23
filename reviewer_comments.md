@@ -26,6 +26,7 @@ their data using their estimates of orientation errors might be something to exp
 these reported for the non-coding DNA.
 
 - [ ] estimate for non-coding, think they were negative when I looked at it before?
+- [ ] deletions: -0.230122722427 insertions: -10.1324551346 (2 class equal t model)
 
 5. When the Tajima’s D analyses are first mentioned there is no reference to figure 2.
 
@@ -35,6 +36,7 @@ these reported for the non-coding DNA.
 consequence of sample size or because there are so few coding indels that you have little information about the DFE?
 
 - [ ] so few INDELs probably, but gamma dist says same thing really? CDS indels are bad.
+- [ ] actually seems to be to do with equal t assumption, if assume then get 2 class best, if not the continuous...
 
 7. The authors give a histogram of the distribution of indel lengths but this is not referred to in the results 
 section.
