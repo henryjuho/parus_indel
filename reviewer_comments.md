@@ -19,6 +19,7 @@ a consequence of biases in the MK-methods to estimate alpha. This should be disc
 3. They use parsimony to orient their indels; this is likely biased and I was wondering whether correcting 
 their data using their estimates of orientation errors might be something to explore.
 
+- [ ] assume they mean correct the actual variant polarisation?
 - [ ] sounds interesting but potentially a lot of work?
 
 4. They estimate alpha for coding sequences but not the non-coding sequences. It would be interesting to see 
@@ -33,7 +34,7 @@ these reported for the non-coding DNA.
 6. The best fit DFE for coding sequences is bimodal, and for non-coding DNA its gamma – is this simply a 
 consequence of sample size or because there are so few coding indels that you have little information about the DFE?
 
-- [ ] so few INDELs surely
+- [ ] so few INDELs probably, but gamma dist says same thing really? CDS indels are bad.
 
 7. The authors give a histogram of the distribution of indel lengths but this is not referred to in the results 
 section.
@@ -62,7 +63,10 @@ range of values like MBE paper?
 
 3. P14Col2L7: in addition to linked selection, elevated diversity at sites of high recombination may also be caused by the mutagenic effect of recombination. These two can be disentangled by comparing within-species vs. between-species comparisons.
 
-- [ ] contrast polymorphism diversity and divergence with recomb
+- [x] contrast polymorphism diversity and divergence with recomb?
+- [ ] don't see how it solves the problem, couldn't it still be caused by both, maybe I'm misunderstanding?
+
+<img src="div_recomb_plot.png" width=400 height=200>
 
 MINOR COMMENTS
 
