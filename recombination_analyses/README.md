@@ -20,4 +20,4 @@ $ Rscript window_summary.R
 
 As well as for INDEL divergence and recombination.
 
-<img src="div_recomb_plot.png" width=400 height=200>
+<img src="div_recomb_plot.png" width=600 height=300>
