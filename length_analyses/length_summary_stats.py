@@ -72,7 +72,7 @@ def main():
             continue
 
         length = indel_length(line)
-        daf = get_derived_freq(line, var_type, 20)
+        daf = get_derived_freq(line, var_type, 10)
 
         # add to dict
         length_freqs[var_type][length].append(daf)
