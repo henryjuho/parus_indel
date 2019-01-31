@@ -30,7 +30,7 @@ these reported for the non-coding DNA.
 
 5. When the Tajima’s D analyses are first mentioned there is no reference to figure 2.
 
-- [ ] refer to
+- [x] refer to
 
 6. The best fit DFE for coding sequences is bimodal, and for non-coding DNA its gamma – is this simply a 
 consequence of sample size or because there are so few coding indels that you have little information about the DFE?
@@ -41,7 +41,7 @@ consequence of sample size or because there are so few coding indels that you ha
 7. The authors give a histogram of the distribution of indel lengths but this is not referred to in the results 
 section.
 
-- [ ] refer to 
+- [x] refer to 
 
 ## Reviewer 2
 
@@ -61,7 +61,8 @@ range of values like MBE paper?
 
 2. Split the CDS indels into those with lengths in multiple of 3 and those that are not
 
-- [ ] separate out, enough power for anavar?
+- [ ] separate out, enough power for anavar - don't think so
+- [ ] separate for summary stats
 
 3. P14Col2L7: in addition to linked selection, elevated diversity at sites of high recombination may also be caused by the mutagenic effect of recombination. These two can be disentangled by comparing within-species vs. between-species comparisons.
 
@@ -74,8 +75,8 @@ MINOR COMMENTS
 
 1. P4Col2L12: where the insertions with just one matching breakpoint included in “multiallelic sites”? Please explain.
 
-- [ ] Yes only variations with matching breakpoints were retained 
-- [ ] also a cause for being unable not to polarise a large amount of INDELs
+- [x] Yes only variations with matching breakpoints were retained 
+- [x] also a cause for being unable not to polarise a large amount of INDELs
 
 2. P5Col2L14: the original definition of \pi by Tajima (1983) is based on the "average number of nucleotide differences", and this is ambiguous for indels. It would help to specify more exactly what is meant.
 
@@ -83,13 +84,13 @@ MINOR COMMENTS
 
 3. P8Col1L8: what’s “stringent” about the parsimony-based approach? Isn’t this the usual 3-species parsimony?
 
-- [ ] Delete stringent?
+- [x] Delete stringent?
 
 4. P8Col1L11-13: it follows that ~50% of indels could not be polarized. Why? It would help to have a supplementary table with a breakdown of what happened (no alignment with the other species, non-parsimonious distribution of indels across species, multiple overlapping indels, etc.). I am also concerned that the polarizable indels form a biased subset of all indels, perhaps more conservative, and that the fraction of indels that could be polarized (and where therefore used in downstream analyses) differed between compared classes (e.g., AR vs. intergenic in Fig. 1a).
 
 - [x] produce summary figure for polarisation success in the different regions
-- [ ] AR bit complicated as identified from genome alignment so pol will be different
-- [ ] Very hard to compare AR in a meaningful way to rest as 'not-aligned' and 'low coverage' as causes for polarisation failure do not exist due to the way ARs were identified.
+- [x] AR bit complicated as identified from genome alignment so pol will be different
+- [x] Very hard to compare AR in a meaningful way to rest as 'not-aligned' and 'low coverage' as causes for polarisation failure do not exist due to the way ARs were identified.
 
 <img src='alignment_and_polarisation/pol_success_indels.png' width='400' height='300'>
 
@@ -99,4 +100,4 @@ MINOR COMMENTS
 
 6. P12Col2L8: a word is missing, perhaps “results” or “findings”
 
-- [ ] add one of the above
+- [x] add one of the above
