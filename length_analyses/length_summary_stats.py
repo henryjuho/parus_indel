@@ -60,6 +60,10 @@ def main():
     # process lines
     for line in vcf:
 
+        # skipZ
+        if line.contig == 'chrZ':
+            continue
+
         # get type, derived allele freq and length
         var_type = indel_type(line)
 
