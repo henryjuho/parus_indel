@@ -101,7 +101,7 @@ def sfs2counts(freq_list, n):
     return counts
 
 
-def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
+def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg, ar_ref=True):
 
     """
     gets sfs from vcf and prepares as anavar input
@@ -110,8 +110,16 @@ def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
     :param n: int
     :param sel_sfs_regions: list
     :param call_sel_reg: str
+    :param ar_ref: str
     :return: dict
     """
+
+    if ar_ref:
+        neu_sfs_regions = ['intergenic_ar', 'intron_ar']
+        neu_call_reg = 'AR'
+    else:
+        neu_sfs_regions = ['intergenic', 'intron']
+        neu_call_reg = 'noncoding'
 
     # extract site frequencies
     del_sfs = vcf2sfs(vcf_name=vcf, mode='del',
@@ -120,7 +128,7 @@ def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
 
     n_d_sfs = vcf2sfs(vcf_name=vcf, mode='del',
                       auto_only=True,
-                      regions=['intergenic_ar', 'intron_ar'])
+                      regions=neu_sfs_regions)
 
     ins_sfs = vcf2sfs(vcf_name=vcf, mode='ins',
                       auto_only=True,
@@ -128,7 +136,7 @@ def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
 
     n_i_sfs = vcf2sfs(vcf_name=vcf, mode='ins',
                       auto_only=True,
-                      regions=['intergenic_ar', 'intron_ar'])
+                      regions=neu_sfs_regions)
 
     # convert to correct format for anavar
     sfs_i = sfs2counts(ins_sfs, n)
@@ -138,7 +146,7 @@ def prepare_indel_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
 
     # get callable sites
     sel_m = call['ALL'][call_sel_reg]['pol']
-    neu_m = call['ALL']['AR']['pol']
+    neu_m = call['ALL'][neu_call_reg]['pol']
 
     # construct control file sfs
     sfs_m = {'selected_INS': (sfs_i, sel_m), 'selected_DEL': (sfs_d, sel_m),
@@ -183,7 +191,7 @@ def prepare_snp_sfs(vcf, call, n, sel_sfs_regions, call_sel_reg):
 
 
 def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nnoimp, maximp,
-                     out_stem, search, degree, spread, evolgen, start_index, given):
+                     out_stem, search, degree, spread, evolgen, start_index, given, ar_ref):
 
     """
     submits anavar jobs to cluster after writing required files etc
@@ -205,6 +213,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
     :param evolgen: bool
     :param start_index: int
     :param given: bool
+    :param ar_ref: bool
     :return: None
     """
 
@@ -242,7 +251,7 @@ def sel_v_neu_anavar(mode, vcf, call, sel_region, constraint, n, c, dfe, alg, nn
     else:
         sfs_data = prepare_indel_sfs(vcf, call, n,
                                      sel_sfs_regions=region_combs[sel_region],
-                                     call_sel_reg=sel_region)
+                                     call_sel_reg=sel_region, ar_ref=ar_ref)
         ctl = an.IndelNeuSelControlFile()
 
     ctl.set_alg_opts(search=search, alg=alg, key=3,
@@ -312,6 +321,7 @@ def main():
     parser.add_argument('-start_index', help='ID for first bin and for first seed', default=1, type=int)
     parser.add_argument('-given', help='If specified takes prev best result as starting values for all runs',
                         default=False, action='store_true')
+    parser.add_argument('-nc_ref', help='use non-coding neu ref instead of ar', default=True, action='store_false')
     parser.add_argument('-evolgen', help='If specified will run on evolgen', default=False, action='store_true')
     args = parser.parse_args()
 
@@ -333,7 +343,8 @@ def main():
                      spread=args.split,
                      evolgen=args.evolgen,
                      start_index=args.start_index,
-                     given=args.given)
+                     given=args.given,
+                     ar_ref=args.nc_ref)
 
 if __name__ == '__main__':
     main()
