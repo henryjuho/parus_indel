@@ -48,7 +48,7 @@ def main():
     parser.add_argument('-call_txt', help=argparse.SUPPRESS,
                         default='../summary_analyses/bgi10_call.txt', required=False)
     parser.add_argument('-region', help='region being analysed, for call sites',
-                        choices=['CDS', 'noncoding'], required=True)
+                        choices=['CDS', 'noncoding', 'intergenic', 'introns'], required=True)
     args = parser.parse_args()
 
     # connect to vcf from stdin
