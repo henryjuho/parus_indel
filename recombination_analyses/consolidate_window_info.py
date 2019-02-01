@@ -2,12 +2,71 @@
 
 from __future__ import print_function
 from vcf2raw_sfs import vcf2sfs
+import argparse
 import gzip
-from window_sel_vs_neu_anavar import window_call_sites
 import pysam
 import sys
-sys.path.insert(0, '/Users/henryjuho/parus_indel/summary_analyses')
-from summary_stats_gt import theta_w, pi, tajimas_d
+sys.path.append('..')
+from summary_analyses.summary_stats_gt import theta_w, pi, tajimas_d
+from anavar_analyses.sel_vs_neu_anavar import sfs2counts
+
+
+def correct_sfs(sfs_i, sfs_d, e_i=0.0110086484429, e_d=0.0166354937984):
+
+    """
+    uses the model estimates of polarisation error to correct the sfs
+    :param sfs_i: list
+    :param sfs_d: list
+    :param e_i: float
+    :param e_d: float
+    :return: list
+    """
+
+    # convert to counts
+    sfs_i = sfs2counts(sfs_i, 20)
+    sfs_d = sfs2counts(sfs_d, 20)
+    freq_keys = [y/20.0 for y in range(1, 20)]
+    corrected_i = []
+    corrected_d = []
+
+    for i in range(0, len(sfs_d)):
+
+        n_i = sfs_i[i] - (sfs_i[i] * e_i) + (sfs_d[-i+1] * e_d)
+        n_d = sfs_d[i] - (sfs_d[i] * e_d) + (sfs_i[-i+1] * e_i)
+
+        freq = freq_keys[i]
+
+        correct_i = [freq for f in range(0, int(round(n_i)))]
+        correct_d = [freq for f in range(0, int(round(n_d)))]
+
+        corrected_i += correct_i
+        corrected_d += correct_d
+
+    return corrected_i, corrected_d
+
+
+def window_call_sites(call_fa, region_bed, window_coords):
+
+    """
+    returns number of callable sites for specied region in window
+    :param call_fa: pysam.FastaFile()
+    :param region_bed: pysam.TabixFile()
+    :param window_coords: tuple
+    :return: int
+    """
+
+    if region_bed is None:
+        regions = [(window_coords[0], window_coords[1], window_coords[2])]
+    else:
+        regions = region_bed.fetch(window_coords[0], window_coords[1], window_coords[2], parser=pysam.asTuple())
+
+    call_sites = 0
+
+    for reg in regions:
+        call_seq = call_fa.fetch(reg[0], int(reg[1]), int(reg[2]))
+        call_sites += call_seq.count('K')
+
+    return call_sites
 
 
 def rec_rates(rec_file):
@@ -24,6 +83,10 @@ def rec_rates(rec_file):
 
 
 def main():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-correct_sfs', default=False, action='store_true', help=argparse.SUPPRESS)
+    args = parser.parse_args()
 
     # paths
     vcf = '/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Analysis_ready_data/' \
@@ -54,26 +117,32 @@ def main():
         ins = vcf2sfs(vcf, mode='ins',
                       chromo=chromo, start=int(start), stop=int(stop),
                       regions=['intron', 'intergenic'])
-        ins = list(ins)
 
         dels = vcf2sfs(vcf, mode='del',
                        chromo=chromo, start=int(start), stop=int(stop),
                        regions=['intron', 'intergenic'])
-        dels = list(dels)
 
-        indels = vcf2sfs(vcf, mode='indel',
+        # correct if specified
+        if args.correct_sfs:
+            ins, dels = correct_sfs(list(ins), list(dels))
+        else:
+            ins = list(ins)
+            dels = list(dels)
+
+        indels = vcf2sfs(vcf, mode='indel', fold=True,
                          chromo=chromo, start=int(start), stop=int(stop),
                          regions=['intron', 'intergenic'])
 
         n_indels = len(list(indels))
-        pol_success = (len(ins) + len(dels)) / float(n_indels)
 
         # callsites
         n_call = window_call_sites(call_sites, nc_bed, (chromo, int(start), int(stop)))
 
         if len(ins) == 0 or len(dels) == 0 or n_call == 0:
-            ins_t, ins_pi, ins_taj, dels_t, dels_pi, dels_taj = 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'
+            ins_t, ins_pi, ins_taj, dels_t, dels_pi, dels_taj, pol_success = 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA'
         else:
+            pol_success = (len(ins) + len(dels)) / float(n_indels)
+
             # summary stats
             ins_t = theta_w(20, len(ins)) / float(n_call)
             ins_pi = pi(20, ins) / float(n_call)
