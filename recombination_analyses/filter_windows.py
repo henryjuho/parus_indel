@@ -2,15 +2,18 @@
 
 from __future__ import print_function
 import pandas as pd
+import sys
 
 
 def main():
 
-    table = pd.read_table('all_2Mb_windows.txt')
+    windows = sys.argv[1]
+
+    table = pd.read_table(windows)
     filtered_table = table[table.n_ins + table.n_del >= 500]
     filtered_table = filtered_table[filtered_table.chr != 'chrZ']
 
-    filtered_table.to_csv(path_or_buf='filtered_2Mb_windows.txt', sep='\t', index=False)
+    filtered_table.to_csv(path_or_buf='filtered_' + windows, sep='\t', index=False)
 
 
 if __name__ == '__main__':
