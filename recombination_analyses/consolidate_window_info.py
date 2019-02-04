@@ -8,41 +8,7 @@ import pysam
 import sys
 sys.path.append('..')
 from summary_analyses.summary_stats_gt import theta_w, pi, tajimas_d
-from anavar_analyses.sel_vs_neu_anavar import sfs2counts
-
-
-def correct_sfs(sfs_i, sfs_d, e_i=0.0110086484429, e_d=0.0166354937984):
-
-    """
-    uses the model estimates of polarisation error to correct the sfs
-    :param sfs_i: list
-    :param sfs_d: list
-    :param e_i: float
-    :param e_d: float
-    :return: list
-    """
-
-    # convert to counts
-    sfs_i = sfs2counts(sfs_i, 20)
-    sfs_d = sfs2counts(sfs_d, 20)
-    freq_keys = [y/20.0 for y in range(1, 20)]
-    corrected_i = []
-    corrected_d = []
-
-    for i in range(0, len(sfs_d)):
-
-        n_i = sfs_i[i] - (sfs_i[i] * e_i) + (sfs_d[-i+1] * e_d)
-        n_d = sfs_d[i] - (sfs_d[i] * e_d) + (sfs_i[-i+1] * e_i)
-
-        freq = freq_keys[i]
-
-        correct_i = [freq for f in range(0, int(round(n_i)))]
-        correct_d = [freq for f in range(0, int(round(n_d)))]
-
-        corrected_i += correct_i
-        corrected_d += correct_d
-
-    return corrected_i, corrected_d
+from summary_analyses.sfs_correct import correct_sfs
 
 
 def window_call_sites(call_fa, region_bed, window_coords):
