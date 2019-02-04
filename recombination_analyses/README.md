@@ -13,7 +13,7 @@ $ ./add_window_indel_subs.py -windows filtered_2Mb_windows.txt -wga_bed /fastdat
 The relationship between theta and recombination rate and Tajima's D and recombination was explored for both insertions and deletions.
 
 ```
-$ Rscript window_summary.R
+$ Rscript window_summary.R filtered_2Mb_windows.txt window_summary.png
 ```
 
 ![sum_stats](window_summary.png)
