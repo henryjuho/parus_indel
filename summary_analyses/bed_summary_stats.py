@@ -6,7 +6,7 @@ from qsub import *
 import math
 import sys
 sys.path.extend('..')
-from recombination_analyses.consolidate_window_info import correct_sfs
+from sfs_correct import correct_sfs
 
 
 def popen_grab(cmd):
