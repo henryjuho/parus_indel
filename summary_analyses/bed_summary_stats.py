@@ -4,6 +4,9 @@ from __future__ import print_function
 import argparse
 from qsub import *
 import math
+import sys
+sys.path.extend('..')
+from recombination_analyses.consolidate_window_info import correct_sfs
 
 
 def popen_grab(cmd):
@@ -50,6 +53,7 @@ def main():
     parser.add_argument('-snp_vcf', help='Vcf file to get summary stats for', required=True)
     parser.add_argument('-bed', help='regions to summarise', required=True)
     parser.add_argument('-tag', help='region name', required=True)
+    parser.add_argument('-correct_sfs', help='Corrects sfs for pol error', default=False, action='store_true')
     parser.add_argument('-no_z', help=argparse.SUPPRESS, required=False, default=True, action='store_false')
     args = parser.parse_args()
 
@@ -62,10 +66,21 @@ def main():
         sex_flag = ''
     n = (int(popen_grab('zgrep ^#CHROM {} | wc -w'.format(args.indel_vcf))[0]) - 9) * 2  # 9 columns before sample IDs
 
+    # pol error dict
+    cds_e = (0.0799355752829, 0.0367725125655)
+    nc_e = (0.0110086484429, 0.0166354937984)
+    ar_e = (0.0302288845982, 0.0261469211997)
+
+    e_dict = {'ALL': nc_e, 'noncoding': nc_e, 'noncoding_noUCNEs': nc_e, 'intergenic': nc_e,
+              'introns': nc_e, 'CDS': cds_e, 'cds_frameshift': cds_e, 'cds_non_frameshift': cds_e,
+              '0fold': cds_e, '4fold': cds_e, 'nonsense': cds_e, 'UCNE': nc_e, 'AR': ar_e}
+
     # write header
     print('category', 'variation', 'seg_sites', 'theta_w', 'pi', 'tajD', sep='\t')
 
-    for mode in ['snp', 'ins', 'del', 'indel']:
+    modes = ['snp', 'ins', 'del', 'indel']
+    sfs_dict = {x: [] for x in modes}
+    for mode in modes:
 
         if mode == 'snp' or mode == 'indel':
             folded = ' -folded'
@@ -77,20 +92,46 @@ def main():
         else:
             vcf_file = args.indel_vcf
 
-        sfs_cmd = ('bedtools intersect -header -a {vcf} -b {bed} | '
-                   '~/sfs_utils/vcf2raw_sfs.py -mode {mode}{fold_flag}{sex_flag}'
-                   .format(vcf=vcf_file, bed=args.bed, mode=mode, fold_flag=folded, sex_flag=sex_flag))
+        # insure none slip through in wrong cds
+        if args.tag == 'cds_frameshift':
+            region = ' -region ' + args.tag
+        elif args.tag == 'cds_non_frameshift':
+            region = ' -region ' + args.tag
+        else:
+            region = ''
+
+        sfs_cmd = ('bedtools intersect -header -u -a {vcf} -b {bed} | '
+                   '~/sfs_utils/vcf2raw_sfs.py -mode {mode}{fold_flag}{sex_flag}{region_flag}'
+                   .format(vcf=vcf_file, bed=args.bed, mode=mode, fold_flag=folded,
+                           sex_flag=sex_flag, region_flag=region))
 
         sfs = [float(x) for x in popen_grab(sfs_cmd)]
 
+        sfs_dict[mode] = sfs
+
+        # correct sfs
+        if args.correct_sfs:
+
+            ei, ed = e_dict[args.tag]
+
+            new_ins, new_del = correct_sfs(sfs_dict['ins'], sfs_dict['del'], e_i=ei, e_d=ed)
+
+            sfs_dict['ins'] = new_ins
+            sfs_dict['del'] = new_del
+
+    # calc stats
+    for var_type in modes:
+
+        var_sfs = sfs_dict[var_type]
+
         try:
-            tw = theta_w(n, len(sfs))
-            pi_val = pi(n, sfs)
-            tajd = tajimas_d(n, sfs)
+            tw = theta_w(n, len(var_sfs))
+            pi_val = pi(n, var_sfs)
+            tajd = tajimas_d(n, var_sfs)
         except ZeroDivisionError:
             tw, pi_val, tajd = 0, 0, float('nan')
 
-        print(args.tag, mode.upper(), len(sfs), tw, pi_val, tajd, sep='\t')
+        print(args.tag, var_type.upper(), len(var_sfs), tw, pi_val, tajd, sep='\t')
 
 
 if __name__ == '__main__':
