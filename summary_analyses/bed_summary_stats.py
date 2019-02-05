@@ -105,6 +105,8 @@ def main():
                    .format(vcf=vcf_file, bed=args.bed, mode=mode, fold_flag=folded,
                            sex_flag=sex_flag, region_flag=region))
 
+        print(sfs_cmd)
+
         sfs = [float(x) for x in popen_grab(sfs_cmd)]
 
         sfs_dict[mode] = sfs
