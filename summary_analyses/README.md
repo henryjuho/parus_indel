@@ -58,15 +58,27 @@ $ ~/parus_indel/summary_analyses/automate_bed_callable.py -call_fa /fastdata/bop
 $ head -n 1 gt_call_0fold.txt > bgi10_call.txt
 $ cat gt_call_*txt | grep -v ^cat >> bgi10_call.txt 
 $ cp bgi10_call.txt ~/parus_indel/summary_analyses/
+```
 
-$ cd ~/parus_indel/summary_analyses/
-$ Rscript summary_stats.R 
+These were also calculated after correcting for polarisation error.
+
+```bash
+mkdir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Summary_stats_corrected_sfs
+
+./automate_bed_summary.py -indel_vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -snp_vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.line.vcf.gz -region_list gt_stat_regions_correctedsfs.txt -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Summary_stats_corrected_sfs/bgi10 -correct_sfs -evolgen
+
+cd /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Summary_stats_corrected_sfs
+head -n 1 bgi10_0fold_stats.txt > bgi10_stats_sfs_corrected.txt
+cat bgi10_*stats.txt | grep -v cat >> bgi10_stats_sfs_corrected.txt
+cp bgi10_stats_sfs_corrected.txt ~/parus_indel/summary_analyses/
+
+cd ~/parus_indel/summary_analyses/
+Rscript summary_stats.R 
 ```
 
 ![stats_plot](gt_summary_stats.png)
 
 Summary table [here](bgi10_summary_stats.csv).
-
 
 ## Divergence
 
