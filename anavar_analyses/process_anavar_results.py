@@ -146,6 +146,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-file_pattern', help='takes a regular expression in order to extract a custom ID from a file'
                                               'name, along with a column name eg) degree,_degree(\d+)\.')
+    parser.add_argument('-neu_ref', help='sets neutral reference type to determine ds',
+                        default='ar', choices=['ar', 'nc'])
     args = parser.parse_args()
     counter = 0
 
@@ -179,8 +181,16 @@ def main():
         free_params = len(results.free_parameters())
 
         if constraint == '_equal_t':
-            ins_alpha = results.get_alpha(dn=0.000121257528807, ds=0.00183918200407, var_type='ins')
-            del_alpha = results.get_alpha(dn=0.000200465669246, ds=0.00383421025726, var_type='del')
+
+            if args.neu_ref == 'ar':
+                i_ds = 0.00183918200407
+                d_ds = 0.00383421025726
+            else:
+                i_ds = 0.00171438749928
+                d_ds = 0.00308343831154
+
+            ins_alpha = results.get_alpha(dn=0.000121257528807, ds=i_ds, var_type='ins')
+            del_alpha = results.get_alpha(dn=0.000200465669246, ds=d_ds, var_type='del')
         else:
             ins_alpha = 'NA'
             del_alpha = 'NA'
