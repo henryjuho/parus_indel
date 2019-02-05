@@ -94,9 +94,9 @@ def main():
 
         # insure none slip through in wrong cds
         if args.tag == 'cds_frameshift':
-            region = ' -region ' + args.tag
+            region = ' -region CDS_frameshift'
         elif args.tag == 'cds_non_frameshift':
-            region = ' -region ' + args.tag
+            region = ' -region CDS_non_frameshift'
         else:
             region = ''
 
@@ -105,7 +105,7 @@ def main():
                    .format(vcf=vcf_file, bed=args.bed, mode=mode, fold_flag=folded,
                            sex_flag=sex_flag, region_flag=region))
 
-        print(sfs_cmd)
+        print(sfs_cmd, file=sys.stderr)
 
         sfs = [float(x) for x in popen_grab(sfs_cmd)]
 
