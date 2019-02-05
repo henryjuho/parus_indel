@@ -29,11 +29,19 @@ Results [here](gt_cds_v_ar_indels_equal_t.aic.csv).
  mkdir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc
 
 ~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 1 -dfe discrete -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_1class_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -alg NLOPT_LN_NELDERMEAD -nnoimp 100 -maximp 1000 -nc_ref -evolgen
+~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 1 -dfe discrete -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_1class_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -start_index 201 -alg NLOPT_LN_NELDERMEAD -nnoimp 100 -maximp 1000 -nc_ref -evolgen
+~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 1 -dfe discrete -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_1class_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -start_index 401 -alg NLOPT_LN_NELDERMEAD -nnoimp 100 -maximp 1000 -nc_ref
 ~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 2 -dfe discrete -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_2class_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -alg NLOPT_LN_NELDERMEAD -nnoimp 100 -maximp 1000 -nc_ref -evolgen
+~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 2 -dfe discrete -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_2class_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -start_index 201 -alg NLOPT_LN_NELDERMEAD -nnoimp 100 -maximp 1000 -nc_ref -evolgen
+~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 2 -dfe discrete -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_2class_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -start_index 401 -alg NLOPT_LN_NELDERMEAD -nnoimp 100 -maximp 1000 -nc_ref -evolgen
 ~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 3 -dfe discrete -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_3class_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -alg NLOPT_LN_NELDERMEAD -nnoimp 100 -maximp 1000 -nc_ref -evolgen
+~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 3 -dfe discrete -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_3class_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -start_index 201 -alg NLOPT_LN_NELDERMEAD -nnoimp 100 -maximp 1000 -nc_ref
 ~/parus_indel/anavar_analyses/sel_vs_neu_anavar.py -mode indel -vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -n 20 -call_txt ~/parus_indel/summary_analyses/bgi10_call.txt -c 1 -dfe continuous -degree 500 -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/gt_cds_nc_ref_continuous_equal_t -constraint equal_mutation_rate -n_search 25 -split 200 -nc_ref
 
+ls /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/*merged* | ./process_anavar_results.py -neu_ref nc > gt_cds_v_nc_indels_equal_t.aic.csv
 ```
+
+Results [here](gt_cds_v_nc_indels_equal_t.aic.csv).
 
 ### CDS free theta models
 
@@ -101,7 +109,7 @@ Results [here](gt_non-coding_v_ar_indels_full.aic.csv).
 Convergence was visually checked:
 
 ```
-$ ls /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/non-coding_vs_ar/*merged.results.txt /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_ar/*merged.results.txt | python check_lnL.py > all_models_lnl.txt
+ls /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/non-coding_vs_ar/*merged.results.txt /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_ar/*merged.results.txt /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/anavar_analysis/cds_vs_nc/*merged.results.txt | python check_lnL.py > all_models_lnl.txt
 $ Rscript lnl_landscape.R 
 ```
 
