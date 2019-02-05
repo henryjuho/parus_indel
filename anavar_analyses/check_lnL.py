@@ -18,7 +18,13 @@ def main():
 
             if len(line) > 0 and line[0].isdigit():
 
-                lnl_list.append(line[-1])
+                if float(line[-1]) > 0:
+
+                    lnl_list.append(line[-1])
+
+                else:
+
+                    lnl_list.append('NA')
 
         for i in range(1, len(lnl_list)+1):
 
