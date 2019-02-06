@@ -3,6 +3,7 @@
 from __future__ import print_function
 import argparse
 import subprocess
+import sys
 
 
 def popen_grab(cmd):
@@ -18,45 +19,59 @@ def main():
     parser.add_argument('-tag', help='region name', required=True)
     args = parser.parse_args()
 
+    # callable sites
     callable_cmd = ('bedtools intersect -a {wga} -b {bed} | '
                     'grep -v ^chrZ | '
                     '~/WGAbed/wga_bed_summary.py -callable'
                     ).format(wga=args.wga, bed=args.bed)
 
-    # print(callable_cmd)
+    print(callable_cmd, file=sys.stderr)
 
     call_sites = [int(x.split('\t')[1]) for x in popen_grab(callable_cmd)]
     n_sites = sum(call_sites)
 
+    # fixed differences
+    inframe = list(range(3, 51, 3))
+    shift = list(set(range(1, 51)) - set(inframe))
+
+    if args.tag == 'cds_non_frameshift':
+        lengths = ','.join([str(x) for x in inframe])
+        len_tag = ' -lengths {}'.format(lengths)
+    elif args.tag == 'cds_frameshift':
+        lengths = ','.join([str(x) for x in shift])
+        len_tag = ' -lengths {}'.format(lengths)
+    else:
+        len_tag = ''
+
     # indels
     indel_cmd = ('bedtools intersect -a {wga} -b {bed} | '
                  'grep -v ^chrZ | '
-                 '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | '
-                 'wc -l').format(wga=args.wga, bed=args.bed)
+                 '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific{lt} | '
+                 'wc -l').format(wga=args.wga, bed=args.bed, lt=len_tag)
 
-    # print(indel_cmd)
+    print(indel_cmd, file=sys.stderr)
 
     n_indels = int(popen_grab(indel_cmd)[0])
 
     # ins
     ins_cmd = ('bedtools intersect -a {wga} -b {bed} | '
                'grep -v ^chrZ | '
-               '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | '
+               '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific{lt} | '
                '~/WGAbed/polarise_wga_ref_indels.py -indel_type insertion | '
-               'wc -l').format(wga=args.wga, bed=args.bed)
+               'wc -l').format(wga=args.wga, bed=args.bed, lt=len_tag)
 
-    # print(ins_cmd)
+    print(ins_cmd, file=sys.stderr)
 
     n_ins = int(popen_grab(ins_cmd)[0])
 
     # del
     del_cmd = ('bedtools intersect -a {wga} -b {bed} | '
                'grep -v ^chrZ | '
-               '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific | '
+               '~/WGAbed/wga_bed_indels.py -min_coverage 3 -max_length 50 -ref_specific{lt} | '
                '~/WGAbed/polarise_wga_ref_indels.py -indel_type deletion | '
-               'wc -l').format(wga=args.wga, bed=args.bed)
+               'wc -l').format(wga=args.wga, bed=args.bed, lt=len_tag)
 
-    # print(del_cmd)
+    print(del_cmd, file=sys.stderr)
     # print('\n\n')
 
     n_del = int(popen_grab(del_cmd)[0])
