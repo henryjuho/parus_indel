@@ -77,6 +77,7 @@ Rscript summary_stats.R
 ```
 
 ![stats_plot](gt_summary_stats.png)
+![](gt_summary_stats_snps.png)
 
 Summary table [here](bgi10_summary_stats.csv).
 
