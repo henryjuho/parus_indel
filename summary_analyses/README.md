@@ -85,11 +85,13 @@ Summary table [here](bgi10_summary_stats.csv).
 
 Simple INDEL divergence estimates were obtained from the whole genome alignment for coding and non-coding regions and plotted as follows.
 
-```
-$ cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/indel_divergence/
-$ ~/parus_indel/summary_analyses/automate_indel_div.py -wga /fastdata/bop15hjb/GT_ref/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -region_list ~/parus_indel/summary_analyses/gt_call_regions.txt -out_dir /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/indel_divergence/ -evolgen
-$ cat *txt | grep -v ^cat | grep -v nonsense | grep -v fold | grep -v frame | grep -v noU >> gt_indel_div.txt 
-$ cp gt_indel_div.txt ~/parus_indel/summary_analyses/
+```bash
+mkdir /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/indel_divergence/
+
+./automate_indel_div.py -wga /fastdata/bop15hjb/h_j_b/GT_ref/Greattit.Zebrafinch.Flycatcher.wga.bed.gz -region_list gt_call_regions.txt -out_dir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/indel_divergence/ -evolgen
+
+head -n 1 /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/indel_divergence/gt_indel_div_AR.txt  > gt_indel_div_frameshifts.txt
+cat /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/indel_divergence/*txt | grep -v ^cat | grep -v nonsense | grep -v noU | grep -v fold | grep -v UCNE >> gt_indel_div_frameshifts.txt
 ```
 
 SNP divergence were obtained using codeml and baseml. First phylip files were generated as follows:
