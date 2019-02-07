@@ -26,32 +26,50 @@ $ Rscript window_plots.R gt_nc_v_ar_2kb_wind_cds.results.csv 2kb_nc_cds_dist.png
 |del_theta          | 0.4741897      | 0.0005822  |
 |rdi                | 0.08052821     | 0.5772  |
 
+We also assessed how much of this was from neutral variation and how much deleterious.
+
+```bash
+python linked_dfe.py -res_csv gt_nc_v_ar_2kb_wind_cds.results.csv > nc_dfe_exon_dist.txt
+Rscript exon_dist_dfe.R
+```
+
+Results: [theta plot](nc_exons_dist_dfe_theta.pdf), [proportion plot](nc_exons_dist_dfe_prop.pdf)
+
 ### summary stats
 
-```
-$ mkdir distance_bin_beds_2kb_from_cds_withsfs/
-$ ls $PWD/distance_bin_beds_2kb_from_cds/*gz | while read i; do ls $i | cut -d '.' -f 2 | tr '\n' '\t'; echo $i; done > 2kb_binids_beds.txt
-$ ../summary_analyses/automate_bed_summary.py -indel_vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -snp_vcf /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.line.vcf.gz -region_list 2kb_binids_beds.txt -out_pre distance_bin_beds_2kb_from_cds_withsfs/gt_prox_summary
-$ ../summary_analyses/automate_bed_callable.py -call_fa /fastdata/bop15hjb/GT_ref/bgi_10birds.callable.fa -chr_list /fastdata/bop15hjb/GT_ref/gt_autosomes.txt -region_list 2kb_binids_beds.txt -out_pre distance_bin_beds_2kb_from_cds_withsfs/gt_prox_call
+```bash
+mkdir distance_bin_beds_2kb_from_cds_withsfs/
+ls $PWD/distance_bin_beds_2kb_from_cds/*gz | while read i; do ls $i | cut -d '.' -f 2 | tr '\n' '\t'; echo $i; done > 2kb_binids_beds.txt
+../summary_analyses/automate_bed_summary.py -indel_vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -snp_vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.line.vcf.gz -region_list 2kb_binids_beds.txt -correct_sfs -out_pre distance_bin_beds_2kb_from_cds_withsfs/gt_prox_summary -evolgen
+../summary_analyses/automate_bed_callable.py -call_fa /fastdata/bop15hjb/GT_ref/bgi_10birds.callable.fa -chr_list /fastdata/bop15hjb/GT_ref/gt_autosomes.txt -region_list 2kb_binids_beds.txt -out_pre distance_bin_beds_2kb_from_cds_withsfs/gt_prox_call
 
-$ cd distance_bin_beds_2kb_from_cds_withsfs/
+cd distance_bin_beds_2kb_from_cds_withsfs/
 
-$ head -n 1 gt_prox_summary_bin1_stats.txt > gt_prox_summary_stats.txt 
-$ cat gt_prox_summary_bin*_stats.txt | grep -v cat | sort -n -k1.4 >> gt_prox_summary_stats.txt
-$ cp gt_prox_summary_stats.txt ../
+head -n 1 gt_prox_summary_bin1_stats.txt > gt_prox_summary_stats.txt 
+cat gt_prox_summary_bin*_stats.txt | grep -v cat | sort -n -k1.4 >> gt_prox_summary_stats.txt
+cp gt_prox_summary_stats.txt ../
 
-$ head -n 1 gt_prox_call_bin1.txt > gt_prox_call.txt 
-$ cat gt_prox_call*.txt | grep -v cat | sort -n -k1.4 >> gt_prox_call.txt 
-$ cp gt_prox_call.txt ../
+head -n 1 gt_prox_call_bin1.txt > gt_prox_call.txt 
+cat gt_prox_call*.txt | grep -v cat | sort -n -k1.4 >> gt_prox_call.txt 
+cp gt_prox_call.txt ../
 
-$ cd ..
-$ Rscript window_plots_sum_stats.R
+cd ..
+Rscript window_plots_sum_stats.R
 ```
 
 ![2kb](2kb_nc_cds_dist_sum.png)
 
 | x (x vs distance) | Spearman's rho | p-value |
 |:------------------|:--------------:|:-------:|
-|ins_theta          | 0.7878511       | 2.2e-16 |
-|del_theta          | 0.8410564       | 2.2e-16  |
+|ins_theta          | 0.8604562       | 2.2e-16 |
+|del_theta          | 0.7958223       | 2.2e-16  |
 |rdi                | 0.08052821     | 0.5351  |
+
+### Looking at how far the relationship persists
+
+```bash
+Rscript correlation_power.R 
+```
+
+Plot [here](theta_cor_power.pdf).
+
