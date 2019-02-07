@@ -114,7 +114,10 @@ def main():
         # correct sfs
         if args.correct_sfs:
 
-            ei, ed = e_dict[args.tag]
+            if 'bin' in args.tag:
+                ei, ed = e_dict['noncoding']
+            else:
+                ei, ed = e_dict[args.tag]
 
             new_ins, new_del = correct_sfs(sfs_dict['ins'], sfs_dict['del'], e_i=ei, e_d=ed)
 
