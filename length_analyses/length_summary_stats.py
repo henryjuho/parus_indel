@@ -8,6 +8,7 @@ sys.path.append('..')
 from summary_analyses.bed_summary_stats import tajimas_d, pi
 from vcf2raw_sfs import indel_length, get_derived_freq
 from anavar_analyses.sel_vs_neu_anavar import read_callable_txt
+from summary_analyses.sfs_correct import correct_sfs
 
 
 def indel_type(vcf_line):
@@ -49,6 +50,7 @@ def main():
                         default='../summary_analyses/bgi10_call.txt', required=False)
     parser.add_argument('-region', help='region being analysed, for call sites',
                         choices=['CDS', 'noncoding', 'intergenic', 'introns'], required=True)
+    parser.add_argument('-correct_sfs', help='corrects sfs for pol error', default=False, action='store_true')
     args = parser.parse_args()
 
     # connect to vcf from stdin
@@ -82,11 +84,18 @@ def main():
 
     # loop through dict and output length, n, call, pi, tajd
     print('length', 'n_var', 'call', 'pi', 'tajd', 'var_type', sep=',')
-    for v_type in ['ins', 'del']:
-        for length in range(1, 51):
+    for length in range(1, 51):
 
-            allele_freqs = length_freqs[v_type][length]
-            n_var = len(allele_freqs)
+        del_freqs = length_freqs['del'][length]
+        ins_freqs = length_freqs['ins'][length]
+
+        if args.correct_sfs:
+            ins_freqs, del_freqs = correct_sfs(ins_freqs, del_freqs)  # uses default errors as from NC
+
+        for allele_freqs in [[ins_freqs, 'ins'], [del_freqs, 'del']]:
+
+            n_var = len(allele_freqs[0])
+
             if n_var != 0:
                 len_pi = pi(20, allele_freqs)/call_sites
                 len_d = tajimas_d(20, allele_freqs)
@@ -94,7 +103,7 @@ def main():
                 len_pi = 0
                 len_d = 'NA'
 
-            print(length, n_var, call_sites, len_pi, len_d, v_type, sep=',')
+            print(length, n_var, call_sites, len_pi, len_d, allele_freqs[1], sep=',')
 
 
 if __name__ == '__main__':
