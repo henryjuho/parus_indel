@@ -27,6 +27,11 @@ ncins_cor = cor.test(nc_ins$tajd, nc_ins$length, method='spearman')
 nc_del = subset(all_dat, region=='Non-coding' & var_type=='del')
 ncdel_cor = cor.test(nc_del$tajd, nc_del$length, method='spearman')
 
+print('insertions')
+print(ncins_cor)
+print('deletions')
+print(ncdel_cor)
+
 avg_dat = data.frame(tajd=c(-0.972881511536, -1.26992351684, -0.325084323868, -0.463188762236),
                      var_type=c('ins', 'del', 'ins', 'del'),
                      region=c('CDS', 'CDS', 'Non-coding', 'Non-coding'))
