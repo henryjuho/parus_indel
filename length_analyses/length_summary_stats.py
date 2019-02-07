@@ -97,8 +97,8 @@ def main():
             n_var = len(allele_freqs[0])
 
             if n_var != 0:
-                len_pi = pi(20, allele_freqs)/call_sites
-                len_d = tajimas_d(20, allele_freqs)
+                len_pi = pi(20, allele_freqs[0])/call_sites
+                len_d = tajimas_d(20, allele_freqs[0])
             else:
                 len_pi = 0
                 len_d = 'NA'
