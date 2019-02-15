@@ -12,8 +12,16 @@ $ ./add_window_indel_subs.py -windows filtered_2Mb_windows.txt -wga_bed /fastdat
 
 The relationship between theta and recombination rate and Tajima's D and recombination was explored for both insertions and deletions.
 
-```
-$ Rscript window_summary.R filtered_2Mb_windows.txt window_summary.png
+```bash
+Rscript window_summary.R filtered_2Mb_windows.txt window_summary.png
+
+1] "# partical corelations"
+[1] "insertions"
+   estimate     p.value statistic   n gp   Method
+1 0.1481634 0.007647801  2.684191 324  1 spearman
+[1] "deletions"
+    estimate   p.value statistic   n gp   Method
+1 0.07733547 0.1655706  1.389741 324  1 spearman
 ```
 
 ![sum_stats](window_summary.png)

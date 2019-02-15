@@ -133,7 +133,22 @@ div_plot = ggplot(div_data, aes(x=log(rec_rate+1), y=value, colour=var_type)) +
 colnames(div_data) = c('window', 'rec_rate', 'var_type', 'div')
 colnames(pi_data) = c('window', 'rec_rate', 'var_type', 'pi')
 div_pi_dat = dplyr::left_join(div_data, pi_data, by=c('window', 'rec_rate', 'var_type'))
+div_pi_dat$pi_div = div_pi_dat$pi / div_pi_dat$div
 
+print('# standardised pi')
+# ins
+print('insertions')
+ins_pi_div = subset(div_pi_dat, var_type=='ins')
+std_cor_ins = cor.test(ins_pi_div$pi_div, ins_pi_div$rec_rate, method='spearman')
+print(std_cor_ins)
+
+# del
+print('deletions')
+del_pi_div = subset(div_pi_dat, var_type=='del')
+std_cor_del = cor.test(del_pi_div$pi_div, del_pi_div$rec_rate, method='spearman')
+print(std_cor_del)
+
+print('# partical corelations')
 # ins
 print('insertions')
 ins_pi_div = subset(div_pi_dat, var_type=='ins')
