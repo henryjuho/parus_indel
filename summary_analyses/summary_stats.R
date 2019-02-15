@@ -123,3 +123,26 @@ png(file='gt_summary_stats_snps.png', width=9, height=3, units='in', res=360)
 grid.arrange(tajd_snp, tw_snp, pi_snp, nrow=1)
 
 dev.off()
+
+# compare corrected v uncorrected tajd
+comp_tajd_dat = subset(indel_data, variation!='INDEL' & category!='CDS')
+comp_tajd_dat$cat = as.factor(paste(comp_tajd_dat$variation, comp_tajd_dat$sfs, sep=' '))
+comp_tajd_dat
+
+
+tajd_comp = ggplot(comp_tajd_dat, aes(x=category, y=tajD, fill=cat))+
+  geom_bar(stat='identity', position = position_dodge(width=0.9), size = 2) +
+  theme_bw() +
+  # facet_wrap(~variation, ncol=2) +
+  xlab('')  + ylab("Tajima's D") +
+  #ylim(-1.3, -0.2) +
+  theme(legend.title=element_blank(), legend.position=c(0.7, 0.3),
+  axis.text.x=element_text(angle=45, hjust=1)) +
+  scale_fill_manual(values=viridis(5)) +
+  scale_x_discrete(labels=c('Frame-shift', 'In-frame', 'introns', 'intergenic', 'AR'))
+
+pdf('comp_tajd_correct.pdf', width=3, height=3)
+
+tajd_comp
+
+dev.off()
