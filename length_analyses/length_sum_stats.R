@@ -45,7 +45,7 @@ avg_dat = data.frame(tajd=c(-0.972881511536, -1.26992351684, -0.325084323868, -0
                      region=c('CDS', 'CDS', 'Non-coding', 'Non-coding'))
 
 
-taj_plot = ggplot(subset(all_dat, sfs=='raw'), aes(x=length, y=tajd, colour=var_type, fill=var_type)) +
+taj_plot = ggplot(all_dat, aes(x=length, y=tajd, colour=var_type, fill=var_type)) +
     geom_hline(data = avg_dat, aes(yintercept=tajd, colour=var_type)) +
     geom_point(stat='identity') +
     theme_bw(base_size=10) +
@@ -69,7 +69,7 @@ dev.off()
 
 pdf('indel_length_tajd.pdf', width=6, height=3)
 
-ggplot(all_dat, aes(x=length, y=tajd, colour=var_type, fill=var_type)) +
+ggplot(subset(all_dat, sfs=='raw'), aes(x=length, y=tajd, colour=var_type, fill=var_type)) +
     geom_hline(data = avg_dat, aes(yintercept=tajd, colour=var_type)) +
     geom_point(stat='identity') +
     theme_bw(base_size=10) +
