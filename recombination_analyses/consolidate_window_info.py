@@ -6,6 +6,7 @@ import argparse
 import gzip
 import pysam
 import sys
+import platform
 sys.path.append('..')
 from summary_analyses.summary_stats_gt import theta_w, pi, tajimas_d
 from summary_analyses.sfs_correct import correct_sfs
@@ -55,18 +56,21 @@ def main():
     args = parser.parse_args()
 
     # paths
-    vcf = '/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/Analysis_ready_data/' \
-          'final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz'
+    if platform.uname()[0] == 'Darwin':
+        stem = '/Users/henryjuho/sharc_fastdata/'
+    else:
+        stem = '/fastdata/bop15hjb/h_j_b/'
 
-    rec = '/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/anavar_analysis/' \
-          'window_analysis/gt_2Mb_window_rec_rates.txt'
+    vcf = stem + 'GT_data/BGI_BWA_GATK/Analysis_ready_data/' \
+                 'final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz'
 
-    windows = '/Users/henryjuho/sharc_fastdata/GT_data/BGI_BWA_GATK/anavar_analysis/' \
-              'window_analysis/gt_windows.2Mb.bed.gz'
+    rec = stem + 'GT_data/BGI_BWA_GATK/anavar_analysis/window_analysis/gt_2Mb_window_rec_rates.txt'
 
-    call_sites = pysam.FastaFile('/Users/henryjuho/sharc_fastdata/GT_ref/bgi_10birds.callable.fa')
+    windows = stem + 'GT_data/BGI_BWA_GATK/anavar_analysis/window_analysis/gt_windows.2Mb.bed.gz'
 
-    noncoding_bed = '/Users/henryjuho/sharc_fastdata/GT_ref/gt_noncoding.bed.gz'
+    call_sites = pysam.FastaFile(stem + 'GT_ref/bgi_10birds.callable.fa')
+
+    noncoding_bed = stem + 'GT_ref/gt_noncoding.bed.gz'
     rec_data = rec_rates(rec)
     nc_bed = pysam.TabixFile(noncoding_bed)
 
