@@ -3,7 +3,7 @@ library(gridExtra)
 library(dplyr)
 library(viridis)
 
-summary_data = read.delim('bgi10_stats.txt', na=0)
+summary_data = read.delim('bgi10_stats_nocorrection.txt', na=0)
 summary_data_sfs_correct = read.delim('bgi10_stats_sfs_corrected.txt', na=0)
 
 summary_data$sfs = 'raw'
