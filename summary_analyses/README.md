@@ -45,7 +45,7 @@ $ cp /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Callable_sites/bgi_10birds.callable
 ```
 
 The statistics were then calculated with the following script:
-
+<!---
 ```
 $ cd /fastdata/bop15hjb/GT_data/BGI_BWA_GATK/Summary_stats
 
@@ -59,7 +59,19 @@ $ head -n 1 gt_call_0fold.txt > bgi10_call.txt
 $ cat gt_call_*txt | grep -v ^cat >> bgi10_call.txt 
 $ cp bgi10_call.txt ~/parus_indel/summary_analyses/
 ```
+--->
+```bash
+mkdir /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Summary_stats_cds_split_uncorrected
 
+./automate_bed_summary.py -indel_vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_indels.pol.anno.recomb.line.vcf.gz -snp_vcf /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Analysis_ready_data/final/bgi_10birds.filtered_snps.pol.anno.degen.line.vcf.gz -region_list gt_stat_regions_correctedsfs.txt -out_pre /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Summary_stats_cds_split_uncorrected/bgi10 -evolgen
+
+cd /fastdata/bop15hjb/h_j_b/GT_data/BGI_BWA_GATK/Summary_stats_cds_split_uncorrected
+head -n 1 bgi10_0fold_stats.txt > bgi10_stats_nocorrection.txt
+cat bgi10_*stats.txt | grep -v cat >> bgi10_stats_nocorrection.txt
+cp bgi10_stats_nocorrection.txt ~/parus_indel/summary_analyses/
+
+cd ~/parus_indel/summary_analyses/
+```
 These were also calculated after correcting for polarisation error.
 
 ```bash
