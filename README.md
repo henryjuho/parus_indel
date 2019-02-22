@@ -57,7 +57,7 @@ Analysis of INDEL data in windows of increasing distance from exons is described
 
 ## Recombination analyses
  
-Pipeline for relating INDEL diversity and Tajima's **D** with recombination rate is documented here: [recombination_analyses](recombination_analyses).
+Pipeline for relating INDEL diversity and Tajima's *D* with recombination rate is documented here: [recombination_analyses](recombination_analyses).
 
 ## Length analyses
 
