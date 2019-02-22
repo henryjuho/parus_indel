@@ -1,4 +1,6 @@
 # Great tit (*Parus major*) INDEL analysis
+## Pipeline from Barton and Zeng (2019)
+
 Henry Juho Barton  
 Department of Animal and Plant Sciences, The University of Sheffield  
 
@@ -57,7 +59,7 @@ Analysis of INDEL data in windows of increasing distance from exons is described
 
 ## Recombination analyses
  
-Pipeline for relating INDEL diversity and Tajima's *D* with recombination rate is documented here: [recombination_analyses](recombination_analyses).
+Pipeline for relating INDEL diversity and Tajima's *D* with recombination rate is documented here: [recombination_analyses/](recombination_analyses).
 
 ## Length analyses
 
