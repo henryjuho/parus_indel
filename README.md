@@ -53,8 +53,12 @@ Analysis of the INDEL data with the ```anavar``` package is described here: [ana
 
 ## Proximity analyses
 
-Analysis of INDEL data in windows of increasing distance from conserved regions (CDS and UCNEs) is described here: [gene_proximity_analyses/](gene_proximity_analyses).
+Analysis of INDEL data in windows of increasing distance from exons is described here: [gene_proximity_analyses/](gene_proximity_analyses).
+
+## Recombination analyses
+ 
+Pipeline for relating INDEL diversity and Tajima's **D** with recombination rate is documented here: [recombination_analyses](recombination_analyses).
 
 ## Length analyses
 
-Analysis of the amount of sequence inserted and deleted in various genomic contexts is documented here: [length_analyses/](length_analyses).
+Analysis of impact of INDEL length on the SFS is documented here: [length_analyses/](length_analyses).
