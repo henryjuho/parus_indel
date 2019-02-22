@@ -2,7 +2,7 @@ library(ggplot2)
 library(gridExtra)
 library(gtools)
 
-sum_file = read.delim('gt_prox_summary_stats.txt')
+sum_file = read.delim('gt_prox_summary_stats_raw.txt')
 call_file = read.delim('gt_prox_call.txt')
 
 all_data = cbind(sum_file, call_file)
