@@ -73,7 +73,8 @@ def main():
 
     e_dict = {'ALL': nc_e, 'noncoding': nc_e, 'noncoding_noUCNEs': nc_e, 'intergenic': nc_e,
               'introns': nc_e, 'CDS': cds_e, 'cds_frameshift': cds_e, 'cds_non_frameshift': cds_e,
-              '0fold': cds_e, '4fold': cds_e, 'nonsense': cds_e, 'UCNE': nc_e, 'AR': ar_e}
+              '0fold': cds_e, '4fold': cds_e, 'nonsense': cds_e, 'UCNE': nc_e,
+              'AR': ar_e, 'AR_frameshift': ar_e, 'AR_non_frameshift': ar_e}
 
     # write header
     print('category', 'variation', 'seg_sites', 'theta_w', 'pi', 'tajD', sep='\t')
@@ -93,10 +94,10 @@ def main():
             vcf_file = args.indel_vcf
 
         # insure none slip through in wrong cds
-        if args.tag == 'cds_frameshift':
+        if args.tag == 'cds_frameshift' or args.tag == 'AR_frameshift':
             lengths = ''.join([' -len ' + str(x) for x in list(set(range(1, 51)) - set(range(3, 51, 3)))])
             # region = ' -region CDS_frameshift'
-        elif args.tag == 'cds_non_frameshift':
+        elif args.tag == 'cds_non_frameshift' or args.tag == 'AR_non_frameshift':
             lengths = ''.join([' -len ' + str(x) for x in range(3, 51, 3)])
             # region = ' -region CDS_non_frameshift'
         else:
