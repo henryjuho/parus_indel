@@ -2,8 +2,8 @@ noncoding   /fastdata/bop15hjb/h_j_b/GT_ref/gt_noncoding.bed.gz
 intergenic  /fastdata/bop15hjb/h_j_b/GT_ref/gt_intergenic.bed.gz
 introns /fastdata/bop15hjb/h_j_b/GT_ref/gt_introns.bed.gz
 CDS /fastdata/bop15hjb/h_j_b/GT_ref/gt_cds.bed.gz
-cds_frameshift  /fastdata/bop15hjb/h_j_b/GT_ref/gt_cds_frameshift_indels.bed.gz
-cds_non_frameshift  /fastdata/bop15hjb/h_j_b/GT_ref/gt_cds_inframe_indels.bed.gz
+cds_frameshift  /fastdata/bop15hjb/h_j_b/GT_ref/gt_cds.bed.gz
+cds_non_frameshift  /fastdata/bop15hjb/h_j_b/GT_ref/gt_cds.bed.gz
 0fold   /fastdata/bop15hjb/h_j_b/GT_ref/gt_0fold.bed.gz
 4fold   /fastdata/bop15hjb/h_j_b/GT_ref/gt_4fold.bed.gz
 nonsense    /fastdata/bop15hjb/h_j_b/GT_ref/gt_snps_nonsense_actual.bed.gz
