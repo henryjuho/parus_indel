@@ -2,7 +2,7 @@
 
 from __future__ import print_function
 import argparse
-from qsub import q_sub
+from qsub import q_sub, q_write
 
 
 def main():
@@ -14,6 +14,7 @@ def main():
     parser.add_argument('-out_pre', help='output path and prefix', required=True)
     parser.add_argument('-correct_sfs', help='Corrects sfs for pol error', default=False, action='store_true')
     parser.add_argument('-evolgen', help='If specified will submit to lab queue', default=False, action='store_true')
+    parser.add_argument('-no_sub', help=argparse.SUPPRESS, default=False, action='store_true')
     args = parser.parse_args()
 
     if args.correct_sfs:
@@ -32,7 +33,10 @@ def main():
                '-bed {} -tag {}{} '
                '> {}').format(args.indel_vcf, args.snp_vcf, bed, tag, correct, out_stem + '_stats.txt')
 
-        q_sub([cmd], out=out_stem, mem=10, rmem=10, evolgen=args.evolgen)
+        if args.no_sub:
+            q_write([cmd], out=out_stem, mem=10, rmem=10, evolgen=args.evolgen)
+        else:
+            q_sub([cmd], out=out_stem, mem=10, rmem=10, evolgen=args.evolgen)
 
 
 if __name__ == '__main__':
