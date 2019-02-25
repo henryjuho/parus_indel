@@ -94,10 +94,10 @@ def main():
 
         # insure none slip through in wrong cds
         if args.tag == 'cds_frameshift':
-            lengths = ' '.join(['-len ' + str(x) for x in list(set(range(1, 51)) - set(range(3, 51, 3)))])
+            lengths = ''.join([' -len ' + str(x) for x in list(set(range(1, 51)) - set(range(3, 51, 3)))])
             # region = ' -region CDS_frameshift'
         elif args.tag == 'cds_non_frameshift':
-            lengths = ' '.join(['-len ' + str(x) for x in range(3, 51, 3)])
+            lengths = ''.join([' -len ' + str(x) for x in range(3, 51, 3)])
             # region = ' -region CDS_non_frameshift'
         else:
             lengths = ''
