@@ -94,16 +94,19 @@ def main():
 
         # insure none slip through in wrong cds
         if args.tag == 'cds_frameshift':
-            region = ' -region CDS_frameshift'
+            lengths = ' '.join(['-len ' + str(x) for x in list(set(range(1, 51)) - set(range(3, 51, 3)))])
+            # region = ' -region CDS_frameshift'
         elif args.tag == 'cds_non_frameshift':
-            region = ' -region CDS_non_frameshift'
+            lengths = ' '.join(['-len ' + str(x) for x in range(3, 51, 3)])
+            # region = ' -region CDS_non_frameshift'
         else:
-            region = ''
+            lengths = ''
+            # region = ''
 
         sfs_cmd = ('bedtools intersect -header -u -a {vcf} -b {bed} | '
                    '~/sfs_utils/vcf2raw_sfs.py -mode {mode}{fold_flag}{sex_flag}{region_flag}'
                    .format(vcf=vcf_file, bed=args.bed, mode=mode, fold_flag=folded,
-                           sex_flag=sex_flag, region_flag=region))
+                           sex_flag=sex_flag, region_flag=lengths))
 
         print(sfs_cmd, file=sys.stderr)
 
