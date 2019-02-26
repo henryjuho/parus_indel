@@ -24,7 +24,7 @@ write.csv(all_data, 'bgi10_summary_stats.csv', row.names=FALSE)
 
 all_data = subset(all_data, category != 'noncoding_noUCNEs'
   & category != 'UCNE' & category != 'ALL'
-  & category != 'noncoding')
+  & category != 'noncoding' & category != 'AR_frameshift' & category != 'AR_non_frameshift')
 #
 # all_data$category = factor(all_data$category,
 #   levels=rev(c('cds_frameshift', 'cds_non_frameshift', 'CDS', '0fold', 'nonsense', '4fold', 'introns', 'intergenic', 'AR')))
