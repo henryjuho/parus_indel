@@ -20,3 +20,15 @@ ggplot(subset(all_sum, cat!='total' & cat!='unpolarised'), aes(x=region, y=perce
     theme(axis.text.x=element_text(angle=45, hjust=1))
 
 dev.off()
+
+pdf('pol_success_indels.pdf', width=4, height=3)
+
+ggplot(subset(all_sum, cat!='total' & cat!='unpolarised'), aes(x=region, y=percent, fill=cat)) +
+    geom_bar(stat='identity') +
+    scale_fill_manual(values=viridis(6),
+    labels = c('Ambiguous', 'Hotspot', 'Low coverage', 'Not aligned', 'Polarised')) +
+    theme_bw() + theme(legend.title=element_blank()) +
+    labs(y='Percentage of INDELs', x='') +
+    theme(axis.text.x=element_text(angle=45, hjust=1))
+
+dev.off()
