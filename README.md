@@ -1,5 +1,5 @@
 # Great tit (*Parus major*) INDEL analysis
-## Pipeline from Barton and Zeng (2019) - <https://academic.oup.com/gbe/advance-article/doi/10.1093/gbe/evz068/5423187>
+## Pipeline from [Barton and Zeng (2019)](https://academic.oup.com/gbe/advance-article/doi/10.1093/gbe/evz068/5423187).
 
 Henry Juho Barton  
 Department of Animal and Plant Sciences, The University of Sheffield  
